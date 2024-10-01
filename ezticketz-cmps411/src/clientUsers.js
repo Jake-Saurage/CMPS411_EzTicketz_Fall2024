@@ -1,15 +1,21 @@
-// src/ClientUsers.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Client from './Client';
 
 const ClientUsers = () => {
-  // Define the initial state for the client users list
   const [clients, setClients] = useState([]);
   const [newClient, setNewClient] = useState({
     name: '',
     email: '',
     phone: '',
   });
+
+  useEffect(() => {
+    // Fetch the existing client users from the backend
+    fetch('http://localhost:5000/api/clients')
+      .then(response => response.json())
+      .then(data => setClients(data))
+      .catch(error => console.error('Error fetching clients:', error));
+  }, []);
 
   // Function to handle new client input change
   const handleInputChange = (e) => {
@@ -22,15 +28,17 @@ const ClientUsers = () => {
 
   // Function to create a new client
   const createClient = () => {
-    const nextId = clients.length ? Math.max(clients.map(client => client.id)) + 1 : 1;
-    const newClientData = {
-      id: nextId,
-      name: newClient.name,
-      email: newClient.email,
-      phone: newClient.phone,
-    };
-    setClients((prevClients) => [...prevClients, newClientData]);
-    setNewClient({ name: '', email: '', phone: '' }); // Reset input fields
+    fetch('http://localhost:5000/api/clients', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newClient),
+    })
+      .then(response => response.json())
+      .then(newClientData => {
+        setClients((prevClients) => [...prevClients, newClientData]);
+        setNewClient({ name: '', email: '', phone: '' }); // Reset input fields
+      })
+      .catch(error => console.error('Error creating client:', error));
   };
 
   return (

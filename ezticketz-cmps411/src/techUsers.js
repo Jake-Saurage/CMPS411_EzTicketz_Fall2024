@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const TechsUser = () => {
   const [users, setUsers] = useState([
@@ -26,22 +26,21 @@ const TechsUser = () => {
   ]);
 
   const [clients, setClients] = useState([]);
-  const [newUser, setNewUser] = useState({
-    username: '',
-    password: '',
-  });
-
-  const [newClient, setNewClient] = useState({
-    name: '',
-    email: '',
-    phone: '',
-  });
-
+  const [newUser, setNewUser] = useState({ username: '', password: '' });
+  const [newClient, setNewClient] = useState({ name: '', email: '', phone: '' });
   const [error, setError] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
   const [userNameToAddLevel, setUserNameToAddLevel] = useState('');
   const [userLevelError, setUserLevelError] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
+
+  useEffect(() => {
+    // Fetch the existing tech users from the backend
+    fetch('http://localhost:5000/api/techusers')
+      .then(response => response.json())
+      .then(data => setUsers(data))
+      .catch(error => console.error('Error fetching tech users:', error));
+  }, []);
 
   const addLevel = (userName, newLevel) => {
     setUsers((prevUsers) =>
@@ -116,7 +115,7 @@ const TechsUser = () => {
       setSelectedLevel('');
       setUserLevelError('');
       setUserNameToAddLevel('');
-      setFilteredUsers([]); // Clear filtered users after adding level
+      setFilteredUsers([]);
     } else {
       setUserLevelError('Please select a level to add.');
     }
@@ -133,7 +132,7 @@ const TechsUser = () => {
     } else {
       setFilteredUsers([]);
     }
-    
+
     setUserLevelError('');
   };
 
