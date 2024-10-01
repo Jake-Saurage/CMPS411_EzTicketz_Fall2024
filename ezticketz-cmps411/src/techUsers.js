@@ -1,19 +1,7 @@
-// src/TechsUser.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const TechsUser = () => {
-  // Define the initial state for the tech users and clients
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: 'Tech Enthusiast',
-      skills: ['JavaScript', 'React', 'Node.js'],
-      username: 'tech_enthusiast',
-      password: 'password123',
-    },
-  ]);
-
-  const [clients, setClients] = useState([]);
+  const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({
     username: '',
     password: '',
@@ -25,15 +13,31 @@ const TechsUser = () => {
     phone: '',
   });
 
-  // Function to add a new skill (for existing user)
+  useEffect(() => {
+    // Fetch the existing tech users from the backend
+    fetch('http://localhost:5000/api/techusers')
+      .then(response => response.json())
+      .then(data => setUsers(data))
+      .catch(error => console.error('Error fetching tech users:', error));
+  }, []);
+
+  // Function to add a new skill (for the first user in the list)
   const addSkill = (newSkill) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === 1 // Assuming you are modifying the first user
-          ? { ...user, skills: [...user.skills, newSkill] }
-          : user
-      )
-    );
+    const userId = users[0]?.id; // Assuming you are modifying the first user
+    if (!userId) return;
+
+    fetch(`http://localhost:5000/api/techusers/${userId}/addskill`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newSkill),
+    })
+      .then(response => response.json())
+      .then(updatedUser => {
+        setUsers(prevUsers =>
+          prevUsers.map(user => user.id === updatedUser.id ? updatedUser : user)
+        );
+      })
+      .catch(error => console.error('Error adding skill:', error));
   };
 
   // Function to handle new user input change
@@ -47,38 +51,22 @@ const TechsUser = () => {
 
   // Function to create a new tech user
   const createUser = () => {
-    const nextId = users.length ? Math.max(users.map(user => user.id)) + 1 : 1;
-    const newTechUserData = {
-      id: nextId,
-      name: `User ${nextId}`,
-      skills: [],
-      username: newUser.username,
-      password: newUser.password,
-    };
-    setUsers((prevTechUsers) => [...prevTechUsers, newTechUserData]);
-    setNewUser({ username: '', password: '' }); // Reset input fields
-  };
-
-  // Function to handle new client input change
-  const handleClientInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewClient((prevNewClient) => ({
-      ...prevNewClient,
-      [name]: value,
-    }));
-  };
-
-  // Function to create a new client
-  const createClient = () => {
-    const nextId = clients.length ? Math.max(clients.map(client => client.id)) + 1 : 1;
-    const newClientData = {
-      id: nextId,
-      name: newClient.name,
-      email: newClient.email,
-      phone: newClient.phone,
-    };
-    setClients((prevClients) => [...prevClients, newClientData]);
-    setNewClient({ name: '', email: '', phone: '' }); // Reset input fields
+    fetch('http://localhost:5000/api/techusers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: newUser.username,
+        password: newUser.password,
+        name: `User ${users.length + 1}`,
+        skills: [],
+      }),
+    })
+      .then(response => response.json())
+      .then(newUser => {
+        setUsers((prevTechUsers) => [...prevTechUsers, newUser]);
+        setNewUser({ username: '', password: '' }); // Reset input fields
+      })
+      .catch(error => console.error('Error creating user:', error));
   };
 
   return (
@@ -91,7 +79,7 @@ const TechsUser = () => {
           </li>
         ))}
       </ul>
-      <h2>Add a Skill to Tech Enthusiast:</h2>
+      <h2>Add a Skill to First Tech User:</h2>
       <button onClick={() => addSkill('TypeScript')}>Add TypeScript</button>
 
       <h2>Create a New Tech User:</h2>
@@ -118,54 +106,6 @@ const TechsUser = () => {
         </label>
       </div>
       <button onClick={createUser}>Create User</button>
-
-      <h1>Create Client Users:</h1>
-      <div>
-        <label>
-          Name:
-          <input
-            type="text"
-            name="name"
-            value={newClient.name}
-            onChange={handleClientInputChange}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          Email:
-          <input
-            type="email"
-            name="email"
-            value={newClient.email}
-            onChange={handleClientInputChange}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          Phone:
-          <input
-            type="text"
-            name="phone"
-            value={newClient.phone}
-            onChange={handleClientInputChange}
-          />
-        </label>
-      </div>
-      <button onClick={createClient}>Create Client</button>
-
-      <h2>Existing Clients:</h2>
-      <ul>
-        {clients.map((client) => (
-          <li key={client.id}>
-            <h3>Client Information</h3>
-            <p><strong>Name:</strong> {client.name}</p>
-            <p><strong>Email:</strong> {client.email}</p>
-            <p><strong>Phone:</strong> {client.phone}</p>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };
