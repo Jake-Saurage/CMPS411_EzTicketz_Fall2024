@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jakes\\OneDrive\\Desktop\\CMPS 285\\Fork\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj": {}
+    "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jakes\\OneDrive\\Desktop\\CMPS 285\\Fork\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj": {
+    "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jakes\\OneDrive\\Desktop\\CMPS 285\\Fork\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
+        "projectUniqueName": "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
         "projectName": "CMPS411_EzTicketz_Fall2024",
-        "projectPath": "C:\\Users\\jakes\\OneDrive\\Desktop\\CMPS 285\\Fork\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
-        "packagesPath": "C:\\Users\\jakes\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jakes\\OneDrive\\Desktop\\CMPS 285\\Fork\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\obj\\",
+        "projectPath": "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
+        "packagesPath": "C:\\Users\\evanc\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\jakes\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\evanc\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,6 +22,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -34,6 +35,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -60,6 +66,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -68,7 +92,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace YourProject.Controllers
+namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -35,8 +35,8 @@ namespace YourProject.Controllers
     public class Client
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
+        public required string Name { get; set; }
+        public required string Email { get; set; }
+        public required string Phone { get; set; }
     }
 }

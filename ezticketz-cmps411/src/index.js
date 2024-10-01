@@ -9,6 +9,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import CompanyPage from './CompanyPage';
 
 
 
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: "techUser",
     element: <TechUserPage/>,
+  },
+  {
+    path: "company",
+    element: <CompanyPage/>,
   },
 ]);
 
