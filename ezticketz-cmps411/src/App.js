@@ -5,11 +5,13 @@ function App() {
   const [tickets, setTickets] = useState([]);
   const [ticketTitle, setTicketTitle] = useState('');
   const [ticketDescription, setTicketDescription] = useState('');
-  const [ticketStatus, setTicketStatus] = useState('Open'); // Default status
+  const [ticketStatus, setTicketStatus] = useState('Open');
   const [errors, setErrors] = useState({ title: '', description: '' });
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [editIndex, setEditIndex] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
 
   // Validate Form
   const validateForm = () => {
@@ -37,20 +39,18 @@ function App() {
       const newTickets = [...tickets];
 
       if (editIndex !== null) {
-        // Edit existing ticket
         newTickets[editIndex] = { 
           title: ticketTitle,
           description: ticketDescription,
-          status: ticketStatus // Include status in edit
+          status: ticketStatus
         };
         setEditIndex(null);
         setToastMessage('Ticket updated successfully!');
       } else {
-        // Add new ticket
         newTickets.push({ 
           title: ticketTitle,
           description: ticketDescription,
-          status: ticketStatus // Include status in new ticket
+          status: ticketStatus
         });
         setToastMessage('Ticket added successfully!');
       }
@@ -58,10 +58,9 @@ function App() {
       setTickets(newTickets);
       setTicketTitle('');
       setTicketDescription('');
-      setTicketStatus('Open'); // Reset status to default
+      setTicketStatus('Open');
       setErrors({ title: '', description: '' });
 
-      // Show toast message
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     }
@@ -72,8 +71,6 @@ function App() {
     const newTickets = tickets.filter((_, i) => i !== index);
     setTickets(newTickets);
     setToastMessage('Ticket deleted successfully!');
-
-    // Show toast message
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
@@ -82,16 +79,30 @@ function App() {
   const handleEditTicket = (index) => {
     setTicketTitle(tickets[index].title);
     setTicketDescription(tickets[index].description);
-    setTicketStatus(tickets[index].status); // Set the current status
+    setTicketStatus(tickets[index].status);
     setEditIndex(index);
   };
 
+  // Toggle Dark Mode
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
+  // Filter tickets based on search query
+  const filteredTickets = tickets.filter(ticket =>
+    ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ticket.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="App">
+    <div className={`App ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       {/* Header Section */}
       <header className="header">
         <h1>EZ Ticketz</h1>
         <p>Create and manage your tickets easily!</p>
+        <button onClick={toggleDarkMode} className="toggle-button">
+          {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+        </button>
       </header>
 
       {/* Ticket Form */}
@@ -131,6 +142,15 @@ function App() {
         </button>
       </div>
 
+      {/* Search Input */}
+      <input
+        type="text"
+        placeholder="Search Tickets..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="search-input"
+      />
+
       {/* Toast Message */}
       {showToast && (
         <div className={`toast ${showToast ? 'show' : ''}`} aria-live="polite">
@@ -141,11 +161,11 @@ function App() {
       {/* Display Tickets */}
       <div className="ticket-list">
         <h2>Your Tickets</h2>
-        {tickets.length === 0 ? (
-          <p>No tickets added yet.</p>
+        {filteredTickets.length === 0 ? (
+          <p>No tickets found.</p>
         ) : (
-          <div className="ticket-grid"> {/* Use a grid layout */}
-            {tickets.map((ticket, index) => (
+          <div className="ticket-grid">
+            {filteredTickets.map((ticket, index) => (
               <div key={index} className="ticket-item">
                 <h3>{ticket.title}</h3>
                 <p>{ticket.description}</p>
