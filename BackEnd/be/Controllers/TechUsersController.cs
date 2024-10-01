@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace YourProject.Controllers
+namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -49,9 +49,9 @@ namespace YourProject.Controllers
     public class TechUser
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public required string Name { get; set; }
         public List<string> Skills { get; set; } = new List<string>();
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public required string Username { get; set; }
+        public required string Password { get; set; }
     }
 }
