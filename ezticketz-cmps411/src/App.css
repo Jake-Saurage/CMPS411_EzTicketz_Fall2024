@@ -1,38 +1,195 @@
-.App {
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header Styles */
+.header {
+  background-color: #202329;
+  color: #fff;
+  padding: 20px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Ticket Form Styles */
+.ticket-form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.ticket-input-container, .ticket-textarea-container {
+  margin-bottom: 10px;
+}
+
+.ticket-input, .ticket-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.ticket-input:focus, .ticket-textarea:focus {
+  border-color: #007bff;
+}
+
+.ticket-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ticket-button:hover {
+  background-color: #0069d9;
+}
+
+/* Toast Message Styles */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+/* Ticket List Styles */
+.ticket-list {
+  margin-top: 20px;
+}
+
+.no-tickets-message {
+  text-align: center;
+  color: #999;
+}
+
+.ticket-items-list {
+  list-style: none;
+  padding: 0;
+}
+
+.ticket-item {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+/* Button Styles */
+.edit-button, .delete-button {
+  background-color: #f0ad4e; /* Edit button color */
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px; /* Space between buttons */
+}
+
+.edit-button:hover {
+  background-color: #ec971f; /* Darker shade for edit button on hover */
+}
+
+.delete-button {
+  background-color: #d9534f; /* Delete button color */
+}
+
+.delete-button:hover {
+  background-color: #c9302c; /* Darker shade for delete button on hover */
+}
+
+/* Ticket Item Styles */
+.ticket-item h3 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.ticket-item p {
+  margin: 5px 0 10px; /* Space between description and buttons */
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+  .ticket-form-container {
+    padding: 10px; /* Adjust padding for mobile */
+  }
+
+  .ticket-button, .edit-button, .delete-button {
+    width: 100%; /* Full width for buttons on mobile */
+    margin-top: 5px; /* Space between buttons */
+  }
+
+  .edit-button, .delete-button {
+    margin-right: 0; /* Remove right margin for full width */
   }
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.status-bubbles {
   display: flex;
-  flex-direction: column;
+  gap: 5px; /* Space between bubbles */
+}
+
+.bubble {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
   color: white;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
-.App-link {
-  color: #61dafb;
+.open {
+  background-color: #007bff; /* Blue for Open */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.in-progress {
+  background-color: #ffc107; /* Yellow for In Progress */
 }
+
+.completed {
+  background-color: #28a745; /* Green for Completed */
+}
+
+.closed {
+  background-color: #dc3545; /* Red for Closed */
+}
+
+/* Ticket List Styles */
+.ticket-list {
+  margin-top: 20px;
+}
+
+.ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid */
+  gap: 15px; /* Space between ticket items */
+}
+
+.ticket-item {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9; /* Light background for tickets */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow effect */
+  transition: transform 0.2s;
+}
+
+.ticket-item:hover {
+  transform: translateY(-2px); /* Slight hover effect */
+}
+
