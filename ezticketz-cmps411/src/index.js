@@ -4,13 +4,12 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import TechUserPage from './TechUsersPage';
- 
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
 import CompanyPage from './CompanyPage';
-
+import SignIn from './SignIn';
 
 
 const router = createBrowserRouter([
@@ -26,6 +25,11 @@ const router = createBrowserRouter([
     path: "company",
     element: <CompanyPage/>,
   },
+  {
+    path: "signin",
+    element: <SignIn/> ,
+  },
+ 
 ]);
 
 

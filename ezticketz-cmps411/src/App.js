@@ -1,26 +1,24 @@
-
 import './App.css';
-// import TechsUser from './techUsers.js';
-import NavBar from "./NavBar.js"
+import NavBar from "./NavBar.js";
+
+
 function App() {
   return (
-    <div className="App">
-        {/* <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a> */}
-       <NavBar></NavBar>
-       <div> <h1>Hello welcome to Ez Tickets</h1></div>
-  
-    </div>
+    
+      <div className="App">
+        <NavBar/>
+          <h2>Hello welcome to Ez Tickets</h2>
+          <div className="description-container"> <p>Our IT ticket platform streamlines the process of requesting and managing computer repairs and software issues. Whether your PC is malfunctioning or you're facing software glitches,
+         our system ensures that technicians are promptly assigned to resolve the problem. Submit a ticket, track its status in real time, 
+         and receive updates throughout the repair process. We prioritize efficiency and clarity to get your devices and programs back in working order with minimal downtime.
+         Let us handle your tech problems so you can focus on what matters.</p>
+            <a href="/signin">Sign In</a> {/* Link to Sign In */}</div>
+
+
+          
+      
+      </div>
+   
   );
 }
 
