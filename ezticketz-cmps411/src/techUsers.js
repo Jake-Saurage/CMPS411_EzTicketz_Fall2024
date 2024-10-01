@@ -1,14 +1,26 @@
-// src/TechsUser.js
 import React, { useState } from 'react';
 
 const TechsUser = () => {
-  // Define the initial state for the tech users and clients
   const [users, setUsers] = useState([
     {
       id: 1,
       name: 'Tech Enthusiast',
-      skills: ['JavaScript', 'React', 'Node.js'],
+      level: [2],
       username: 'tech_enthusiast',
+      password: 'password123',
+    },
+    {
+      id: 2,
+      name: 'Java Dev',
+      level: [3],
+      username: 'java_dev',
+      password: 'password123',
+    },
+    {
+      id: 3,
+      name: 'Pythonista',
+      level: [1],
+      username: 'pythonista',
       password: 'password123',
     },
   ]);
@@ -25,51 +37,64 @@ const TechsUser = () => {
     phone: '',
   });
 
-  // Function to add a new skill (for existing user)
-  const addSkill = (newSkill) => {
+  const [error, setError] = useState('');
+  const [selectedLevel, setSelectedLevel] = useState('');
+  const [userNameToAddLevel, setUserNameToAddLevel] = useState('');
+  const [userLevelError, setUserLevelError] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState([]);
+
+  const addLevel = (userName, newLevel) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
-        user.id === 1 // Assuming you are modifying the first user
-          ? { ...user, skills: [...user.skills, newSkill] }
+        user.name === userName
+          ? { ...user, level: [...user.level, `Level ${newLevel}`] }
           : user
       )
     );
   };
 
-  // Function to handle new user input change
   const handleUserInputChange = (e) => {
     const { name, value } = e.target;
     setNewUser((prevNewUser) => ({
       ...prevNewUser,
       [name]: value,
     }));
+    setError('');
   };
 
-  // Function to create a new tech user
   const createUser = () => {
+    if (!newUser.username || !newUser.password) {
+      setError('Both Name and Password must be filled!');
+      return;
+    }
+
     const nextId = users.length ? Math.max(users.map(user => user.id)) + 1 : 1;
     const newTechUserData = {
       id: nextId,
-      name: `User ${nextId}`,
-      skills: [],
+      name: newUser.username,
+      level: [],
       username: newUser.username,
       password: newUser.password,
     };
     setUsers((prevTechUsers) => [...prevTechUsers, newTechUserData]);
-    setNewUser({ username: '', password: '' }); // Reset input fields
+    setNewUser({ username: '', password: '' });
   };
 
-  // Function to handle new client input change
   const handleClientInputChange = (e) => {
     const { name, value } = e.target;
     setNewClient((prevNewClient) => ({
       ...prevNewClient,
       [name]: value,
     }));
+    setError('');
   };
 
-  // Function to create a new client
   const createClient = () => {
+    if (!newClient.name || !newClient.email || !newClient.phone) {
+      setError('All fields must be filled!');
+      return;
+    }
+
     const nextId = clients.length ? Math.max(clients.map(client => client.id)) + 1 : 1;
     const newClientData = {
       id: nextId,
@@ -78,7 +103,38 @@ const TechsUser = () => {
       phone: newClient.phone,
     };
     setClients((prevClients) => [...prevClients, newClientData]);
-    setNewClient({ name: '', email: '', phone: '' }); // Reset input fields
+    setNewClient({ name: '', email: '', phone: '' });
+  };
+
+  const handleLevelChange = (e) => {
+    setSelectedLevel(e.target.value);
+  };
+
+  const handleAddLevel = () => {
+    if (selectedLevel) {
+      addLevel(userNameToAddLevel, selectedLevel);
+      setSelectedLevel('');
+      setUserLevelError('');
+      setUserNameToAddLevel('');
+      setFilteredUsers([]); // Clear filtered users after adding level
+    } else {
+      setUserLevelError('Please select a level to add.');
+    }
+  };
+
+  const handleUserNameChange = (e) => {
+    const value = e.target.value;
+    setUserNameToAddLevel(value);
+
+    // Filter users based on input value
+    if (value) {
+      const filtered = users.filter(user => user.username.toLowerCase().includes(value.toLowerCase()));
+      setFilteredUsers(filtered);
+    } else {
+      setFilteredUsers([]);
+    }
+    
+    setUserLevelError('');
   };
 
   return (
@@ -87,17 +143,62 @@ const TechsUser = () => {
       <ul>
         {users.map((user) => (
           <li key={user.id}>
-            {user.name} - Skills: {user.skills.join(', ')}
+            {user.name} - level: {user.level.join(', ')}
           </li>
         ))}
       </ul>
-      <h2>Add a Skill to Tech Enthusiast:</h2>
-      <button onClick={() => addSkill('TypeScript')}>Add TypeScript</button>
 
-      <h2>Create a New Tech User:</h2>
+      <h2>Add a Level to Tech User:</h2>
       <div>
         <label>
-          Username:
+          Name:
+          <input
+            type="text"
+            value={userNameToAddLevel}
+            onChange={handleUserNameChange}
+          />
+        </label>
+        {userLevelError && <p style={{ color: 'red' }}>{userLevelError}</p>}
+        
+        {/* Autofill suggestions */}
+        {filteredUsers.length > 0 && (
+          <div style={{ border: '1px solid #ccc', maxHeight: '100px', overflowY: 'auto' }}>
+            {filteredUsers.map((user) => (
+              <div
+                key={user.id}
+                onClick={() => {
+                  setUserNameToAddLevel(user.username);
+                  setFilteredUsers([]); // Clear suggestions after selection
+                }}
+                style={{ padding: '5px', cursor: 'pointer' }}
+              >
+                {user.name}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <label>
+          Select Level:
+          <select value={selectedLevel} onChange={handleLevelChange} required>
+            <option value="" disabled hidden>Select a level</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </label>
+        <button onClick={handleAddLevel}>Add Level</button>
+      </div>
+
+      <h2>Create a New Tech User:</h2>
+      {error && error !== 'All fields must be filled!' && (
+        <p style={{ color: 'red' }}>{error}</p>
+      )}
+      <div>
+        <label>
+          Name:
           <input
             type="text"
             name="username"
@@ -153,6 +254,9 @@ const TechsUser = () => {
           />
         </label>
       </div>
+      {error === 'All fields must be filled!' && (
+        <p style={{ color: 'red' }}>{error}</p>
+      )}
       <button onClick={createClient}>Create Client</button>
 
       <h2>Existing Clients:</h2>
