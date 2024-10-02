@@ -29,6 +29,272 @@
   font-size: 20px;
 }
 
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.ticket-form-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.8s ease;
+}
+
+.ticket-input-container, .ticket-textarea-container {
+  margin-bottom: 10px;
+}
+.ticket-input, .ticket-textarea, .ticket-status-select, .file-input {
+  width: 95%;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-right: 30px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+}
+
+
+.ticket-input:focus, .ticket-textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
+}
+
+
+.ticket-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+
+.ticket-button:hover {
+  transform: scale(1.05);
+  background-color: #0069d9;
+}
+
+
+/* Toast Message Styles */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 4px;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+/* Ticket List Styles */
+.ticket-list {
+  margin-top: 20px;
+}
+
+
+.ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+
+.ticket-item {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  background-color: #fff;
+  animation: fadeIn 0.7s ease-in-out;
+  transition: transform 0.3s ease;
+}
+
+
+.ticket-item:hover {
+  transform: translateY(-10px);
+}
+
+
+.bubble {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 30px;
+  color: #fff;
+  font-size: 0.8em;
+  margin-right: 5px;
+  margin-bottom: 15px;
+  animation: fadeIn 0.5s ease;
+}
+
+
+.bubble.open {
+  background-color: #28a745;
+}
+
+
+.bubble.in-progress {
+  background-color: #ffc107;
+}
+
+
+.bubble.completed {
+  background-color: #17a2b8;
+}
+
+
+.bubble.closed {
+  background-color: #dc3545;
+}
+
+
+/* Button Animations */
+.edit-button, .delete-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+
+.edit-button:hover {
+  background-color: #007bff;
+  color: white;
+  transform: scale(1.05);
+}
+
+
+.delete-button:hover {
+  background-color: #dc3545;
+  color: white;
+  transform: scale(1.05);
+}
+/* Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.ticket-progress {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 20px;
+  margin: 10px 0;
+}
+
+
+.progress-bar {
+  height: 100%;
+  background-color: #4caf50; /* Green */
+  text-align: center;
+  color: white;
+  line-height: 20px; /* Center the text vertically */
+}
+
+
+.status-bubbles {
+  display: flex;
+  gap: 5px;
+}
+
+
+.bubble {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+
+.open {
+  background-color: #007bff; /* Blue */
+}
+
+
+.in-progress {
+  background-color: #ffc107; /* Yellow */
+}
+
+
+.completed {
+  background-color: #28a745; /* Green */
+}
+
+
+.closed {
+  background-color: #dc3545; /* Red */
+}
+
+
+.ticket-item {
+  transition: background-color 0.5s ease, transform 0.5s ease;
+}
+
+
+.ticket-item.completed {
+  background-color: #d4edda; /* Light green background for completed tickets */
+  transform: scale(1.05); /* Slightly enlarge the item */
+}
+
+
+/* Optionally, you could add a fade-out effect */
+.ticket-item.completed {
+  animation: fadeOut 0.5s forwards;
+}
+
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5; /* Adjust to your desired opacity */
+  }
+}
+
+
+
+
+
 .App {
   text-align: center;
 }
@@ -60,11 +326,7 @@
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
+
 
 .App-header {
   background-color: #282c34;
@@ -81,11 +343,3 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
