@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\CMPS411_EzTicketz_Fall2024.props" />
+</Project>

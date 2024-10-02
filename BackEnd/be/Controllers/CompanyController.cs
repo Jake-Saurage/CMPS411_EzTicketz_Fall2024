@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
+using CMPS411_EzTicketz_Fall2024.Models; // Add this line
 
 namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
@@ -120,19 +122,5 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             }
             return false;
         }
-    }
-
-    public class Company
-    {
-        public int Id { get; set; }
-        public required string CompanyName { get; set; }
-        public int UserId { get; set; }  // Should pull from Clients
-        public int CompanyWideTickets { get; set; }  // Should pull from Tickets
-    }
-
-    public class Ticket
-    {
-        public int Id { get; set; }
-        // Include other relevant properties for your Ticket model
     }
 }

@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using CMPS411_EzTicketz_Fall2024.Models; // Ensure this line is present
 
 namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
@@ -9,49 +12,39 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
     public class TechUsersController : ControllerBase
     {
         // In-memory data for simplicity (replace with a database)
-        private static List<TechUser> techUsers = new List<TechUser>
+        private static List<TechUser> techs = new List<TechUser>
         {
-            new TechUser { Id = 1, Name = "Tech Enthusiast", Skills = new List<string> { "JavaScript", "React", "Node.js" }, Username = "tech_enthusiast", Password = "password123" }
+            new TechUser { Id = 1, Name = "Tech Enthusiast", TechLevel = 3, Username = "tech_enthusiast", Password = "password123" }
         };
 
         // GET: api/techusers
         [HttpGet]
         public IActionResult GetTechUsers()
         {
-            return Ok(techUsers);
+            return Ok(techs);
         }
 
         // POST: api/techusers
         [HttpPost]
-        public IActionResult CreateTechUser([FromBody] TechUser newUser)
+        public IActionResult CreateTechUser([FromBody] TechUser newTech)
         {
-            if (newUser == null) return BadRequest();
+            if (newTech == null) return BadRequest();
 
-            newUser.Id = techUsers.Count > 0 ? techUsers.Max(u => u.Id) + 1 : 1;
-            techUsers.Add(newUser);
+            newTech.Id = techs.Count > 0 ? techs.Max(u => u.Id) + 1 : 1;
+            techs.Add(newTech);
 
-            return Ok(newUser);
+            return Ok(newTech);
         }
 
-        // POST: api/techusers/{id}/addskill
-        [HttpPost("{id}/addskill")]
-        public IActionResult AddSkill(int id, [FromBody] string newSkill)
+        // POST: api/techusers/{id}/updatetechlevel
+        [HttpPost("{id}/updatetechlevel")]
+        public IActionResult UpdateTechLevel(int id, [FromBody] int newTechLevel)
         {
-            var user = techUsers.FirstOrDefault(u => u.Id == id);
-            if (user == null) return NotFound();
+            var tech = techs.FirstOrDefault(u => u.Id == id);
+            if (tech == null) return NotFound();
 
-            user.Skills.Add(newSkill);
-            return Ok(user);
+            tech.TechLevel = newTechLevel;
+            return Ok(tech);
         }
-    }
-
-    // Model for Tech User
-    public class TechUser
-    {
-        public int Id { get; set; }
-        public required string Name { get; set; }
-        public List<string> Skills { get; set; } = new List<string>();
-        public required string Username { get; set; }
-        public required string Password { get; set; }
     }
 }

@@ -1,61 +1,72 @@
 import React, { useState, useEffect } from 'react';
 
 const CompanyManager = () => {
-  const [companies, setCompanies] = useState([
-    { Id: 1, CompanyName: 'Tech Solutions', CompanyWideTickets: 50 },
-    { Id: 2, CompanyName: 'Web Innovators', CompanyWideTickets: 30 },
-    { Id: 3, CompanyName: 'Cloud Services', CompanyWideTickets: 75 },
-  ]);
+  const [companies, setCompanies] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingCompany, setEditingCompany] = useState(null);
   const [companyName, setCompanyName] = useState('');
-  const [companyWideTickets, setCompanyWideTickets] = useState('');
+  const [loading, setLoading] = useState(true); // Add loading state
+  const [error, setError] = useState(null); // Add error state
 
   // Fetch companies from backend when component mounts
   useEffect(() => {
-    fetch('/api/company')
-      .then(response => response.json())
-      .then(data => setCompanies(data))
-      .catch(error => console.log(error));
+    const fetchCompanies = async () => {
+      try {
+        const response = await fetch('/api/company');
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        setCompanies(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
+
+    fetchCompanies();
   }, []);
 
   // Add or Update Company
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newCompany = {
       CompanyName: companyName,
-      CompanyWideTickets: parseInt(companyWideTickets),
+      // Removed CompanyWideTickets since we're no longer using it
     };
 
-    if (isEditing) {
-      // Update existing company
-      fetch(`/api/company/${editingCompany.Id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newCompany)
-      })
-      .then(response => response.json())
-      .then(updatedCompany => {
+    try {
+      let response;
+      if (isEditing) {
+        // Update existing company
+        response = await fetch(`/api/company/${editingCompany.Id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newCompany)
+        });
+      } else {
+        // Add new company
+        response = await fetch('/api/company', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newCompany)
+        });
+      }
+
+      if (!response.ok) throw new Error('Network response was not ok');
+      const result = await response.json();
+
+      if (isEditing) {
         setCompanies(companies.map(company =>
-          company.Id === editingCompany.Id ? updatedCompany : company
+          company.Id === editingCompany.Id ? result : company
         ));
-        resetForm();
-      })
-      .catch(error => console.log(error));
-    } else {
-      // Add new company
-      fetch('/api/company', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newCompany)
-      })
-      .then(response => response.json())
-      .then(addedCompany => {
-        setCompanies([...companies, addedCompany]);
-        resetForm();
-      })
-      .catch(error => console.log(error));
+      } else {
+        setCompanies([...companies, result]);
+      }
+      
+      resetForm();
+    } catch (error) {
+      setError(error.message);
     }
   };
 
@@ -64,16 +75,22 @@ const CompanyManager = () => {
     setIsEditing(true);
     setEditingCompany(company);
     setCompanyName(company.CompanyName);
-    setCompanyWideTickets(company.CompanyWideTickets);
+    // Removed setting of companyWideTickets
   };
 
   // Delete a company
-  const handleDelete = (id) => {
-    fetch(`/api/company/${id}`, {
-      method: 'DELETE'
-    })
-    .then(() => setCompanies(companies.filter(company => company.Id !== id)))
-    .catch(error => console.log(error));
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`/api/company/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) throw new Error('Network response was not ok');
+
+      setCompanies(companies.filter(company => company.Id !== id));
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   // Reset form after adding or updating
@@ -81,12 +98,14 @@ const CompanyManager = () => {
     setIsEditing(false);
     setEditingCompany(null);
     setCompanyName('');
-    setCompanyWideTickets('');
   };
 
   return (
     <div style={styles.container}>
       <h1 style={styles.header}>Company Manager</h1>
+
+      {loading && <p>Loading companies...</p>}
+      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
       {/* Form for adding/updating a company */}
       <form onSubmit={handleSubmit} style={styles.form}>
@@ -95,13 +114,6 @@ const CompanyManager = () => {
           placeholder="Company Name"
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
-          style={styles.input}
-        />
-        <input
-          type="number"
-          placeholder="Company Wide Tickets"
-          value={companyWideTickets}
-          onChange={(e) => setCompanyWideTickets(e.target.value)}
           style={styles.input}
         />
         <button type="submit" style={styles.button}>{isEditing ? 'Update Company' : 'Add Company'}</button>
@@ -114,7 +126,7 @@ const CompanyManager = () => {
         {companies.map((company) => (
           <div key={company.Id} style={styles.companyCard}>
             <h3 style={styles.companyName}>{company.CompanyName}</h3>
-            <p style={styles.companyInfo}>Company Wide Tickets: {company.CompanyWideTickets}</p>
+            <p style={styles.companyInfo}>Assigned Tickets: {company.AssignedTickets}</p> {/* Update to show assigned tickets */}
             <div style={styles.buttonGroup}>
               <button onClick={() => handleEdit(company)} style={styles.editButton}>Edit</button>
               <button onClick={() => handleDelete(company.Id)} style={styles.deleteButton}>Delete</button>
@@ -126,7 +138,7 @@ const CompanyManager = () => {
   );
 };
 
-// Styles
+// Styles (same as before)
 const styles = {
   container: {
     padding: '20px',

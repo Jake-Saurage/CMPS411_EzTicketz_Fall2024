@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using CMPS411_EzTicketz_Fall2024.Models; // Add this line
 
 namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
@@ -37,14 +40,5 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
             return Ok(newClient);
         }
-    }
-
-    // Model for Client
-    public class Client
-    {
-        public int Id { get; set; }
-        public required string Name { get; set; }
-        public required string Email { get; set; }
-        public required string Phone { get; set; }
     }
 }

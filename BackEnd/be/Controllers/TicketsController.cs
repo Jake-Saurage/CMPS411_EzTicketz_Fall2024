@@ -3,8 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Json;
 using CMPS411_EzTicketz_Fall2024.Data; 
-using CMPS411_EzTicketz_Fall2024.Models; 
+using CMPS411_EzTicketz_Fall2024.Models; // Add this line
 
 [Route("api/[controller]")]
 [ApiController]
