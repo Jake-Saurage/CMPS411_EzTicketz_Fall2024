@@ -8,6 +8,7 @@ function NavBar() {
    </div>
    <ul className='navbar-menu'>
      <li><Link to="/">Home</Link></li>
+     <li><Link to="/tickets">Tickets</Link></li>
      <li><Link to="/techUser">Tech User</Link></li>
      <li><Link to="/company">Company</Link></li>
    </ul>
