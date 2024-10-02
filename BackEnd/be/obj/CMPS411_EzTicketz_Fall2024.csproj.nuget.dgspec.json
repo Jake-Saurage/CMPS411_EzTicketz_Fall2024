@@ -1,24 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj": {}
+    "C:\\Users\\NYKOp\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj": {}
   },
   "projects": {
-    "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj": {
+    "C:\\Users\\NYKOp\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
+        "projectUniqueName": "C:\\Users\\NYKOp\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
         "projectName": "CMPS411_EzTicketz_Fall2024",
-        "projectPath": "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
-        "packagesPath": "C:\\Users\\evanc\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\obj\\",
+        "projectPath": "C:\\Users\\NYKOp\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
+        "packagesPath": "C:\\Users\\NYKOp\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\NYKOp\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\evanc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\NYKOp\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net7.0"
+          "net8.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
@@ -26,8 +26,8 @@
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net7.0": {
-            "targetAlias": "net7.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
         },
@@ -43,12 +43,30 @@
         }
       },
       "frameworks": {
-        "net7.0": {
-          "targetAlias": "net7.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNet.WebApi.Client": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[7.0.2, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -66,24 +84,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[7.0.20, 7.0.20]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[7.0.20, 7.0.20]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[7.0.20, 7.0.20]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[7.0.20, 7.0.20]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -92,7 +92,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
