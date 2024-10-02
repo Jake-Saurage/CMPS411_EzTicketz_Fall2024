@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 import CompanyPage from './CompanyPage';
 import SignIn from './SignIn';
+import TicketsPage from './TicketsPage';
 
 
 const router = createBrowserRouter([
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: "signin",
     element: <SignIn/> ,
+  },
+  {
+    path: "tickets",
+    element: <TicketsPage/> ,
   },
  
 ]);
