@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import ConfirmationModal from './ConfirmationModal'; // Import the Confirmation Modal
 
 function App() {
   const [tickets, setTickets] = useState([]);
@@ -10,8 +11,10 @@ function App() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [editIndex, setEditIndex] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
-  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [ticketToDelete, setTicketToDelete] = useState(null); // Track the ticket to delete
+  const [selectedFile, setSelectedFile] = useState(null); // State for the file chooser
 
   // Validate Form
   const validateForm = () => {
@@ -33,25 +36,43 @@ function App() {
     return valid;
   };
 
+  // Get Progress Percentage
+  const getProgressPercentage = (status) => {
+    switch (status) {
+      case 'Open':
+        return 0;
+      case 'In Progress':
+        return 50; // Arbitrary value; adjust as needed
+      case 'Completed':
+        return 100;
+      case 'Closed':
+        return 100;
+      default:
+        return 0;
+    }
+  };
+
   // Add or Edit Ticket
   const handleAddEditTicket = () => {
     if (validateForm()) {
       const newTickets = [...tickets];
 
+      const ticketData = {
+        title: ticketTitle,
+        description: ticketDescription,
+        status: ticketStatus,
+        createdAt: new Date().toLocaleString(),
+        progress: getProgressPercentage(ticketStatus), // Set initial progress
+        isCompleted: false, // Track completion status
+        fileName: selectedFile ? selectedFile.name : '', // Store file name if selected
+      };
+
       if (editIndex !== null) {
-        newTickets[editIndex] = { 
-          title: ticketTitle,
-          description: ticketDescription,
-          status: ticketStatus
-        };
+        newTickets[editIndex] = ticketData;
         setEditIndex(null);
         setToastMessage('Ticket updated successfully!');
       } else {
-        newTickets.push({ 
-          title: ticketTitle,
-          description: ticketDescription,
-          status: ticketStatus
-        });
+        newTickets.push(ticketData);
         setToastMessage('Ticket added successfully!');
       }
 
@@ -60,6 +81,7 @@ function App() {
       setTicketDescription('');
       setTicketStatus('Open');
       setErrors({ title: '', description: '' });
+      setSelectedFile(null); // Reset selected file
 
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
@@ -68,11 +90,22 @@ function App() {
 
   // Delete Ticket
   const handleDeleteTicket = (index) => {
-    const newTickets = tickets.filter((_, i) => i !== index);
+    setTicketToDelete(index); // Set the ticket to delete
+    setShowModal(true); // Show the confirmation modal
+  };
+
+  const confirmDeleteTicket = () => {
+    const newTickets = tickets.filter((_, i) => i !== ticketToDelete);
     setTickets(newTickets);
     setToastMessage('Ticket deleted successfully!');
     setShowToast(true);
+    setShowModal(false); // Close the modal
     setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const cancelDelete = () => {
+    setShowModal(false); // Close the modal without deleting
+    setTicketToDelete(null); // Reset the ticket to delete
   };
 
   // Edit Ticket
@@ -81,11 +114,7 @@ function App() {
     setTicketDescription(tickets[index].description);
     setTicketStatus(tickets[index].status);
     setEditIndex(index);
-  };
-
-  // Toggle Dark Mode
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
+    setSelectedFile(null); // Reset selected file
   };
 
   // Filter tickets based on search query
@@ -94,15 +123,20 @@ function App() {
     ticket.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Handle file selection
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file); // Set the selected file
+    }
+  };
+
   return (
-    <div className={`App ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+    <div className="App">
       {/* Header Section */}
       <header className="header">
         <h1>EZ Ticketz</h1>
         <p>Create and manage your tickets easily!</p>
-        <button onClick={toggleDarkMode} className="toggle-button">
-          {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-        </button>
       </header>
 
       {/* Ticket Form */}
@@ -137,6 +171,14 @@ function App() {
           <option value="Closed">Closed</option>
         </select>
 
+        {/* File Chooser */}
+        <input
+          type="file"
+          onChange={handleFileChange}
+          className="file-input"
+        />
+        {selectedFile && <p>Selected File: {selectedFile.name}</p>} {/* Display selected file name */}
+
         <button onClick={handleAddEditTicket} className="ticket-button">
           {editIndex !== null ? 'Update Ticket' : 'Add Ticket'}
         </button>
@@ -151,13 +193,6 @@ function App() {
         className="search-input"
       />
 
-      {/* Toast Message */}
-      {showToast && (
-        <div className={`toast ${showToast ? 'show' : ''}`} aria-live="polite">
-          {toastMessage}
-        </div>
-      )}
-
       {/* Display Tickets */}
       <div className="ticket-list">
         <h2>Your Tickets</h2>
@@ -166,9 +201,16 @@ function App() {
         ) : (
           <div className="ticket-grid">
             {filteredTickets.map((ticket, index) => (
-              <div key={index} className="ticket-item">
+              <div key={index} className={`ticket-item ${ticket.isCompleted ? 'completed' : ''}`}>
                 <h3>{ticket.title}</h3>
                 <p>{ticket.description}</p>
+                <p><strong>Created At:</strong> {ticket.createdAt}</p>
+                {ticket.fileName && <p><strong>Attached File:</strong> {ticket.fileName}</p>} {/* Display attached file name */}
+                <div className="ticket-progress">
+                  <div className="progress-bar" style={{ width: `${ticket.progress}%` }}>
+                    {ticket.progress}%
+                  </div>
+                </div>
                 <div className="status-bubbles">
                   {ticket.status === 'Open' && <div className="bubble open">O</div>}
                   {ticket.status === 'In Progress' && <div className="bubble in-progress">IP</div>}
@@ -182,6 +224,22 @@ function App() {
           </div>
         )}
       </div>
+
+      {/* Confirmation Modal */}
+      {showModal && (
+        <ConfirmationModal
+          message="Are you sure you want to delete this ticket?"
+          onConfirm={confirmDeleteTicket}
+          onCancel={cancelDelete}
+        />
+      )}
+
+      {/* Toast Message */}
+      {showToast && (
+        <div className={`toast ${showToast ? 'show' : ''}`} aria-live="polite">
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 }
