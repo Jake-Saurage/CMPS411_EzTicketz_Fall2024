@@ -18,6 +18,14 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             return Ok(clients);
         }
 
+        // GET: api/clients/ids
+        [HttpGet("ids")]
+        public IActionResult GetClientIds()
+        {
+            var clientIds = clients.Select(c => c.Id).ToList();
+            return Ok(clientIds);
+        }
+
         // POST: api/clients
         [HttpPost]
         public IActionResult CreateClient([FromBody] Client newClient)
