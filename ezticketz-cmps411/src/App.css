@@ -1,4 +1,4 @@
-
+/*NavBar Styling */
 .navbar{
   display: flex;
   justify-content:space-between;
@@ -34,7 +34,7 @@ body {
   margin: 0;
   padding: 0;
 }
-
+/* Ticket Page Styling Stuff */
 .ticket-form-container {
   max-width: 600px;
   margin: 20px auto;
@@ -343,3 +343,79 @@ body {
   color: #61dafb;
 }
 
+/* SIGN IN STYLING */
+.sign-in-form-container {
+  max-width: 400px;
+  padding: 35px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.8s ease;
+  position: absolute;
+  top: 15%;
+  left: 35%;
+  
+}
+
+.input-container {
+  margin-bottom: 15px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+  
+  
+}
+
+.input-field:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  width: 100%;
+}
+
+.submit-button:hover {
+  transform: scale(1.05);
+  background-color: #0069d9;
+}
+
+/* Animations */
+@keyframes slideUp {
+  0% {
+      transform: translateY(50px);
+      opacity: 0;
+  }
+  100% {
+      transform: translateY(0);
+      opacity: 1;
+  }
+}
+
+.sign-in-button  {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  width: 25%;
+  
+}
+.sign-in-button:hover {
+  transform: scale(1.05);
+  background-color: #0069d9;
+}
