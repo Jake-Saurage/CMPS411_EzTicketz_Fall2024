@@ -37,9 +37,9 @@ const TechsUser = () => {
   useEffect(() => {
     // Fetch the existing tech users from the backend
     fetch('http://localhost:5000/api/techusers')
-      .then(response => response.json())
-      .then(data => setUsers(data))
-      .catch(error => console.error('Error fetching tech users:', error));
+      .then((response) => response.json())
+      .then((data) => setUsers(data))
+      .catch((error) => console.error('Error fetching tech users:', error));
   }, []);
 
   const addLevel = (userName, newLevel) => {
@@ -67,7 +67,7 @@ const TechsUser = () => {
       return;
     }
 
-    const nextId = users.length ? Math.max(users.map(user => user.id)) + 1 : 1;
+    const nextId = users.length ? Math.max(users.map((user) => user.id)) + 1 : 1;
     const newTechUserData = {
       id: nextId,
       name: newUser.username,
@@ -94,7 +94,9 @@ const TechsUser = () => {
       return;
     }
 
-    const nextId = clients.length ? Math.max(clients.map(client => client.id)) + 1 : 1;
+    const nextId = clients.length
+      ? Math.max(clients.map((client) => client.id)) + 1
+      : 1;
     const newClientData = {
       id: nextId,
       name: newClient.name,
@@ -127,7 +129,9 @@ const TechsUser = () => {
 
     // Filter users based on input value
     if (value) {
-      const filtered = users.filter(user => user.username.toLowerCase().includes(value.toLowerCase()));
+      const filtered = users.filter((user) =>
+        user.username.toLowerCase().includes(value.toLowerCase())
+      );
       setFilteredUsers(filtered);
     } else {
       setFilteredUsers([]);
@@ -136,32 +140,95 @@ const TechsUser = () => {
     setUserLevelError('');
   };
 
+  const styles = {
+    container: {
+      fontFamily: 'Arial, sans-serif',
+      maxWidth: '800px',
+      margin: '0 auto',
+      padding: '20px',
+      backgroundColor: '#f0f0f0',
+      borderRadius: '8px',
+    },
+    heading: {
+      textAlign: 'center',
+      color: '#333',
+    },
+    formGroup: {
+      marginBottom: '15px',
+    },
+    input: {
+      width: '100%',
+      padding: '8px',
+      margin: '5px 0',
+      borderRadius: '4px',
+      border: '1px solid #ccc',
+    },
+    button: {
+      padding: '10px 15px',
+      backgroundColor: '#007bff',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      marginTop: '10px',
+    },
+    errorMessage: {
+      color: 'red',
+    },
+    userList: {
+      listStyle: 'none',
+      padding: 0,
+    },
+    userItem: {
+      backgroundColor: '#fff',
+      padding: '10px',
+      border: '1px solid #ccc',
+      borderRadius: '4px',
+      marginBottom: '10px',
+    },
+    clientInfo: {
+      marginTop: '20px',
+    },
+  };
+
   return (
-    <div>
-      <h1>Existing Tech Users:</h1>
-      <ul>
+    <div style={styles.container}>
+      <h1 style={styles.heading}>Tech Users and Clients Management</h1>
+
+      <h2>Existing Tech Users:</h2>
+      <ul style={styles.userList}>
         {users.map((user) => (
-          <li key={user.id}>
+          <li key={user.id} style={styles.userItem}>
             {user.name} - level: {user.level.join(', ')}
           </li>
         ))}
       </ul>
 
       <h2>Add a Level to Tech User:</h2>
-      <div>
+      <div style={styles.formGroup}>
         <label>
           Name:
           <input
             type="text"
             value={userNameToAddLevel}
             onChange={handleUserNameChange}
+            style={styles.input}
           />
         </label>
-        {userLevelError && <p style={{ color: 'red' }}>{userLevelError}</p>}
-        
+        {userLevelError && (
+          <p style={styles.errorMessage}>{userLevelError}</p>
+        )}
+
         {/* Autofill suggestions */}
         {filteredUsers.length > 0 && (
-          <div style={{ border: '1px solid #ccc', maxHeight: '100px', overflowY: 'auto' }}>
+          <div
+            style={{
+              border: '1px solid #ccc',
+              maxHeight: '100px',
+              overflowY: 'auto',
+              backgroundColor: '#fff',
+            }}
+          >
             {filteredUsers.map((user) => (
               <div
                 key={user.id}
@@ -179,8 +246,15 @@ const TechsUser = () => {
 
         <label>
           Select Level:
-          <select value={selectedLevel} onChange={handleLevelChange} required>
-            <option value="" disabled hidden>Select a level</option>
+          <select
+            value={selectedLevel}
+            onChange={handleLevelChange}
+            style={styles.input}
+            required
+          >
+            <option value="" disabled hidden>
+              Select a level
+            </option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -188,14 +262,16 @@ const TechsUser = () => {
             <option value="5">5</option>
           </select>
         </label>
-        <button onClick={handleAddLevel}>Add Level</button>
+        <button style={styles.button} onClick={handleAddLevel}>
+          Add Level
+        </button>
       </div>
 
       <h2>Create a New Tech User:</h2>
       {error && error !== 'All fields must be filled!' && (
-        <p style={{ color: 'red' }}>{error}</p>
+        <p style={styles.errorMessage}>{error}</p>
       )}
-      <div>
+      <div style={styles.formGroup}>
         <label>
           Name:
           <input
@@ -203,10 +279,11 @@ const TechsUser = () => {
             name="username"
             value={newUser.username}
             onChange={handleUserInputChange}
+            style={styles.input}
           />
         </label>
       </div>
-      <div>
+      <div style={styles.formGroup}>
         <label>
           Password:
           <input
@@ -214,13 +291,16 @@ const TechsUser = () => {
             name="password"
             value={newUser.password}
             onChange={handleUserInputChange}
+            style={styles.input}
           />
         </label>
       </div>
-      <button onClick={createUser}>Create User</button>
+      <button style={styles.button} onClick={createUser}>
+        Create User
+      </button>
 
       <h1>Create Client Users:</h1>
-      <div>
+      <div style={styles.formGroup}>
         <label>
           Name:
           <input
@@ -228,10 +308,11 @@ const TechsUser = () => {
             name="name"
             value={newClient.name}
             onChange={handleClientInputChange}
+            style={styles.input}
           />
         </label>
       </div>
-      <div>
+      <div style={styles.formGroup}>
         <label>
           Email:
           <input
@@ -239,10 +320,11 @@ const TechsUser = () => {
             name="email"
             value={newClient.email}
             onChange={handleClientInputChange}
+            style={styles.input}
           />
         </label>
       </div>
-      <div>
+      <div style={styles.formGroup}>
         <label>
           Phone:
           <input
@@ -250,22 +332,31 @@ const TechsUser = () => {
             name="phone"
             value={newClient.phone}
             onChange={handleClientInputChange}
+            style={styles.input}
           />
         </label>
       </div>
       {error === 'All fields must be filled!' && (
-        <p style={{ color: 'red' }}>{error}</p>
+        <p style={styles.errorMessage}>{error}</p>
       )}
-      <button onClick={createClient}>Create Client</button>
+      <button style={styles.button} onClick={createClient}>
+        Create Client
+      </button>
 
       <h2>Existing Clients:</h2>
-      <ul>
+      <ul style={styles.userList}>
         {clients.map((client) => (
-          <li key={client.id}>
+          <li key={client.id} style={styles.clientInfo}>
             <h3>Client Information</h3>
-            <p><strong>Name:</strong> {client.name}</p>
-            <p><strong>Email:</strong> {client.email}</p>
-            <p><strong>Phone:</strong> {client.phone}</p>
+            <p>
+              <strong>Name:</strong> {client.name}
+            </p>
+            <p>
+              <strong>Email:</strong> {client.email}
+            </p>
+            <p>
+              <strong>Phone:</strong> {client.phone}
+            </p>
           </li>
         ))}
       </ul>
