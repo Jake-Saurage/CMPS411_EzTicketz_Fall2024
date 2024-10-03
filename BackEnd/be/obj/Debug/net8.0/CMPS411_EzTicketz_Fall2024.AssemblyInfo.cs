@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CMPS411_EzTicketz_Fall2024")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+959e9adbe125d35a14077abbb274f49bb5f82225")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ccb96eb668aec46ee1ef645cd8879eb396e62c7")]
 [assembly: System.Reflection.AssemblyProductAttribute("CMPS411_EzTicketz_Fall2024")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CMPS411_EzTicketz_Fall2024")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

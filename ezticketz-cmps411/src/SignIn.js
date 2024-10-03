@@ -1,34 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './App.css'; // Import the CSS file
 
 const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Use useNavigate instead of useHistory
+  const navigate = useNavigate();
 
   const handleSignIn = () => {
-    // Fetch Tech Users from your API or use existing user data
     fetch('http://localhost:5000/api/techusers')
       .then(response => response.json())
       .then(users => {
-        // Check if the username and password match any Tech User
         const foundUser = users.find(user => user.username === username && user.password === password);
-if (foundUser) {
-          // Redirect to homepage for Tech Users
-          navigate('/home'); // Use navigate instead of history.push
+        if (foundUser) {
+          navigate('/');
         } else {
-          // If not found in Tech Users, fetch Client Users
           fetch('http://localhost:5000/api/clients')
             .then(response => response.json())
             .then(clients => {
               const foundClient = clients.find(client => client.email === username && client.phone === password);
-
               if (foundClient) {
-                // Redirect to homepage for Clients
-                navigate('/home'); // Use navigate instead of history.push
+                navigate('/');
               } else {
-                // Set error if no user is found
                 setError('Invalid username or password');
               }
             });
@@ -37,30 +31,32 @@ if (foundUser) {
   };
 
   return (
-    <div>
+    <div className="sign-in-form-container">
       <h2>Sign In</h2>
-      <div>
+      <div className="input-container">
         <label>
           Username / Email:
           <input
             type="text"
+            className="input-field"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </label>
       </div>
-      <div>
+      <div className="input-container">
         <label>
           Password:
           <input
             type="password"
+            className="input-field"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
       </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <button onClick={handleSignIn}>Sign In</button>
+      <button className="submit-button" onClick={handleSignIn}>Sign In</button>
     </div>
   );
 };

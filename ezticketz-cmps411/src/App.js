@@ -12,11 +12,12 @@ function App() {
          our system ensures that technicians are promptly assigned to resolve the problem. Submit a ticket, track its status in real time, 
          and receive updates throughout the repair process. We prioritize efficiency and clarity to get your devices and programs back in working order with minimal downtime.
          Let us handle your tech problems so you can focus on what matters.</p>
-            <a href="/signin">Sign In</a> {/* Link to Sign In */}</div>
+          <button className="sign-in-button" onClick={() => window.location.href = "/signin"}>
+          Sign In
+          </button>
 
+          </div>
 
-          
-      
       </div>
    
   );
