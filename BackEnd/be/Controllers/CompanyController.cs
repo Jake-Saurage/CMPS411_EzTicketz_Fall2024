@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using CMPS411_EzTicketz_Fall2024.Models; // Add this line
+using CMPS411_EzTicketz_Fall2024.Models;
 
 namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
@@ -48,9 +48,9 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 return BadRequest("Invalid User ID.");
             }
 
-            if (!IsValidTicketId(company.CompanyWideTickets))
+            if (company.CompanyWideTicketIds == null || !company.CompanyWideTicketIds.All(IsValidTicketId))
             {
-                return BadRequest("Invalid Ticket ID.");
+                return BadRequest("One or more invalid Ticket IDs.");
             }
 
             company.Id = Companies.Count + 1; // Simplistic ID generation for the example
@@ -73,14 +73,14 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 return BadRequest("Invalid User ID.");
             }
 
-            if (!IsValidTicketId(updatedCompany.CompanyWideTickets))
+            if (updatedCompany.CompanyWideTicketIds == null || !updatedCompany.CompanyWideTicketIds.All(IsValidTicketId))
             {
-                return BadRequest("Invalid Ticket ID.");
+                return BadRequest("One or more invalid Ticket IDs.");
             }
 
             company.CompanyName = updatedCompany.CompanyName;
             company.UserId = updatedCompany.UserId;
-            company.CompanyWideTickets = updatedCompany.CompanyWideTickets;
+            company.CompanyWideTicketIds = updatedCompany.CompanyWideTicketIds;
 
             return Ok(company);
         }
@@ -102,10 +102,10 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
         // Validate if User ID exists in Clients
         private bool IsValidUserId(int userId)
         {
-            var clientIdsResponse = _httpClient.GetAsync("http://localhost:5000/api/clients/ids").Result;
+            var clientIdsResponse = _httpClient.GetAsync("http://localhost:5099/api/clients/ids").Result;
             if (clientIdsResponse.IsSuccessStatusCode)
             {
-                var clientIds = clientIdsResponse.Content.ReadAsAsync<List<int>>().Result;
+                var clientIds = clientIdsResponse.Content.ReadFromJsonAsync<List<int>>().Result;
                 return clientIds.Contains(userId);
             }
             return false;
@@ -114,11 +114,11 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
         // Validate if Ticket ID exists in Tickets
         private bool IsValidTicketId(int ticketId)
         {
-            var ticketIdsResponse = _httpClient.GetAsync("http://localhost:5000/api/tickets/").Result;
+            var ticketIdsResponse = _httpClient.GetAsync("http://localhost:5099/api/tickets/").Result;
             if (ticketIdsResponse.IsSuccessStatusCode)
             {
-                var tickets = ticketIdsResponse.Content.ReadAsAsync<List<Ticket>>().Result;
-                return tickets.Any(t => t.Id == ticketId);
+                var tickets = ticketIdsResponse.Content.ReadFromJsonAsync<List<Ticket>>().Result;
+                return tickets?.Any(t => t.Id == ticketId) == true; // Handle possible null
             }
             return false;
         }

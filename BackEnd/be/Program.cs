@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using CMPS411_EzTicketz_Fall2024.Data; // Adjust the namespace if needed
+using CMPS411_EzTicketz_Fall2024.Data;
+using CMPS411_EzTicketz_Fall2024.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,9 @@ builder.Services.AddControllers();
 // Register your DbContext
 builder.Services.AddDbContext<YourDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("YourConnectionString"))); // Replace with your connection string
+
+// Register HttpClient for CompanyController
+builder.Services.AddHttpClient<CompanyController>();
 
 // Configure CORS (if needed)
 builder.Services.AddCors(options =>
