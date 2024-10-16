@@ -11,7 +11,7 @@ const ClientUsers = () => {
 
   useEffect(() => {
     // Fetch the existing client users from the backend
-    fetch('http://localhost:5000/api/clients')
+    fetch('http://localhost:5099/api/clients')
       .then(response => response.json())
       .then(data => setClients(data))
       .catch(error => console.error('Error fetching clients:', error));
@@ -28,7 +28,7 @@ const ClientUsers = () => {
 
   // Function to create a new client
   const createClient = () => {
-    fetch('http://localhost:5000/api/clients', {
+    fetch('http://localhost:5099/api/clients', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newClient),

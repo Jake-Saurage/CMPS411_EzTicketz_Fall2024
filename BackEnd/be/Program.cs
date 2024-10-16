@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 
 // Register your DbContext
 builder.Services.AddDbContext<YourDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("YourConnectionString"))); // Replace with your connection string
+    options.UseSqlServer(builder.Configuration.GetConnectionString("YourConnectionString"))); 
 
 // Register HttpClient for CompanyController
 builder.Services.AddHttpClient<CompanyController>();

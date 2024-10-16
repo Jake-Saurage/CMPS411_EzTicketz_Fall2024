@@ -4581,19 +4581,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\NYKOp\\.nuget\\packages\\": {}
+    "C:\\Users\\evanc\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\NYKOp\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
+      "projectUniqueName": "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
       "projectName": "CMPS411_EzTicketz_Fall2024",
-      "projectPath": "C:\\Users\\NYKOp\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
-      "packagesPath": "C:\\Users\\NYKOp\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\NYKOp\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\obj\\",
+      "projectPath": "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
+      "packagesPath": "C:\\Users\\evanc\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\evanc\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\NYKOp\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\evanc\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
