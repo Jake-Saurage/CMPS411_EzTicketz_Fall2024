@@ -5,21 +5,24 @@ const CompanyManager = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingCompany, setEditingCompany] = useState(null);
   const [companyName, setCompanyName] = useState('');
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [error, setError] = useState(null); // Add error state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Fetch companies from backend when component mounts
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const response = await fetch('/api/company');
-        if (!response.ok) throw new Error('Network response was not ok');
+        const response = await fetch('http://localhost:5099/api/company');
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Network response was not ok: ${errorText}`);
+        }
         const data = await response.json();
         setCompanies(data);
       } catch (error) {
         setError(error.message);
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
 
@@ -32,28 +35,29 @@ const CompanyManager = () => {
 
     const newCompany = {
       CompanyName: companyName,
-      // Removed CompanyWideTickets since we're no longer using it
     };
 
     try {
       let response;
       if (isEditing) {
-        // Update existing company
-        response = await fetch(`/api/company/${editingCompany.Id}`, {
+        response = await fetch(`http://localhost:5099/api/company/${editingCompany.Id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newCompany)
         });
       } else {
-        // Add new company
-        response = await fetch('/api/company', {
+        response = await fetch('http://localhost:5099/api/company', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newCompany)
         });
       }
 
-      if (!response.ok) throw new Error('Network response was not ok');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Network response was not ok: ${errorText}`);
+      }
+      
       const result = await response.json();
 
       if (isEditing) {
@@ -75,17 +79,19 @@ const CompanyManager = () => {
     setIsEditing(true);
     setEditingCompany(company);
     setCompanyName(company.CompanyName);
-    // Removed setting of companyWideTickets
   };
 
   // Delete a company
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`/api/company/${id}`, {
+      const response = await fetch(`http://localhost:5099/api/company/${id}`, {
         method: 'DELETE'
       });
 
-      if (!response.ok) throw new Error('Network response was not ok');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Network response was not ok: ${errorText}`);
+      }
 
       setCompanies(companies.filter(company => company.Id !== id));
     } catch (error) {
@@ -125,8 +131,8 @@ const CompanyManager = () => {
         <h2 style={styles.subHeader}>Company List</h2>
         {companies.map((company) => (
           <div key={company.Id} style={styles.companyCard}>
-            <h3 style={styles.companyName}>{company.CompanyName}</h3>
-            <p style={styles.companyInfo}>Assigned Tickets: {company.AssignedTickets}</p> {/* Update to show assigned tickets */}
+            <h3 style={styles.companyName}>{company.CompanyName || 'No Name'}</h3> {/* Use fallback if name is missing */}
+            <p style={styles.companyInfo}>Assigned Tickets: {company.AssignedTickets || 0}</p> {/* Fallback for assigned tickets */}
             <div style={styles.buttonGroup}>
               <button onClick={() => handleEdit(company)} style={styles.editButton}>Edit</button>
               <button onClick={() => handleDelete(company.Id)} style={styles.deleteButton}>Delete</button>

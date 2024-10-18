@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CMPS411_EzTicketz_Fall2024.Models
@@ -14,12 +13,48 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         public int UserId { get; set; }
 
         // Navigation property for the associated Client
-        public virtual Client Client { get; set; }
+        public  Client? Client { get; set; }
+        public  Ticket? Ticket { get; set; }
+    }
 
-        // List of Ticket IDs associated with the Company
-        public List<int> CompanyWideTicketIds { get; set; } = new List<int>(); // Ensure this property is defined
+    // DTO for creating a new company
+    public class CreateCompanyDTO
+    {
+        [Required]
+        public required string CompanyName { get; set; }
+    }
 
-        // Navigation property for the Tickets associated with the Company
-        public virtual ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+    // DTO for updating a company's details
+    public class UpdateCompanyDTO
+    {
+        [Required]
+        public int Id { get; set; }  // Required for updating
+
+        [Required]
+        public required string CompanyName { get; set; }
+    }
+
+    // DTO for editing (partial update) a company's details
+    public class EditCompanyDTO
+    {
+        [Required]
+        public int Id { get; set; }
+
+        // Optional for partial updates
+        public string? CompanyName { get; set; }
+    }
+
+    // DTO for deleting a company
+    public class DeleteCompanyDTO
+    {
+        [Required]
+        public int Id { get; set; }  // Only the ID is necessary for deletion
+    }
+
+    // DTO for getting company details
+    public class GetCompanyDTO
+    {
+        public int Id { get; set; }
+        public required string CompanyName { get; set; }
     }
 }

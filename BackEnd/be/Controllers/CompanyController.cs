@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using CMPS411_EzTicketz_Fall2024.Models;
+using CMPS411_EzTicketz_Fall2024.Data; 
 
 namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
@@ -13,18 +14,25 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
     public class CompanyController : ControllerBase
     {
         private static List<Company> Companies = new List<Company>();
-        private readonly HttpClient _httpClient;
 
-        public CompanyController(HttpClient httpClient)
+        // private readonly HttpClient _httpClient;
+        private readonly YourDbContext _context; // Add the DbContext
+        public CompanyController(YourDbContext context)
         {
-            _httpClient = httpClient;
+            _context = context;
         }
 
         // GET: api/company
         [HttpGet]
         public IActionResult GetCompanies()
         {
-            return Ok(Companies);
+            var companyDTOs = Companies.Select(c => new GetCompanyDTO
+            {
+                Id = c.Id,
+                CompanyName = c.CompanyName
+            }).ToList();
+
+            return Ok(companyDTOs);
         }
 
         // GET: api/company/5
@@ -36,51 +44,75 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             {
                 return NotFound();
             }
-            return Ok(company);
+
+            var companyDTO = new GetCompanyDTO
+            {
+                Id = company.Id,
+                CompanyName = company.CompanyName
+            };
+
+            return Ok(companyDTO);
         }
 
         // POST: api/company
         [HttpPost]
-        public IActionResult AddCompany([FromBody] Company company)
+        public IActionResult AddCompany([FromBody] CreateCompanyDTO createCompanyDTO)
         {
-            if (!IsValidUserId(company.UserId))
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid User ID.");
+                return BadRequest(ModelState);
             }
 
-            if (company.CompanyWideTicketIds == null || !company.CompanyWideTicketIds.All(IsValidTicketId))
+            var newCompany = new Company
             {
-                return BadRequest("One or more invalid Ticket IDs.");
-            }
+                Id = Companies.Count + 1, // Simplistic ID generation for the example
+                CompanyName = createCompanyDTO.CompanyName
+                
+            };
 
-            company.Id = Companies.Count + 1; // Simplistic ID generation for the example
-            Companies.Add(company);
-            return Ok(company);
+            Companies.Add(newCompany);
+            return Ok(newCompany);
         }
 
         // PUT: api/company/5
         [HttpPut("{id}")]
-        public IActionResult UpdateCompany(int id, [FromBody] Company updatedCompany)
+        public IActionResult UpdateCompany(int id, [FromBody] UpdateCompanyDTO updateCompanyDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var company = Companies.FirstOrDefault(c => c.Id == id);
             if (company == null)
             {
                 return NotFound();
             }
 
-            if (!IsValidUserId(updatedCompany.UserId))
+            company.CompanyName = updateCompanyDTO.CompanyName;
+
+            return Ok(company);
+        }
+
+        // PATCH: api/company/5
+        [HttpPatch("{id}")]
+        public IActionResult EditCompany(int id, [FromBody] EditCompanyDTO editCompanyDTO)
+        {
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid User ID.");
+                return BadRequest(ModelState);
             }
 
-            if (updatedCompany.CompanyWideTicketIds == null || !updatedCompany.CompanyWideTicketIds.All(IsValidTicketId))
+            var company = Companies.FirstOrDefault(c => c.Id == id);
+            if (company == null)
             {
-                return BadRequest("One or more invalid Ticket IDs.");
+                return NotFound();
             }
 
-            company.CompanyName = updatedCompany.CompanyName;
-            company.UserId = updatedCompany.UserId;
-            company.CompanyWideTicketIds = updatedCompany.CompanyWideTicketIds;
+            if (!string.IsNullOrEmpty(editCompanyDTO.CompanyName))
+            {
+                company.CompanyName = editCompanyDTO.CompanyName;
+            }
 
             return Ok(company);
         }
@@ -97,30 +129,6 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
             Companies.Remove(company);
             return Ok();
-        }
-
-        // Validate if User ID exists in Clients
-        private bool IsValidUserId(int userId)
-        {
-            var clientIdsResponse = _httpClient.GetAsync("http://localhost:5099/api/clients/ids").Result;
-            if (clientIdsResponse.IsSuccessStatusCode)
-            {
-                var clientIds = clientIdsResponse.Content.ReadFromJsonAsync<List<int>>().Result;
-                return clientIds.Contains(userId);
-            }
-            return false;
-        }
-
-        // Validate if Ticket ID exists in Tickets
-        private bool IsValidTicketId(int ticketId)
-        {
-            var ticketIdsResponse = _httpClient.GetAsync("http://localhost:5099/api/tickets/").Result;
-            if (ticketIdsResponse.IsSuccessStatusCode)
-            {
-                var tickets = ticketIdsResponse.Content.ReadFromJsonAsync<List<Ticket>>().Result;
-                return tickets?.Any(t => t.Id == ticketId) == true; // Handle possible null
-            }
-            return false;
         }
     }
 }
