@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CMPS411_EzTicketz_Fall2024.Models
@@ -9,12 +10,11 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         [Required]
         public required string CompanyName { get; set; }
 
-        // Foreign key for Clients
-        public int UserId { get; set; }
+        // Navigation property for the associated Clients (if it's a one-to-many relationship)
+        public ICollection<Client>? Clients { get; set; } = new List<Client>(); // Consider using a collection for multiple clients
 
-        // Navigation property for the associated Client
-        public  Client? Client { get; set; }
-        public  Ticket? Ticket { get; set; }
+        // Navigation property for the associated Tickets (if it's a one-to-many relationship)
+        public ICollection<Ticket>? Tickets { get; set; } = new List<Ticket>(); // Consider using a collection for multiple tickets
     }
 
     // DTO for creating a new company

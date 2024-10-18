@@ -9,24 +9,41 @@ const SignIn = () => {
   const navigate = useNavigate();
 
   const handleSignIn = () => {
-    fetch('http://localhost:5000/api/techusers')
-      .then(response => response.json())
-      .then(users => {
-        const foundUser = users.find(user => user.username === username && user.password === password);
-        if (foundUser) {
-          navigate('/');
-        } else {
-          fetch('http://localhost:5000/api/clients')
-            .then(response => response.json())
-            .then(clients => {
-              const foundClient = clients.find(client => client.email === username && client.phone === password);
-              if (foundClient) {
-                navigate('/');
-              } else {
-                setError('Invalid username or password');
-              }
-            });
+    const isTechUser = username.includes('@') ? false : true; // Simple logic to check if it's a tech user or client
+
+    // Determine the API endpoint based on user type
+    const apiEndpoint = isTechUser
+      ? 'http://localhost:5099/api/auth/techuser-login'
+      : 'http://localhost:5099/api/auth/client-login';
+
+    // Prepare login data based on user type
+    const loginData = isTechUser
+      ? { username, password }  // For tech users
+      : { email: username, password: password };  
+
+    // Send login request to the appropriate API
+    fetch(apiEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(loginData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => {
+            console.error('Error:', response.status, err);  // Log the status and error details
+            throw new Error('Invalid username or password');
+          });
         }
+        return response.json();  // Parse the response as JSON
+      })
+      .then(data => {
+        // Store the JWT token in local storage
+        localStorage.setItem('token', data.token);
+        navigate('/');  // Redirect to home page or dashboard
+      })
+      .catch(error => {
+        console.log(error); // Log the error to inspect it
+        setError(error.message);  
       });
   };
 

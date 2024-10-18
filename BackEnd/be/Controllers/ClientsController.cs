@@ -4,6 +4,7 @@ using System.Linq;
 using CMPS411_EzTicketz_Fall2024.Models;
 using CMPS411_EzTicketz_Fall2024.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
@@ -31,7 +32,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 Email = c.Email,
                 Phone = c.Phone,
                 CompanyId = c.CompanyId,
-                CompanyName = c.Company.CompanyName
+                CompanyName = c.Company.CompanyName  // Updated to match the correct property
             });
 
             return Ok(clientDTOs);
@@ -55,18 +56,10 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 Email = client.Email,
                 Phone = client.Phone,
                 CompanyId = client.CompanyId,
-                CompanyName = client.Company.CompanyName
+                CompanyName = client.Company.CompanyName  // Updated to match the correct property
             };
 
             return Ok(clientDTO);
-        }
-
-        // GET: api/clients/ids
-        [HttpGet("ids")]
-        public async Task<ActionResult<IEnumerable<int>>> GetClientIds()
-        {
-            var clientIds = await _context.Clients.Select(c => c.Id).ToListAsync();
-            return Ok(clientIds);
         }
 
         // POST: api/clients
@@ -83,6 +76,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 Name = newClientDto.Name,
                 Email = newClientDto.Email,
                 Phone = newClientDto.Phone,
+                Password = newClientDto.Password,  // Include Password
                 CompanyId = newClientDto.CompanyId
             };
 
@@ -96,7 +90,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 Email = newClient.Email,
                 Phone = newClient.Phone,
                 CompanyId = newClient.CompanyId,
-                CompanyName = (await _context.Companies.FindAsync(newClient.CompanyId))?.CompanyName ?? string.Empty
+                CompanyName = (await _context.Companies.FindAsync(newClient.CompanyId))?.CompanyName ?? string.Empty  // Updated to match the correct property
             };
 
             return CreatedAtAction(nameof(GetClient), new { id = newClient.Id }, createdClientDto);
@@ -120,6 +114,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             client.Name = updateClientDto.Name;
             client.Email = updateClientDto.Email;
             client.Phone = updateClientDto.Phone;
+            client.Password = updateClientDto.Password;  // Update Password
             client.CompanyId = updateClientDto.CompanyId;
 
             await _context.SaveChangesAsync();
@@ -150,6 +145,11 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             if (!string.IsNullOrEmpty(editClientDto.Phone))
             {
                 client.Phone = editClientDto.Phone;
+            }
+
+            if (!string.IsNullOrEmpty(editClientDto.Password))
+            {
+                client.Password = editClientDto.Password;  // Update Password if provided
             }
 
             if (editClientDto.CompanyId.HasValue)

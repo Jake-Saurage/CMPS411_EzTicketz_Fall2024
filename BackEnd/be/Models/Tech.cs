@@ -1,16 +1,20 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace CMPS411_EzTicketz_Fall2024.Models
-
 {
     public class TechUser
     {
         public int Id { get; set; }
-        public required string Name { get; set; }
-        public required int TechLevel { get; set; } 
-        public required string Username { get; set; }
-        public required string Password { get; set; }
+
+        public required string Name { get; set; } = string.Empty;
+
+        public required int TechLevel { get; set; }
+
+        public required string Username { get; set; } = string.Empty;
+
+        public required string Password { get; set; } = string.Empty;
     }
+
     // DTO for creating a TechUser
     public class TechUserCreateDto
     {
@@ -78,5 +82,14 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         public int TechLevel { get; set; }
 
         public string Username { get; set; } = string.Empty;
+    }
+
+    public class TechUserLoginDto
+    {
+        [Required]
+        public string Username { get; set; } = string.Empty;
+
+        [Required]
+        public string Password { get; set; } = string.Empty;
     }
 }
