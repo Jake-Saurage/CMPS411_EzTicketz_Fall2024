@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using CMPS411_EzTicketz_Fall2024.Models;
-using CMPS411_EzTicketz_Fall2024.Data; 
+using CMPS411_EzTicketz_Fall2024.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
@@ -13,10 +12,8 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
     [Route("api/[controller]")]
     public class CompanyController : ControllerBase
     {
-        private static List<Company> Companies = new List<Company>();
+        private readonly YourDbContext _context;
 
-        // private readonly HttpClient _httpClient;
-        private readonly YourDbContext _context; // Add the DbContext
         public CompanyController(YourDbContext context)
         {
             _context = context;
@@ -24,22 +21,24 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
         // GET: api/company
         [HttpGet]
-        public IActionResult GetCompanies()
+        public async Task<ActionResult<IEnumerable<GetCompanyDTO>>> GetCompanies()
         {
-            var companyDTOs = Companies.Select(c => new GetCompanyDTO
+            var companies = await _context.Companies.ToListAsync();
+
+            var companyDTOs = companies.Select(c => new GetCompanyDTO
             {
                 Id = c.Id,
                 CompanyName = c.CompanyName
-            }).ToList();
+            });
 
             return Ok(companyDTOs);
         }
 
-        // GET: api/company/5
+        // GET: api/company/{id}
         [HttpGet("{id}")]
-        public IActionResult GetCompany(int id)
+        public async Task<ActionResult<GetCompanyDTO>> GetCompany(int id)
         {
-            var company = Companies.FirstOrDefault(c => c.Id == id);
+            var company = await _context.Companies.FindAsync(id);
             if (company == null)
             {
                 return NotFound();
@@ -56,7 +55,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
         // POST: api/company
         [HttpPost]
-        public IActionResult AddCompany([FromBody] CreateCompanyDTO createCompanyDTO)
+        public async Task<ActionResult<GetCompanyDTO>> AddCompany(CreateCompanyDTO createCompanyDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -65,25 +64,31 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
             var newCompany = new Company
             {
-                Id = Companies.Count + 1, // Simplistic ID generation for the example
                 CompanyName = createCompanyDTO.CompanyName
-                
             };
 
-            Companies.Add(newCompany);
-            return Ok(newCompany);
+            _context.Companies.Add(newCompany);
+            await _context.SaveChangesAsync();
+
+            var createdCompanyDTO = new GetCompanyDTO
+            {
+                Id = newCompany.Id,
+                CompanyName = newCompany.CompanyName
+            };
+
+            return CreatedAtAction(nameof(GetCompany), new { id = newCompany.Id }, createdCompanyDTO);
         }
 
-        // PUT: api/company/5
+        // PUT: api/company/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateCompany(int id, [FromBody] UpdateCompanyDTO updateCompanyDTO)
+        public async Task<IActionResult> UpdateCompany(int id, UpdateCompanyDTO updateCompanyDTO)
         {
-            if (!ModelState.IsValid)
+            if (id != updateCompanyDTO.Id)
             {
-                return BadRequest(ModelState);
+                return BadRequest("ID in URL does not match ID in request body.");
             }
 
-            var company = Companies.FirstOrDefault(c => c.Id == id);
+            var company = await _context.Companies.FindAsync(id);
             if (company == null)
             {
                 return NotFound();
@@ -91,19 +96,30 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
             company.CompanyName = updateCompanyDTO.CompanyName;
 
-            return Ok(company);
-        }
-
-        // PATCH: api/company/5
-        [HttpPatch("{id}")]
-        public IActionResult EditCompany(int id, [FromBody] EditCompanyDTO editCompanyDTO)
-        {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Companies.Any(c => c.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
-            var company = Companies.FirstOrDefault(c => c.Id == id);
+            return NoContent();
+        }
+
+        // PATCH: api/company/{id}
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> EditCompany(int id, EditCompanyDTO editCompanyDTO)
+        {
+            var company = await _context.Companies.FindAsync(id);
             if (company == null)
             {
                 return NotFound();
@@ -114,21 +130,39 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 company.CompanyName = editCompanyDTO.CompanyName;
             }
 
-            return Ok(company);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Companies.Any(c => c.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // DELETE: api/company/5
+        // DELETE: api/company/{id}
         [HttpDelete("{id}")]
-        public IActionResult DeleteCompany(int id)
+        public async Task<IActionResult> DeleteCompany(int id)
         {
-            var company = Companies.FirstOrDefault(c => c.Id == id);
+            var company = await _context.Companies.FindAsync(id);
             if (company == null)
             {
                 return NotFound();
             }
 
-            Companies.Remove(company);
-            return Ok();
+            _context.Companies.Remove(company);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using CMPS411_EzTicketz_Fall2024.Models; // Ensure this line is present
+using CMPS411_EzTicketz_Fall2024.Models;
 
 namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
@@ -19,32 +17,116 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
         // GET: api/techusers
         [HttpGet]
-        public IActionResult GetTechUsers()
+        public ActionResult<IEnumerable<TechUserGetDto>> GetTechUsers()
         {
-            return Ok(techs);
+            var techDtos = techs.Select(t => new TechUserGetDto
+            {
+                Id = t.Id,
+                Name = t.Name,
+                TechLevel = t.TechLevel,
+                Username = t.Username
+            });
+
+            return Ok(techDtos);
+        }
+
+        // GET: api/techusers/{id}
+        [HttpGet("{id}")]
+        public ActionResult<TechUserGetDto> GetTechUser(int id)
+        {
+            var tech = techs.FirstOrDefault(t => t.Id == id);
+            if (tech == null)
+            {
+                return NotFound();
+            }
+
+            var techDto = new TechUserGetDto
+            {
+                Id = tech.Id,
+                Name = tech.Name,
+                TechLevel = tech.TechLevel,
+                Username = tech.Username
+            };
+
+            return Ok(techDto);
         }
 
         // POST: api/techusers
         [HttpPost]
-        public IActionResult CreateTechUser([FromBody] TechUser newTech)
+        public ActionResult<TechUserGetDto> CreateTechUser(TechUserCreateDto newTechDto)
         {
-            if (newTech == null) return BadRequest();
+            var newTech = new TechUser
+            {
+                Id = techs.Count > 0 ? techs.Max(u => u.Id) + 1 : 1,
+                Name = newTechDto.Name,
+                TechLevel = newTechDto.TechLevel,
+                Username = newTechDto.Username,
+                Password = newTechDto.Password
+            };
 
-            newTech.Id = techs.Count > 0 ? techs.Max(u => u.Id) + 1 : 1;
             techs.Add(newTech);
 
-            return Ok(newTech);
+            var createdTechDto = new TechUserGetDto
+            {
+                Id = newTech.Id,
+                Name = newTech.Name,
+                TechLevel = newTech.TechLevel,
+                Username = newTech.Username
+            };
+
+            return CreatedAtAction(nameof(GetTechUser), new { id = newTech.Id }, createdTechDto);
         }
 
-        // POST: api/techusers/{id}/updatetechlevel
-        [HttpPost("{id}/updatetechlevel")]
-        public IActionResult UpdateTechLevel(int id, [FromBody] int newTechLevel)
+        // PUT: api/techusers/{id}
+        [HttpPut("{id}")]
+        public IActionResult UpdateTechUser(int id, TechUserUpdateDto techDto)
         {
-            var tech = techs.FirstOrDefault(u => u.Id == id);
-            if (tech == null) return NotFound();
+            var tech = techs.FirstOrDefault(t => t.Id == id);
+            if (tech == null)
+            {
+                return NotFound();
+            }
 
-            tech.TechLevel = newTechLevel;
-            return Ok(tech);
+            tech.Name = techDto.Name;
+            tech.TechLevel = techDto.TechLevel;
+            tech.Username = techDto.Username;
+            tech.Password = techDto.Password;
+
+            return NoContent();
+        }
+
+        // PATCH: api/techusers/{id}
+        [HttpPatch("{id}")]
+        public IActionResult EditTechUser(int id, TechUserEditDto techDto)
+        {
+            var tech = techs.FirstOrDefault(t => t.Id == id);
+            if (tech == null)
+            {
+                return NotFound();
+            }
+
+            // Only update fields if they are provided
+            if (techDto.Name != null) tech.Name = techDto.Name;
+            if (techDto.TechLevel.HasValue) tech.TechLevel = techDto.TechLevel.Value;
+            if (techDto.Username != null) tech.Username = techDto.Username;
+            if (techDto.Password != null) tech.Password = techDto.Password;
+
+            return NoContent();
+        }
+
+        // DELETE: api/techusers/{id}
+        [HttpDelete("{id}")]
+        public IActionResult DeleteTechUser(int id)
+        {
+            var tech = techs.FirstOrDefault(t => t.Id == id);
+            if (tech == null)
+            {
+                return NotFound();
+            }
+
+            techs.Remove(tech);
+
+            return NoContent();
         }
     }
 }
