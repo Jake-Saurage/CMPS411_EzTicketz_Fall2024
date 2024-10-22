@@ -4,48 +4,44 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import TechUserPage from './TechUsersPage';
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
 import CompanyPage from './CompanyPage';
 import SignIn from './SignIn';
 import TicketsPage from './TicketsPage';
-
+import CompanyDetail from './CompanyDetail'; // Assuming you have CompanyDetail component
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App/>,
+    element: <App />, // App component for homepage or main content
   },
   {
     path: "techUser",
-    element: <TechUserPage/>,
+    element: <TechUserPage />, // Route for TechUser page
   },
   {
     path: "company",
-    element: <CompanyPage/>,
+    element: <CompanyPage />, // Route for Company page
   },
   {
     path: "signin",
-    element: <SignIn/> ,
+    element: <SignIn />, // Route for SignIn page
   },
   {
     path: "tickets",
-    element: <TicketsPage/> ,
+    element: <TicketsPage />, // Route for Tickets page
   },
- 
+  {
+    path: "companies/:companyId",
+    element: <CompanyDetail />, // Route for individual company details
+  },
 ]);
-
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  
-    <RouterProvider router={router} />
-  
+  <RouterProvider router={router} />
 );
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

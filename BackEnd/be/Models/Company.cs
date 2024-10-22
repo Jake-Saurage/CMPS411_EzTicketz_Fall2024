@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CMPS411_EzTicketz_Fall2024.Models
@@ -9,7 +10,10 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         [Required]
         public required string CompanyName { get; set; }
 
-        // Navigation property for the associated Ticket
+        // Navigation property for the associated Clients
+        public ICollection<Client> Clients { get; set; } = new List<Client>();  // A company has many clients
+
+        // Remove or keep the Ticket property depending on your needs
         public Ticket? Ticket { get; set; }
     }
 
@@ -24,7 +28,7 @@ namespace CMPS411_EzTicketz_Fall2024.Models
     public class UpdateCompanyDTO
     {
         [Required]
-        public int Id { get; set; }  // Required for updating
+        public int Id { get; set; }
 
         [Required]
         public required string CompanyName { get; set; }
@@ -36,7 +40,6 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         [Required]
         public int Id { get; set; }
 
-        // Optional for partial updates
         public string? CompanyName { get; set; }
     }
 
@@ -44,7 +47,7 @@ namespace CMPS411_EzTicketz_Fall2024.Models
     public class DeleteCompanyDTO
     {
         [Required]
-        public int Id { get; set; }  // Only the ID is necessary for deletion
+        public int Id { get; set; }
     }
 
     // DTO for getting company details
@@ -52,5 +55,8 @@ namespace CMPS411_EzTicketz_Fall2024.Models
     {
         public int Id { get; set; }
         public required string CompanyName { get; set; }
+
+        // Include the list of clients in the response DTO
+        public List<ClientGetDto> Clients { get; set; } = new List<ClientGetDto>();
     }
 }

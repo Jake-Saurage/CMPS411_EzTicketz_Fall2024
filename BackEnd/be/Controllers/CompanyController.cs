@@ -23,13 +23,23 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetCompanyDTO>>> GetCompanies()
         {
-            var companies = await _context.Companies.ToListAsync();
+            var companies = await _context.Companies
+                .Include(c => c.Clients) // Include clients in the list
+                .ToListAsync();
 
             var companyDTOs = companies.Select(c => new GetCompanyDTO
             {
                 Id = c.Id,
-                CompanyName = c.CompanyName
-            });
+                CompanyName = c.CompanyName,
+                Clients = c.Clients.Select(cl => new ClientGetDto
+                {
+                    Id = cl.Id,
+                    Name = cl.Name,
+                    Email = cl.Email,
+                    Phone = cl.Phone,
+                    CompanyName = c.CompanyName
+                }).ToList()
+            }).ToList();
 
             return Ok(companyDTOs);
         }
@@ -38,16 +48,28 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<GetCompanyDTO>> GetCompany(int id)
         {
-            var company = await _context.Companies.FindAsync(id);
+            var company = await _context.Companies
+                .Include(c => c.Clients)  // Include the Clients navigation property
+                .FirstOrDefaultAsync(c => c.Id == id);
+
             if (company == null)
             {
                 return NotFound();
             }
 
+            // Create the response with company details and clients
             var companyDTO = new GetCompanyDTO
             {
                 Id = company.Id,
-                CompanyName = company.CompanyName
+                CompanyName = company.CompanyName,
+                Clients = company.Clients.Select(client => new ClientGetDto
+                {
+                    Id = client.Id,
+                    Name = client.Name,
+                    Email = client.Email,
+                    Phone = client.Phone,
+                    CompanyName = company.CompanyName
+                }).ToList()
             };
 
             return Ok(companyDTO);

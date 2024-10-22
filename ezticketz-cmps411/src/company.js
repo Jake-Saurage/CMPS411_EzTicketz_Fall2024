@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import ConfirmationModal from './ConfirmationModal'; // Import the modal component
+import './App.css'; // Make sure the CSS file with hover styles is imported
 
 const CompanyManager = () => {
   const [companies, setCompanies] = useState([]);
@@ -7,8 +10,9 @@ const CompanyManager = () => {
   const [companyName, setCompanyName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  const [companyToDelete, setCompanyToDelete] = useState(null); // State to track the company being deleted
 
-  // Fetch companies from backend when component mounts
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
@@ -29,11 +33,9 @@ const CompanyManager = () => {
     fetchCompanies();
   }, []);
 
-  // Add or Update Company
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Create the company object with or without id
     const newCompany = {
       id: editingCompany ? editingCompany.id : undefined,
       companyName: companyName,
@@ -60,7 +62,6 @@ const CompanyManager = () => {
         throw new Error(`Network response was not ok: ${errorText}`);
       }
   
-      // If the response has content, parse it as JSON
       const result = response.status !== 204 ? await response.json() : newCompany;
   
       if (isEditing) {
@@ -74,34 +75,47 @@ const CompanyManager = () => {
       setError(error.message);
     }
   };
-  
 
-  // Edit an existing company
+  // Open confirmation modal when attempting to delete a company
+  const handleDelete = (company) => {
+    setCompanyToDelete(company);
+    setShowModal(true); // Show the confirmation modal
+  };
+
+  // Proceed with deletion if the user confirms
+  const confirmDelete = async () => {
+    if (companyToDelete) {
+      try {
+        const response = await fetch(`http://localhost:5099/api/company/${companyToDelete.id}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Network response was not ok: ${errorText}`);
+        }
+
+        setCompanies(companies.filter(company => company.id !== companyToDelete.id));
+        setShowModal(false); // Close the modal after deletion
+        setCompanyToDelete(null); // Reset the state after deletion
+      } catch (error) {
+        setError(error.message);
+      }
+    }
+  };
+
+  // Cancel deletion if the user cancels
+  const cancelDelete = () => {
+    setShowModal(false); // Close the modal
+    setCompanyToDelete(null); // Reset the state
+  };
+
   const handleEdit = (company) => {
     setIsEditing(true);
     setEditingCompany(company);
     setCompanyName(company.companyName);
   };
 
-  // Delete a company
-  const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:5099/api/company/${id}`, {
-        method: 'DELETE'
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Network response was not ok: ${errorText}`);
-      }
-
-      setCompanies(companies.filter(company => company.id !== id));
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
-  // Reset form after adding or updating
   const resetForm = () => {
     setIsEditing(false);
     setEditingCompany(null);
@@ -115,7 +129,6 @@ const CompanyManager = () => {
       {loading && <p>Loading companies...</p>}
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
-      {/* Form for adding/updating a company */}
       <form onSubmit={handleSubmit} style={styles.form}>
         <input
           type="text"
@@ -128,22 +141,32 @@ const CompanyManager = () => {
         {isEditing && <button type="button" onClick={resetForm} style={styles.cancelButton}>Cancel</button>}
       </form>
 
-      {/* List of companies */}
       <div style={styles.companyList}>
         <h2 style={styles.subHeader}>Company List</h2>
         {companies.map((company) => {
           return (
-            <div key={company.id.toString()} style={styles.companyCard}> {/* Key as string */}
-              <h3 style={styles.companyName}>{company.companyName || 'No Name'}</h3>
+            <div key={company.id.toString()} style={styles.companyCard}>
+              <Link to={`/companies/${company.id}`} className="company-link">
+                <h3 style={styles.companyName}>{company.companyName || 'No Name'}</h3>
+              </Link>
               <p style={styles.companyInfo}>Assigned Tickets: {company.assignedTickets || 0}</p>
               <div style={styles.buttonGroup}>
                 <button onClick={() => handleEdit(company)} style={styles.editButton}>Edit</button>
-                <button onClick={() => handleDelete(company.id)} style={styles.deleteButton}>Delete</button>
+                <button onClick={() => handleDelete(company)} style={styles.deleteButton}>Delete</button>
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* Render the Confirmation Modal if showModal is true */}
+      {showModal && (
+        <ConfirmationModal
+          message={`Are you sure you want to delete ${companyToDelete?.companyName}?`}
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+        />
+      )}
     </div>
   );
 };
