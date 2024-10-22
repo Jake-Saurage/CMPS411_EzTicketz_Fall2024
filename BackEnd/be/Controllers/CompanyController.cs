@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using CMPS411_EzTicketz_Fall2024.Models;
+using CMPS411_EzTicketz_Fall2024.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
@@ -12,115 +12,179 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
     [Route("api/[controller]")]
     public class CompanyController : ControllerBase
     {
-        private static List<Company> Companies = new List<Company>();
-        private readonly HttpClient _httpClient;
+        private readonly YourDbContext _context;
 
-        public CompanyController(HttpClient httpClient)
+        public CompanyController(YourDbContext context)
         {
-            _httpClient = httpClient;
+            _context = context;
         }
 
         // GET: api/company
         [HttpGet]
-        public IActionResult GetCompanies()
+        public async Task<ActionResult<IEnumerable<GetCompanyDTO>>> GetCompanies()
         {
-            return Ok(Companies);
+            var companies = await _context.Companies
+                .Include(c => c.Clients) // Include clients in the list
+                .ToListAsync();
+
+            var companyDTOs = companies.Select(c => new GetCompanyDTO
+            {
+                Id = c.Id,
+                CompanyName = c.CompanyName,
+                Clients = c.Clients.Select(cl => new ClientGetDto
+                {
+                    Id = cl.Id,
+                    Name = cl.Name,
+                    Email = cl.Email,
+                    Phone = cl.Phone,
+                    CompanyName = c.CompanyName
+                }).ToList()
+            }).ToList();
+
+            return Ok(companyDTOs);
         }
 
-        // GET: api/company/5
+        // GET: api/company/{id}
         [HttpGet("{id}")]
-        public IActionResult GetCompany(int id)
+        public async Task<ActionResult<GetCompanyDTO>> GetCompany(int id)
         {
-            var company = Companies.FirstOrDefault(c => c.Id == id);
+            var company = await _context.Companies
+                .Include(c => c.Clients)  // Include the Clients navigation property
+                .FirstOrDefaultAsync(c => c.Id == id);
+
             if (company == null)
             {
                 return NotFound();
             }
-            return Ok(company);
+
+            // Create the response with company details and clients
+            var companyDTO = new GetCompanyDTO
+            {
+                Id = company.Id,
+                CompanyName = company.CompanyName,
+                Clients = company.Clients.Select(client => new ClientGetDto
+                {
+                    Id = client.Id,
+                    Name = client.Name,
+                    Email = client.Email,
+                    Phone = client.Phone,
+                    CompanyName = company.CompanyName
+                }).ToList()
+            };
+
+            return Ok(companyDTO);
         }
 
         // POST: api/company
         [HttpPost]
-        public IActionResult AddCompany([FromBody] Company company)
+        public async Task<ActionResult<GetCompanyDTO>> AddCompany(CreateCompanyDTO createCompanyDTO)
         {
-            if (!IsValidUserId(company.UserId))
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid User ID.");
+                return BadRequest(ModelState);
             }
 
-            if (company.CompanyWideTicketIds == null || !company.CompanyWideTicketIds.All(IsValidTicketId))
+            var newCompany = new Company
             {
-                return BadRequest("One or more invalid Ticket IDs.");
-            }
+                CompanyName = createCompanyDTO.CompanyName
+            };
 
-            company.Id = Companies.Count + 1; // Simplistic ID generation for the example
-            Companies.Add(company);
-            return Ok(company);
+            _context.Companies.Add(newCompany);
+            await _context.SaveChangesAsync();
+
+            var createdCompanyDTO = new GetCompanyDTO
+            {
+                Id = newCompany.Id,
+                CompanyName = newCompany.CompanyName
+            };
+
+            return CreatedAtAction(nameof(GetCompany), new { id = newCompany.Id }, createdCompanyDTO);
         }
 
-        // PUT: api/company/5
+        // PUT: api/company/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateCompany(int id, [FromBody] Company updatedCompany)
+        public async Task<IActionResult> UpdateCompany(int id, UpdateCompanyDTO updateCompanyDTO)
         {
-            var company = Companies.FirstOrDefault(c => c.Id == id);
+            if (id != updateCompanyDTO.Id)
+            {
+                return BadRequest("ID in URL does not match ID in request body.");
+            }
+
+            var company = await _context.Companies.FindAsync(id);
             if (company == null)
             {
                 return NotFound();
             }
 
-            if (!IsValidUserId(updatedCompany.UserId))
+            company.CompanyName = updateCompanyDTO.CompanyName;
+
+            try
             {
-                return BadRequest("Invalid User ID.");
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Companies.Any(c => c.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
-            if (updatedCompany.CompanyWideTicketIds == null || !updatedCompany.CompanyWideTicketIds.All(IsValidTicketId))
-            {
-                return BadRequest("One or more invalid Ticket IDs.");
-            }
-
-            company.CompanyName = updatedCompany.CompanyName;
-            company.UserId = updatedCompany.UserId;
-            company.CompanyWideTicketIds = updatedCompany.CompanyWideTicketIds;
-
-            return Ok(company);
+            return NoContent();
         }
 
-        // DELETE: api/company/5
+        // PATCH: api/company/{id}
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> EditCompany(int id, EditCompanyDTO editCompanyDTO)
+        {
+            var company = await _context.Companies.FindAsync(id);
+            if (company == null)
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrEmpty(editCompanyDTO.CompanyName))
+            {
+                company.CompanyName = editCompanyDTO.CompanyName;
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Companies.Any(c => c.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // DELETE: api/company/{id}
         [HttpDelete("{id}")]
-        public IActionResult DeleteCompany(int id)
+        public async Task<IActionResult> DeleteCompany(int id)
         {
-            var company = Companies.FirstOrDefault(c => c.Id == id);
+            var company = await _context.Companies.FindAsync(id);
             if (company == null)
             {
                 return NotFound();
             }
 
-            Companies.Remove(company);
-            return Ok();
-        }
+            _context.Companies.Remove(company);
+            await _context.SaveChangesAsync();
 
-        // Validate if User ID exists in Clients
-        private bool IsValidUserId(int userId)
-        {
-            var clientIdsResponse = _httpClient.GetAsync("http://localhost:5099/api/clients/ids").Result;
-            if (clientIdsResponse.IsSuccessStatusCode)
-            {
-                var clientIds = clientIdsResponse.Content.ReadFromJsonAsync<List<int>>().Result;
-                return clientIds.Contains(userId);
-            }
-            return false;
-        }
-
-        // Validate if Ticket ID exists in Tickets
-        private bool IsValidTicketId(int ticketId)
-        {
-            var ticketIdsResponse = _httpClient.GetAsync("http://localhost:5099/api/tickets/").Result;
-            if (ticketIdsResponse.IsSuccessStatusCode)
-            {
-                var tickets = ticketIdsResponse.Content.ReadFromJsonAsync<List<Ticket>>().Result;
-                return tickets?.Any(t => t.Id == ticketId) == true; // Handle possible null
-            }
-            return false;
+            return NoContent();
         }
     }
 }

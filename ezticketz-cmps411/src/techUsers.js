@@ -35,18 +35,24 @@ const TechsUser = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
 
   useEffect(() => {
-    // Fetch the existing tech users from the backend
-    fetch('http://localhost:5000/api/techusers')
+    // Fetch existing tech users from the backend
+    fetch('http://localhost:5099/api/techusers')
       .then((response) => response.json())
       .then((data) => setUsers(data))
       .catch((error) => console.error('Error fetching tech users:', error));
+
+    // Fetch existing clients from the backend
+    fetch('http://localhost:5099/api/clients')
+      .then((response) => response.json())
+      .then((data) => setClients(data))
+      .catch((error) => console.error('Error fetching clients:', error));
   }, []);
 
   const addLevel = (userName, newLevel) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         user.name === userName
-          ? { ...user, level: [...user.level, `Level ${newLevel}`] }
+          ? { ...user, level: [...(user.level || []), `Level ${newLevel}`] } // Ensure level is always an array
           : user
       )
     );
@@ -71,7 +77,7 @@ const TechsUser = () => {
     const newTechUserData = {
       id: nextId,
       name: newUser.username,
-      level: [],
+      level: [], // Set level to an empty array
       username: newUser.username,
       password: newUser.password,
     };
@@ -199,7 +205,7 @@ const TechsUser = () => {
       <ul style={styles.userList}>
         {users.map((user) => (
           <li key={user.id} style={styles.userItem}>
-            {user.name} - level: {user.level.join(', ')}
+            {user.name} - level: {user.level ? user.level.join(', ') : 'No levels assigned'} {/* Check for undefined */}
           </li>
         ))}
       </ul>
@@ -282,8 +288,6 @@ const TechsUser = () => {
             style={styles.input}
           />
         </label>
-      </div>
-      <div style={styles.formGroup}>
         <label>
           Password:
           <input
@@ -294,12 +298,12 @@ const TechsUser = () => {
             style={styles.input}
           />
         </label>
+        <button style={styles.button} onClick={createUser}>
+          Create User
+        </button>
       </div>
-      <button style={styles.button} onClick={createUser}>
-        Create User
-      </button>
 
-      <h1>Create Client Users:</h1>
+      <h2>Create a New Client:</h2>
       <div style={styles.formGroup}>
         <label>
           Name:
@@ -311,8 +315,6 @@ const TechsUser = () => {
             style={styles.input}
           />
         </label>
-      </div>
-      <div style={styles.formGroup}>
         <label>
           Email:
           <input
@@ -323,8 +325,6 @@ const TechsUser = () => {
             style={styles.input}
           />
         </label>
-      </div>
-      <div style={styles.formGroup}>
         <label>
           Phone:
           <input
@@ -335,19 +335,16 @@ const TechsUser = () => {
             style={styles.input}
           />
         </label>
+        <button style={styles.button} onClick={createClient}>
+          Create Client
+        </button>
       </div>
-      {error === 'All fields must be filled!' && (
-        <p style={styles.errorMessage}>{error}</p>
-      )}
-      <button style={styles.button} onClick={createClient}>
-        Create Client
-      </button>
 
-      <h2>Existing Clients:</h2>
+      <h2 className={styles.clientInfo}>Existing Clients:</h2>
       <ul style={styles.userList}>
         {clients.map((client) => (
-          <li key={client.id} style={styles.clientInfo}>
-            <h3>Client Information</h3>
+          <li key={client.id} style={styles.userItem}>
+            <h3>Client Info</h3>
             <p>
               <strong>Name:</strong> {client.name}
             </p>
@@ -357,10 +354,14 @@ const TechsUser = () => {
             <p>
               <strong>Phone:</strong> {client.phone}
             </p>
+
           </li>
         ))}
       </ul>
+      
     </div>
+
+
   );
 };
 

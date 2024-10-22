@@ -104,31 +104,46 @@ body {
 
 
 /* Ticket List Styles */
+/* Align the Ticket Heading */
+.ticket-list h2 {
+  text-align: center; /* Center the heading */
+  margin-bottom: 30px; /* Add space between heading and tickets */
+}
+
+/* Center the Ticket List */
 .ticket-list {
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Ensure the content is centered */
 }
 
-
+/* Fixed Ticket Grid with 5 Tickets Per Row */
 .ticket-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(5, 1fr); /* Set a maximum of 5 tickets per row */
+  gap: 36px; /* Increase the gap between tickets to 30px */
+  justify-content: center; /* Center the grid horizontally */
+  width: 100%; /* Allow the grid to take full width */
+  max-width: 1200px; /* Optional: Limit the max width */
 }
 
-
+/* Style the Ticket Item */
 .ticket-item {
+  width: 100%; /* Ticket will auto-size based on grid */
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 10px;
   background-color: #fff;
   animation: fadeIn 0.7s ease-in-out;
   transition: transform 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
 }
-
 
 .ticket-item:hover {
   transform: translateY(-10px);
 }
+
 
 
 .bubble {
@@ -163,6 +178,21 @@ body {
 
 .bubble.closed {
   background-color: #dc3545;
+}
+/* Search Bar Styling */
+.search-input {
+  width: 35%; 
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add some shadow for a stylish effect */
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.2); /* Same focus style as other inputs */
 }
 
 
@@ -419,3 +449,78 @@ body {
   transform: scale(1.05);
   background-color: #0069d9;
 }
+
+
+/* Container for the company details */
+.company-detail-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.company-name {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.clients-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.clients-list li {
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.client-info {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.no-clients {
+  color: #999;
+  text-align: center;
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+.total-tickets {
+  font-size: 1.5rem;
+  color: #444;
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Base link style */
+.company-link {
+  text-decoration: none;
+  color: #007BFF; /* Standard color */
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+}
+
+/* Hover style for the link */
+.company-link:hover {
+  color: #0056b3; /* Darker blue on hover */
+  border-bottom: 2px solid #0056b3; /* Add underline */
+}
+
+/* Ensure hover also affects the nested h3 inside the link */
+.company-link h3 {
+  margin: 0;
+  padding: 0;
+  display: inline-block; /* Ensures the underline stays close to the text */
+  color: inherit; /* Ensures the h3 inherits the color on hover */
+}
+

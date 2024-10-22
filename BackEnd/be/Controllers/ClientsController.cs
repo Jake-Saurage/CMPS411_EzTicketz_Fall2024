@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using CMPS411_EzTicketz_Fall2024.Models; // Add this line
+using CMPS411_EzTicketz_Fall2024.Models;
+using CMPS411_EzTicketz_Fall2024.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
@@ -11,34 +11,117 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
     [Route("api/[controller]")]
     public class ClientsController : ControllerBase
     {
-        // In-memory data for simplicity (replace with a database)
-        private static List<Client> clients = new List<Client>();
+        private readonly YourDbContext _context;
+
+        public ClientsController(YourDbContext context)
+        {
+            _context = context;
+        }
 
         // GET: api/clients
         [HttpGet]
-        public IActionResult GetClients()
+        public async Task<ActionResult<IEnumerable<ClientGetDto>>> GetClients()
         {
-            return Ok(clients);
+            var clients = await _context.Clients.Include(c => c.Company).ToListAsync();
+
+            var clientDTOs = clients.Select(c => new ClientGetDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Email = c.Email,
+                Phone = c.Phone,
+                Password = c.Password, // Added password to the response
+                CompanyId = c.CompanyId,
+                CompanyName = c.Company.CompanyName
+            });
+
+            return Ok(clientDTOs);
         }
 
-        // GET: api/clients/ids
-        [HttpGet("ids")]
-        public IActionResult GetClientIds()
+        // GET: api/clients/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ClientGetDto>> GetClient(int id)
         {
-            var clientIds = clients.Select(c => c.Id).ToList();
-            return Ok(clientIds);
+            var client = await _context.Clients.Include(c => c.Company).FirstOrDefaultAsync(c => c.Id == id);
+
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            var clientDTO = new ClientGetDto
+            {
+                Id = client.Id,
+                Name = client.Name,
+                Email = client.Email,
+                Phone = client.Phone,
+                Password = client.Password, // Added password to the response
+                CompanyId = client.CompanyId,
+                CompanyName = client.Company.CompanyName
+            };
+
+            return Ok(clientDTO);
         }
 
         // POST: api/clients
         [HttpPost]
-        public IActionResult CreateClient([FromBody] Client newClient)
+        public async Task<ActionResult<ClientGetDto>> CreateClient(ClientCreateDto newClientDto)
         {
-            if (newClient == null) return BadRequest();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            newClient.Id = clients.Count > 0 ? clients.Max(c => c.Id) + 1 : 1;
-            clients.Add(newClient);
+            var newClient = new Client
+            {
+                Name = newClientDto.Name,
+                Email = newClientDto.Email,
+                Phone = newClientDto.Phone,
+                Password = newClientDto.Password, // Save the password
+                CompanyId = newClientDto.CompanyId
+            };
 
-            return Ok(newClient);
+            _context.Clients.Add(newClient);
+            await _context.SaveChangesAsync();
+
+            var createdClientDto = new ClientGetDto
+            {
+                Id = newClient.Id,
+                Name = newClient.Name,
+                Email = newClient.Email,
+                Phone = newClient.Phone,
+                Password = newClient.Password, // Return the password
+                CompanyId = newClient.CompanyId,
+                CompanyName = (await _context.Companies.FindAsync(newClient.CompanyId))?.CompanyName ?? string.Empty
+            };
+
+            return CreatedAtAction(nameof(GetClient), new { id = newClient.Id }, createdClientDto);
+        }
+
+        // PUT: api/clients/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateClient(int id, ClientUpdateDto updateClientDto)
+        {
+            if (id != updateClientDto.Id)
+            {
+                return BadRequest("Client ID mismatch.");
+            }
+
+            var client = await _context.Clients.FindAsync(id);
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            client.Name = updateClientDto.Name;
+            client.Email = updateClientDto.Email;
+            client.Phone = updateClientDto.Phone;
+            client.Password = updateClientDto.Password; // Update the password
+            client.CompanyId = updateClientDto.CompanyId;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
