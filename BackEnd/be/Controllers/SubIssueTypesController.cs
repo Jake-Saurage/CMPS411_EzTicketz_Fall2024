@@ -1,21 +1,29 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CMPS411_EzTicketz_Fall2024.Models;
-
+using CMPS411_EzTicketz_Fall2024.Data;
 namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class SubIssueTypesController : ControllerBase
     {
-        // In-memory data for simplicity (replace with a database)
-        private static List<SubIssueType> subIssueTypes = new List<SubIssueType>();
+        private readonly YourDbContext _context;
+
+        public SubIssueTypesController(YourDbContext context)
+        {
+            _context = context;
+        }
 
         // GET: api/subissuetypes
         [HttpGet]
-        public ActionResult<IEnumerable<SubIssueTypeGetDto>> GetSubIssueTypes()
+        public async Task<ActionResult<IEnumerable<SubIssueTypeGetDto>>> GetSubIssueTypes()
         {
+            var subIssueTypes = await _context.SubIssueTypes.ToListAsync();
+
             var subIssueTypeDtos = subIssueTypes.Select(s => new SubIssueTypeGetDto
             {
                 Id = s.Id,
@@ -28,9 +36,9 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
         // GET: api/subissuetypes/{id}
         [HttpGet("{id}")]
-        public ActionResult<SubIssueTypeGetDto> GetSubIssueType(int id)
+        public async Task<ActionResult<SubIssueTypeGetDto>> GetSubIssueType(int id)
         {
-            var subIssueType = subIssueTypes.FirstOrDefault(s => s.Id == id);
+            var subIssueType = await _context.SubIssueTypes.FindAsync(id);
             if (subIssueType == null)
             {
                 return NotFound();
@@ -48,16 +56,16 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
         // POST: api/subissuetypes
         [HttpPost]
-        public ActionResult<SubIssueTypeGetDto> CreateSubIssueType(SubIssueTypeCreateDto newSubIssueTypeDto)
+        public async Task<ActionResult<SubIssueTypeGetDto>> CreateSubIssueType(SubIssueTypeCreateDto newSubIssueTypeDto)
         {
             var newSubIssueType = new SubIssueType
             {
-                Id = subIssueTypes.Count > 0 ? subIssueTypes.Max(s => s.Id) + 1 : 1,
                 SubIssueName = newSubIssueTypeDto.SubIssueName,
                 SubIssueDescription = newSubIssueTypeDto.SubIssueDescription
             };
 
-            subIssueTypes.Add(newSubIssueType);
+            _context.SubIssueTypes.Add(newSubIssueType);
+            await _context.SaveChangesAsync();
 
             var createdSubIssueTypeDto = new SubIssueTypeGetDto
             {
@@ -71,9 +79,9 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
         // PUT: api/subissuetypes/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateSubIssueType(int id, SubIssueTypeUpdateDto subIssueTypeDto)
+        public async Task<IActionResult> UpdateSubIssueType(int id, SubIssueTypeUpdateDto subIssueTypeDto)
         {
-            var subIssueType = subIssueTypes.FirstOrDefault(s => s.Id == id);
+            var subIssueType = await _context.SubIssueTypes.FindAsync(id);
             if (subIssueType == null)
             {
                 return NotFound();
@@ -82,20 +90,22 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             subIssueType.SubIssueName = subIssueTypeDto.SubIssueName;
             subIssueType.SubIssueDescription = subIssueTypeDto.SubIssueDescription;
 
+            _context.Entry(subIssueType).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
-        // PATCH: api/subissuetypes/{id}
+        // PATCH: api/subissuetypes/{id}]
         [HttpPatch("{id}")]
-        public IActionResult EditSubIssueType(int id, SubIssueTypeEditDto subIssueTypeDto)
+        public async Task<IActionResult> EditSubIssueType(int id, SubIssueTypeEditDto subIssueTypeDto)
         {
-            var subIssueType = subIssueTypes.FirstOrDefault(s => s.Id == id);
+            var subIssueType = await _context.SubIssueTypes.FindAsync(id);
             if (subIssueType == null)
             {
                 return NotFound();
             }
 
-            // Only update fields that are provided
             if (!string.IsNullOrWhiteSpace(subIssueTypeDto.SubIssueName))
             {
                 subIssueType.SubIssueName = subIssueTypeDto.SubIssueName;
@@ -106,20 +116,24 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 subIssueType.SubIssueDescription = subIssueTypeDto.SubIssueDescription;
             }
 
+            _context.Entry(subIssueType).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
-        // DELETE: api/subissuetypes/{id}
+        // DELETE: api/subissuetypes/{id}]
         [HttpDelete("{id}")]
-        public IActionResult DeleteSubIssueType(int id)
+        public async Task<IActionResult> DeleteSubIssueType(int id)
         {
-            var subIssueType = subIssueTypes.FirstOrDefault(s => s.Id == id);
+            var subIssueType = await _context.SubIssueTypes.FindAsync(id);
             if (subIssueType == null)
             {
                 return NotFound();
             }
 
-            subIssueTypes.Remove(subIssueType);
+            _context.SubIssueTypes.Remove(subIssueType);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
