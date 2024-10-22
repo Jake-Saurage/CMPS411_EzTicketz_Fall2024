@@ -104,31 +104,46 @@ body {
 
 
 /* Ticket List Styles */
+/* Align the Ticket Heading */
+.ticket-list h2 {
+  text-align: center; /* Center the heading */
+  margin-bottom: 30px; /* Add space between heading and tickets */
+}
+
+/* Center the Ticket List */
 .ticket-list {
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Ensure the content is centered */
 }
 
-
+/* Fixed Ticket Grid with 5 Tickets Per Row */
 .ticket-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(5, 1fr); /* Set a maximum of 5 tickets per row */
+  gap: 36px; /* Increase the gap between tickets to 30px */
+  justify-content: center; /* Center the grid horizontally */
+  width: 100%; /* Allow the grid to take full width */
+  max-width: 1200px; /* Optional: Limit the max width */
 }
 
-
+/* Style the Ticket Item */
 .ticket-item {
+  width: 100%; /* Ticket will auto-size based on grid */
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 10px;
   background-color: #fff;
   animation: fadeIn 0.7s ease-in-out;
   transition: transform 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
 }
-
 
 .ticket-item:hover {
   transform: translateY(-10px);
 }
+
 
 
 .bubble {
@@ -163,6 +178,21 @@ body {
 
 .bubble.closed {
   background-color: #dc3545;
+}
+/* Search Bar Styling */
+.search-input {
+  width: 35%; 
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add some shadow for a stylish effect */
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.2); /* Same focus style as other inputs */
 }
 
 

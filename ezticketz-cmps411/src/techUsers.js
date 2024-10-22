@@ -36,7 +36,7 @@ const TechsUser = () => {
 
   useEffect(() => {
     // Fetch existing tech users from the backend
-    fetch('http://localhost:5000/api/techusers')
+    fetch('http://localhost:5099/api/techusers')
       .then((response) => response.json())
       .then((data) => setUsers(data))
       .catch((error) => console.error('Error fetching tech users:', error));

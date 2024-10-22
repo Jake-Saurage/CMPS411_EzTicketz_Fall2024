@@ -32,53 +32,55 @@ const CompanyManager = () => {
   // Add or Update Company
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Create the company object with or without id
     const newCompany = {
-      CompanyName: companyName,
+      id: editingCompany ? editingCompany.id : undefined,
+      companyName: companyName,
     };
-
+  
     try {
       let response;
       if (isEditing) {
-        response = await fetch(`http://localhost:5099/api/company/${editingCompany.Id}`, {
+        response = await fetch(`http://localhost:5099/api/company/${editingCompany.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newCompany)
+          body: JSON.stringify(newCompany),
         });
       } else {
         response = await fetch('http://localhost:5099/api/company', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newCompany)
+          body: JSON.stringify(newCompany),
         });
       }
-
+  
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Network response was not ok: ${errorText}`);
       }
-      
-      const result = await response.json();
-
+  
+      // If the response has content, parse it as JSON
+      const result = response.status !== 204 ? await response.json() : newCompany;
+  
       if (isEditing) {
-        setCompanies(companies.map(company =>
-          company.Id === editingCompany.Id ? result : company
-        ));
+        setCompanies(companies.map(company => company.id === editingCompany.id ? result : company));
       } else {
         setCompanies([...companies, result]);
       }
-      
+  
       resetForm();
     } catch (error) {
       setError(error.message);
     }
   };
+  
 
   // Edit an existing company
   const handleEdit = (company) => {
     setIsEditing(true);
     setEditingCompany(company);
-    setCompanyName(company.CompanyName);
+    setCompanyName(company.companyName);
   };
 
   // Delete a company
@@ -93,7 +95,7 @@ const CompanyManager = () => {
         throw new Error(`Network response was not ok: ${errorText}`);
       }
 
-      setCompanies(companies.filter(company => company.Id !== id));
+      setCompanies(companies.filter(company => company.id !== id));
     } catch (error) {
       setError(error.message);
     }
@@ -129,16 +131,18 @@ const CompanyManager = () => {
       {/* List of companies */}
       <div style={styles.companyList}>
         <h2 style={styles.subHeader}>Company List</h2>
-        {companies.map((company) => (
-          <div key={company.Id} style={styles.companyCard}>
-            <h3 style={styles.companyName}>{company.CompanyName || 'No Name'}</h3> {/* Use fallback if name is missing */}
-            <p style={styles.companyInfo}>Assigned Tickets: {company.AssignedTickets || 0}</p> {/* Fallback for assigned tickets */}
-            <div style={styles.buttonGroup}>
-              <button onClick={() => handleEdit(company)} style={styles.editButton}>Edit</button>
-              <button onClick={() => handleDelete(company.Id)} style={styles.deleteButton}>Delete</button>
+        {companies.map((company) => {
+          return (
+            <div key={company.id.toString()} style={styles.companyCard}> {/* Key as string */}
+              <h3 style={styles.companyName}>{company.companyName || 'No Name'}</h3>
+              <p style={styles.companyInfo}>Assigned Tickets: {company.assignedTickets || 0}</p>
+              <div style={styles.buttonGroup}>
+                <button onClick={() => handleEdit(company)} style={styles.editButton}>Edit</button>
+                <button onClick={() => handleDelete(company.id)} style={styles.deleteButton}>Delete</button>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

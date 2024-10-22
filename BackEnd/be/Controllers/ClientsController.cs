@@ -30,6 +30,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 Name = c.Name,
                 Email = c.Email,
                 Phone = c.Phone,
+                Password = c.Password, // Added password to the response
                 CompanyId = c.CompanyId,
                 CompanyName = c.Company.CompanyName
             });
@@ -54,19 +55,12 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 Name = client.Name,
                 Email = client.Email,
                 Phone = client.Phone,
+                Password = client.Password, // Added password to the response
                 CompanyId = client.CompanyId,
                 CompanyName = client.Company.CompanyName
             };
 
             return Ok(clientDTO);
-        }
-
-        // GET: api/clients/ids
-        [HttpGet("ids")]
-        public async Task<ActionResult<IEnumerable<int>>> GetClientIds()
-        {
-            var clientIds = await _context.Clients.Select(c => c.Id).ToListAsync();
-            return Ok(clientIds);
         }
 
         // POST: api/clients
@@ -83,6 +77,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 Name = newClientDto.Name,
                 Email = newClientDto.Email,
                 Phone = newClientDto.Phone,
+                Password = newClientDto.Password, // Save the password
                 CompanyId = newClientDto.CompanyId
             };
 
@@ -95,6 +90,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 Name = newClient.Name,
                 Email = newClient.Email,
                 Phone = newClient.Phone,
+                Password = newClient.Password, // Return the password
                 CompanyId = newClient.CompanyId,
                 CompanyName = (await _context.Companies.FindAsync(newClient.CompanyId))?.CompanyName ?? string.Empty
             };
@@ -120,59 +116,9 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             client.Name = updateClientDto.Name;
             client.Email = updateClientDto.Email;
             client.Phone = updateClientDto.Phone;
+            client.Password = updateClientDto.Password; // Update the password
             client.CompanyId = updateClientDto.CompanyId;
 
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        // PATCH: api/clients/{id}
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> EditClient(int id, ClientEditDto editClientDto)
-        {
-            var client = await _context.Clients.FindAsync(id);
-            if (client == null)
-            {
-                return NotFound();
-            }
-
-            if (!string.IsNullOrEmpty(editClientDto.Name))
-            {
-                client.Name = editClientDto.Name;
-            }
-
-            if (!string.IsNullOrEmpty(editClientDto.Email))
-            {
-                client.Email = editClientDto.Email;
-            }
-
-            if (!string.IsNullOrEmpty(editClientDto.Phone))
-            {
-                client.Phone = editClientDto.Phone;
-            }
-
-            if (editClientDto.CompanyId.HasValue)
-            {
-                client.CompanyId = editClientDto.CompanyId.Value;
-            }
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        // DELETE: api/clients/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteClient(int id)
-        {
-            var client = await _context.Clients.FindAsync(id);
-            if (client == null)
-            {
-                return NotFound();
-            }
-
-            _context.Clients.Remove(client);
             await _context.SaveChangesAsync();
 
             return NoContent();

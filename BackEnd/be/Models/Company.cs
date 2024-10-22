@@ -9,12 +9,8 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         [Required]
         public required string CompanyName { get; set; }
 
-        // Foreign key for Clients
-        public int UserId { get; set; }
-
-        // Navigation property for the associated Client
-        public  Client? Client { get; set; }
-        public  Ticket? Ticket { get; set; }
+        // Navigation property for the associated Ticket
+        public Ticket? Ticket { get; set; }
     }
 
     // DTO for creating a new company
