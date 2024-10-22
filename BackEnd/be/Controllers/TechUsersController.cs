@@ -1,24 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CMPS411_EzTicketz_Fall2024.Models;
-
+using CMPS411_EzTicketz_Fall2024.Data;
 namespace CMPS411_EzTicketz_Fall2024.Controllers
+
 {
     [ApiController]
     [Route("api/[controller]")]
     public class TechUsersController : ControllerBase
     {
-        // In-memory data for simplicity (replace with a database)
-        private static List<TechUser> techs = new List<TechUser>
+        private readonly YourDbContext _context;
+
+        public TechUsersController(YourDbContext context)
         {
-            new TechUser { Id = 1, Name = "Tech Enthusiast", TechLevel = 3, Username = "tech_enthusiast", Password = "password123" }
-        };
+            _context = context;
+        }
 
         // GET: api/techusers
         [HttpGet]
-        public ActionResult<IEnumerable<TechUserGetDto>> GetTechUsers()
+        public async Task<ActionResult<IEnumerable<TechUserGetDto>>> GetTechUsers()
         {
+            var techs = await _context.TechUsers.ToListAsync();
+
             var techDtos = techs.Select(t => new TechUserGetDto
             {
                 Id = t.Id,
@@ -32,9 +38,9 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
         // GET: api/techusers/{id}
         [HttpGet("{id}")]
-        public ActionResult<TechUserGetDto> GetTechUser(int id)
+        public async Task<ActionResult<TechUserGetDto>> GetTechUser(int id)
         {
-            var tech = techs.FirstOrDefault(t => t.Id == id);
+            var tech = await _context.TechUsers.FindAsync(id);
             if (tech == null)
             {
                 return NotFound();
@@ -53,18 +59,18 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
         // POST: api/techusers
         [HttpPost]
-        public ActionResult<TechUserGetDto> CreateTechUser(TechUserCreateDto newTechDto)
+        public async Task<ActionResult<TechUserGetDto>> CreateTechUser(TechUserCreateDto newTechDto)
         {
             var newTech = new TechUser
             {
-                Id = techs.Count > 0 ? techs.Max(u => u.Id) + 1 : 1,
                 Name = newTechDto.Name,
                 TechLevel = newTechDto.TechLevel,
                 Username = newTechDto.Username,
                 Password = newTechDto.Password
             };
 
-            techs.Add(newTech);
+            _context.TechUsers.Add(newTech);
+            await _context.SaveChangesAsync();
 
             var createdTechDto = new TechUserGetDto
             {
@@ -79,9 +85,9 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
         // PUT: api/techusers/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateTechUser(int id, TechUserUpdateDto techDto)
+        public async Task<IActionResult> UpdateTechUser(int id, TechUserUpdateDto techDto)
         {
-            var tech = techs.FirstOrDefault(t => t.Id == id);
+            var tech = await _context.TechUsers.FindAsync(id);
             if (tech == null)
             {
                 return NotFound();
@@ -92,14 +98,17 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             tech.Username = techDto.Username;
             tech.Password = techDto.Password;
 
+            _context.Entry(tech).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
         // PATCH: api/techusers/{id}
         [HttpPatch("{id}")]
-        public IActionResult EditTechUser(int id, TechUserEditDto techDto)
+        public async Task<IActionResult> EditTechUser(int id, TechUserEditDto techDto)
         {
-            var tech = techs.FirstOrDefault(t => t.Id == id);
+            var tech = await _context.TechUsers.FindAsync(id);
             if (tech == null)
             {
                 return NotFound();
@@ -111,20 +120,24 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             if (techDto.Username != null) tech.Username = techDto.Username;
             if (techDto.Password != null) tech.Password = techDto.Password;
 
+            _context.Entry(tech).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
         // DELETE: api/techusers/{id}
         [HttpDelete("{id}")]
-        public IActionResult DeleteTechUser(int id)
+        public async Task<IActionResult> DeleteTechUser(int id)
         {
-            var tech = techs.FirstOrDefault(t => t.Id == id);
+            var tech = await _context.TechUsers.FindAsync(id);
             if (tech == null)
             {
                 return NotFound();
             }
 
-            techs.Remove(tech);
+            _context.TechUsers.Remove(tech);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

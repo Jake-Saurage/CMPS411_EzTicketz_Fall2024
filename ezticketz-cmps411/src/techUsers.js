@@ -1,30 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const TechsUser = () => {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: 'Tech Enthusiast',
-      level: [2],
-      username: 'tech_enthusiast',
-      password: 'password123',
-    },
-    {
-      id: 2,
-      name: 'Java Dev',
-      level: [3],
-      username: 'java_dev',
-      password: 'password123',
-    },
-    {
-      id: 3,
-      name: 'Pythonista',
-      level: [1],
-      username: 'pythonista',
-      password: 'password123',
-    },
-  ]);
-
+  const [users, setUsers] = useState([]);
   const [clients, setClients] = useState([]);
   const [newUser, setNewUser] = useState({ username: '', password: '' });
   const [newClient, setNewClient] = useState({ name: '', email: '', phone: '' });
@@ -38,7 +15,22 @@ const TechsUser = () => {
     // Fetch existing tech users from the backend
     fetch('http://localhost:5099/api/techusers')
       .then((response) => response.json())
-      .then((data) => setUsers(data))
+      .then((data) => {
+        console.log('Fetched Tech Users:', data); // Debugging log
+
+        // Use level data as provided by the backend
+        const formattedData = data.map(user => ({
+          ...user,
+          level: Array.isArray(user.level) ? user.level : [user.level] // Ensure level is treated as an array
+        }));
+
+        // Log each user's levels to ensure they're properly formatted
+        formattedData.forEach(user => {
+          console.log(`User ${user.name}'s Levels:`, user.level); // Log each user's levels
+        });
+
+        setUsers(formattedData);
+      })
       .catch((error) => console.error('Error fetching tech users:', error));
 
     // Fetch existing clients from the backend
@@ -52,7 +44,7 @@ const TechsUser = () => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         user.name === userName
-          ? { ...user, level: [...(user.level || []), `Level ${newLevel}`] } // Ensure level is always an array
+          ? { ...user, level: [...(user.level || []), newLevel] } // Ensure level is treated as an array
           : user
       )
     );
@@ -77,7 +69,7 @@ const TechsUser = () => {
     const newTechUserData = {
       id: nextId,
       name: newUser.username,
-      level: [], // Set level to an empty array
+      level: [], // Set level to an empty array initially
       username: newUser.username,
       password: newUser.password,
     };
@@ -205,7 +197,9 @@ const TechsUser = () => {
       <ul style={styles.userList}>
         {users.map((user) => (
           <li key={user.id} style={styles.userItem}>
-            {user.name} - level: {user.level ? user.level.join(', ') : 'No levels assigned'} {/* Check for undefined */}
+            {user.name} - level: {user.level && user.level.length > 0
+              ? user.level.map((lvl, index) => <span key={index}>{lvl}</span>) // Display each level in the array
+              : 'No levels assigned'}
           </li>
         ))}
       </ul>
@@ -354,14 +348,10 @@ const TechsUser = () => {
             <p>
               <strong>Phone:</strong> {client.phone}
             </p>
-
           </li>
         ))}
       </ul>
-      
     </div>
-
-
   );
 };
 
