@@ -123,5 +123,26 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
             return NoContent();
         }
+        // DELETE: api/clients
+    // DELETE: api/clients/{id}
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteClient(int id)
+        {
+    // Find the client using the ID
+    var client = await _context.Clients.FindAsync(id);
+    
+    if (client == null)
+    {
+        return NotFound();
+    }
+
+    // Remove the client from the database
+    _context.Clients.Remove(client);
+    await _context.SaveChangesAsync();
+
+    return NoContent();
+        }
+
+
     }
 }
