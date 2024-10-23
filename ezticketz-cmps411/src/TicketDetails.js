@@ -1,59 +1,93 @@
-// TicketDetails.js
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; // Import useParams to get the ticketId from the URL
-import './App.css'; // Import your CSS styling
+import { useParams, Link } from 'react-router-dom';
+import './App.css'; 
+import NavBar from './NavBar'; // Import the NavBar component
 
 const TicketDetails = () => {
-  const { ticketId } = useParams(); // Get the ticketId from the URL
-  const [ticket, setTicket] = useState(null); // State to store the ticket data
-  const [loading, setLoading] = useState(true); // State to track loading
-  const [error, setError] = useState(null); // State to store errors
+  const { ticketId } = useParams(); 
+  const [ticket, setTicket] = useState(null); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
-    // Fetch the ticket data from the API
     const fetchTicket = async () => {
       try {
-        const response = await fetch(`http://localhost:5099/api/tickets/${ticketId}`); // Adjust the API endpoint as needed
+        const response = await fetch(`http://localhost:5099/api/tickets/${ticketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket');
         }
         const data = await response.json();
-        setTicket(data); // Set the ticket data in state
-        setLoading(false); // Set loading to false
+        setTicket(data);
+        setLoading(false);
       } catch (error) {
-        setError(error.message); // Handle errors
+        setError(error.message);
         setLoading(false);
       }
     };
 
-    fetchTicket(); // Call the fetch function when the component mounts
-  }, [ticketId]); // Re-run this effect if ticketId changes
+    fetchTicket();
+  }, [ticketId]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="loading">Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="error">Error: {error}</div>;
   }
 
   if (!ticket) {
-    return <div>No ticket found.</div>;
+    return <div className="no-ticket">No ticket found.</div>;
   }
 
   return (
-    <div className="ticket-details-container">
-      <h1>Ticket Details</h1>
-      <p><strong>Title:</strong> {ticket.ticketTitle}</p>
-      <p><strong>Description:</strong> {ticket.ticketDescription}</p>
-      <p><strong>Resolution:</strong> {ticket.resolution}</p>
-      <p><strong>Client ID:</strong> {ticket.clientId}</p>
-      <p><strong>Tech ID:</strong> {ticket.techId}</p>
-      <p><strong>Company ID:</strong> {ticket.companyId}</p>
-      <p><strong>Issue ID:</strong> {ticket.issueId}</p>
-      <p><strong>Sub-Issue ID:</strong> {ticket.subIssueId}</p>
-      <p><strong>Notes:</strong> {ticket.ticketNotes}</p>
-      {/* Add any additional fields you want to display */}
+    <div>
+      <NavBar /> {/* Render the NavBar component */}
+      
+      <div className="ticket-details-container">
+        <div className="ticket-title-container">
+          <h1 className="ticket-title">{ticket.ticketTitle}</h1>
+        </div>
+
+        <div className="ticket-main-content">
+          <div className="ticket-description-container">
+            <p>{ticket.ticketDescription}</p>
+          </div>
+
+          <div className="ticket-side-container">
+            <div className="client-container">
+              <p><strong>Client: </strong> 
+                <Link to={`/clients/${ticket.clientId}`} className="details-link">
+                  {ticket.clientName}
+                </Link>
+              </p>
+            </div>
+
+            <div className="tech-container">
+              <p><strong>Tech User: </strong> 
+                <Link to={`/techusers/${ticket.techId}`} className="details-link">
+                  {ticket.techName}
+                </Link>
+              </p>
+            </div>
+
+            <div className="issue-info-container">
+              <div className="issue-type">
+                <p><strong>Issue Type: </strong> {ticket.issueId}</p>
+              </div>
+
+              <div className="sub-issue-type">
+                <p><strong>Sub-Issue Type: </strong> {ticket.subIssueId}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="ticket-notes-container">
+          <h2>Notes</h2>
+          <p>{ticket.ticketNotes || 'No notes available'}</p>
+        </div>
+      </div>
     </div>
   );
 };
