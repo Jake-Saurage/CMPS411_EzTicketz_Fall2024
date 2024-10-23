@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom'; // Import Link from react-router-dom
 import './App.css'; 
 import NavBar from './NavBar.js';
 
@@ -55,7 +55,10 @@ const CompanyDetail = () => {
           <ul className="clients-list">
             {clients.map(client => (
               <li key={client.id}>
-                <span className="client-info">{client.name}</span>
+                {/* Link to the client's details page */}
+                <Link to={`/clients/${client.id}`} className="client-info-link">
+                  <span className="client-info">{client.name}</span>
+                </Link>
                 <span>Total Tickets: {client.totalTickets}</span>
               </li>
             ))}

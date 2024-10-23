@@ -30,7 +30,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 Id = t.Id,
                 Name = t.Name,
                 TechLevel = t.TechLevel,
-                Username = t.Username
+                Email = t.Email
             });
 
             return Ok(techDtos);
@@ -51,7 +51,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 Id = tech.Id,
                 Name = tech.Name,
                 TechLevel = tech.TechLevel,
-                Username = tech.Username
+                Email = tech.Email
             };
 
             return Ok(techDto);
@@ -65,7 +65,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             {
                 Name = newTechDto.Name,
                 TechLevel = newTechDto.TechLevel,
-                Username = newTechDto.Username,
+                Email = newTechDto.Email,
                 Password = newTechDto.Password
             };
 
@@ -77,7 +77,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 Id = newTech.Id,
                 Name = newTech.Name,
                 TechLevel = newTech.TechLevel,
-                Username = newTech.Username
+                Email = newTech.Email
             };
 
             return CreatedAtAction(nameof(GetTechUser), new { id = newTech.Id }, createdTechDto);
@@ -95,7 +95,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
             tech.Name = techDto.Name;
             tech.TechLevel = techDto.TechLevel;
-            tech.Username = techDto.Username;
+            tech.Email = techDto.Email;
             tech.Password = techDto.Password;
 
             _context.Entry(tech).State = EntityState.Modified;
@@ -117,7 +117,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             // Only update fields if they are provided
             if (techDto.Name != null) tech.Name = techDto.Name;
             if (techDto.TechLevel.HasValue) tech.TechLevel = techDto.TechLevel.Value;
-            if (techDto.Username != null) tech.Username = techDto.Username;
+            if (techDto.Email != null) tech.Email = techDto.Email;
             if (techDto.Password != null) tech.Password = techDto.Password;
 
             _context.Entry(tech).State = EntityState.Modified;

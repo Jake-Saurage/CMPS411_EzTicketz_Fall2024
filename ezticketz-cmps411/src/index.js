@@ -4,10 +4,12 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import TechUserPage from './TechUsersPage';
+import TechUserDetails from './TechUserDetails'; // Import TechUserDetails component
 import CompanyPage from './CompanyPage';
 import SignIn from './SignIn';
 import TicketsPage from './TicketsPage';
 import CompanyDetail from './CompanyDetail'; // Assuming you have CompanyDetail component
+import ClientDetails from './ClientDetails'; // Import the ClientDetails component
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -18,6 +20,10 @@ const router = createBrowserRouter([
   {
     path: "techUser",
     element: <TechUserPage />, // Route for TechUser page
+  },
+  {
+    path: "techusers/:id",  // New route for individual TechUser details
+    element: <TechUserDetails />,  // TechUserDetails component to display tech user information
   },
   {
     path: "company",
@@ -34,6 +40,10 @@ const router = createBrowserRouter([
   {
     path: "companies/:companyId",
     element: <CompanyDetail />, // Route for individual company details
+  },
+  {
+    path: "clients/:id",  // Route for individual client details
+    element: <ClientDetails />,  // ClientDetails component to display individual client information
   },
 ]);
 

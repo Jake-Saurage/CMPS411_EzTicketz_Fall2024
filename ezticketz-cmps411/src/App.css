@@ -484,10 +484,17 @@ body {
   align-items: center;
 }
 
-.client-info {
-  font-size: 1.2rem;
-  color: #555;
+.client-info-link {
+  text-decoration: none;
+  color: #007bff; /* Blue color for client name */
+  font-weight: bold;
 }
+
+.client-info-link:hover {
+  color: #0056b3; /* Darker blue on hover */
+  text-decoration: underline; /* Optional hover underline effect */
+}
+
 
 .no-clients {
   color: #999;
@@ -523,4 +530,6 @@ body {
   display: inline-block; /* Ensures the underline stays close to the text */
   color: inherit; /* Ensures the h3 inherits the color on hover */
 }
+
+
 
