@@ -957,3 +957,145 @@ h1 {
   background-color: #0056b3; /* Darker blue for hover effect */
 };
 
+/* Ticket Detail Page */
+.ticket-details-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.ticket-details-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #4066FA; /* Consistent color with other headings */
+  margin-bottom: 20px;
+}
+
+.ticket-details-content p {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.ticket-details-content strong {
+  color: #4066FA;
+}
+
+.details-link {
+  text-decoration: none;
+  color: #007bff; /* Link color consistent with the rest of the app */
+  font-weight: bold;
+}
+
+.details-link:hover {
+  text-decoration: underline;
+}
+
+.no-ticket, .error {
+  text-align: center;
+  font-size: 1.5rem;
+  color: red;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #333;
+}
+.ticket-details-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.ticket-main-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.ticket-title-container {
+  background-color: #4066FA;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.ticket-title {
+  color: white;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.ticket-description-container {
+  flex: 2;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.ticket-side-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.client-container, .tech-container, .issue-info-container {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.issue-info-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.issue-type, .sub-issue-type {
+  width: 48%;
+}
+
+.ticket-notes-container {
+  margin-top: 20px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.ticket-notes-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.details-link {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.details-link:hover {
+  text-decoration: underline;
+}
+
+.no-ticket, .error {
+  text-align: center;
+  font-size: 1.5rem;
+  color: red;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #333;
+}
