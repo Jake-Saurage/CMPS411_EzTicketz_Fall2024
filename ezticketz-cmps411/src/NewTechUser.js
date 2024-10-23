@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom'; // Add useNavigate to handle redirection
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import './App.css'; // Import the stylesheet
 
-const NewClient = () => {
+const NewTechUser = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [techLevel, setTechLevel] = useState(1);
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState(''); // Password field
   const [error, setError] = useState('');
   const [passwordErrors, setPasswordErrors] = useState({
@@ -16,31 +16,12 @@ const NewClient = () => {
     number: true,
   });
 
-  const [searchParams] = useSearchParams(); // Hook to get URL search parameters
-  const companyId = searchParams.get('companyId'); // Get the companyId from the URL
   const navigate = useNavigate(); // Hook to handle navigation
 
   // Handle email validation
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
-  };
-
-  // Handle phone formatting and validation (cap to 10 digits)
-  const formatPhone = (value) => {
-    const cleaned = value.replace(/\D/g, ''); // Remove non-numeric characters
-    const trimmed = cleaned.substring(0, 10); // Limit to 10 digits
-    const match = trimmed.match(/^(\d{3})(\d{3})(\d{4})$/);
-    if (match) {
-      return `(${match[1]})-${match[2]}-${match[3]}`;
-    }
-    return trimmed;
-  };
-
-  // Handle phone input change
-  const handlePhoneChange = (e) => {
-    const formattedPhone = formatPhone(e.target.value);
-    setPhone(formattedPhone);
   };
 
   // Handle password validation
@@ -62,7 +43,8 @@ const NewClient = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!firstName || !lastName || !email || !phone || !password || !companyId) {
+    // Ensure both firstName and lastName are filled out
+    if (!firstName || !lastName || !techLevel || !email || !password) {
       setError('Please fill out all fields.');
       return;
     }
@@ -72,56 +54,50 @@ const NewClient = () => {
       return;
     }
 
-    const formattedPhone = phone;
-    if (formattedPhone.replace(/\D/g, '').length !== 10) {
-      setError('Phone number must be exactly 10 digits.');
-      return;
-    }
-
     if (Object.values(passwordErrors).some((error) => error)) {
       setError('Password must meet all the requirements.');
       return;
     }
 
-    // Combine first and last name
-    const fullName = `${firstName} ${lastName}`;
+    // Combine first and last names into the full name
+    const name = `${firstName} ${lastName}`;
 
-    // Send data to the backend (create new client user)
-    fetch('http://localhost:5099/api/clients', {
+    // Send data to the backend (create new tech user)
+    fetch('http://localhost:5099/api/techusers', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name: fullName,
+        name, // Store the full name (first name + last name)
+        techLevel,
         email,
-        phone: formattedPhone,
         password, // Store password as a string for now
-        companyId: companyId, // Use companyId from the URL
       }),
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log('Client created:', data);
+        console.log('Tech User created:', data);
         // Reset form
         setFirstName('');
         setLastName('');
+        setTechLevel(1);
         setEmail('');
-        setPhone('');
         setPassword('');
         setError('');
-        // Redirect to the company details page after successful creation
-        navigate(`/companies/${companyId}`);
+
+        // Redirect to the Technicians page after successful creation
+        navigate('/technicians');
       })
       .catch((error) => {
-        console.error('Error creating client:', error);
-        setError('Failed to create client. Please try again.');
+        console.error('Error creating tech user:', error);
+        setError('Failed to create tech user. Please try again.');
       });
   };
 
   return (
     <div className="new-client-container">
-      <h1>Create New Client User</h1>
+      <h1>Create New Tech User</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>First Name:
@@ -146,6 +122,23 @@ const NewClient = () => {
           />
         </div>
         <div className="form-group">
+          <label>Tech Level:
+            {techLevel === '' && <span className="required-asterisk"> *</span>}
+          </label>
+          <select
+            className="styled-select" // Add a class for custom styling
+            value={techLevel}
+            onChange={(e) => setTechLevel(e.target.value)}
+            required
+          >
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <div className="form-group">
           <label>Email:
             {email === '' && <span className="required-asterisk"> *</span>}
           </label>
@@ -153,18 +146,6 @@ const NewClient = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Phone:
-            {phone === '' && <span className="required-asterisk"> *</span>}
-          </label>
-          <input
-            type="text"
-            value={phone}
-            onChange={handlePhoneChange}
-            placeholder="(xxx)-xxx-xxxx"
             required
           />
         </div>
@@ -189,10 +170,10 @@ const NewClient = () => {
           </ul>
         </div>
         {error && <p className="error-message">{error}</p>}
-        <button type="submit" className="submit-button">Create Client</button>
+        <button type="submit" className="submit-button">Create Tech User</button>
       </form>
     </div>
   );
 };
 
-export default NewClient;
+export default NewTechUser;

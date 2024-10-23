@@ -11,6 +11,8 @@ import TicketsPage from './TicketsPage';
 import CompanyDetail from './CompanyDetail'; // Import CompanyDetail component
 import ClientDetails from './ClientDetails'; // Import ClientDetails component
 import NewClient from './NewClient'; // Import NewClient component
+import NewTechUser from './NewTechUser';
+import Technicians from './Technicians';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from './Layout'; // Import Layout for global NavBar
 
@@ -87,6 +89,24 @@ const router = createBrowserRouter([
       </Layout>
     ),
   },
+  {
+    path: "createTechUser",  // Route for creating a new tech user
+    element: (
+      <Layout>
+        <NewTechUser /> {/* NewTechUser component for creating a tech user */}
+      </Layout>
+    ),
+  },
+  
+  {
+    path: "technicians", // Add a new route for the Technicians page
+    element: (
+      <Layout>
+        <Technicians /> {/* Technicians component */}
+      </Layout>
+    ),
+  },
+
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

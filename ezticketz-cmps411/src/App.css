@@ -742,3 +742,218 @@ body {
   font-size: 1.1rem;
   color: #555;
 }
+
+
+/* General styles for the form and container */
+.new-client-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  transition: border 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Custom styles for the dropdown */
+.styled-select {
+  height: 50px; /* Increase the height */
+  font-size: 1.2rem; /* Larger font size */
+  padding: 10px; /* Increase padding */
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.styled-select:hover {
+  background-color: #e0e0e0;
+}
+
+.styled-select:focus {
+  border-color: #007bff;
+}
+
+/* Error message styling */
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Submit button styling */
+.submit-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+
+
+/* Technicians page styling */
+.technicians-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.tech-users-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.tech-user-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.view-details-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.view-details-link:hover {
+  text-decoration: underline;
+}
+
+.create-tech-user-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.create-tech-user-button:hover {
+  background-color: #0056b3;
+}
+
+
+.technicians-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tech-users-list {
+  list-style: none;
+  padding: 0;
+}
+
+.tech-user-item {
+  display: flex;
+  background-color: #fff;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.tech-user-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.tech-user-name {
+  flex: 1;
+  cursor: pointer;
+  color: #007bff;
+  text-decoration: underline;
+  text-align: left; /* Align name to the left */
+}
+
+.tech-user-email {
+  flex: 1;
+  text-align: center; /* Center the email */
+}
+
+.tech-user-level {
+  flex: 1;
+  text-align: right; /* Align tech level to the right */
+}
+
+.create-tech-user-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff; /* Change to the blue color */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.create-tech-user-button:hover {
+  background-color: #0056b3; /* Darker blue for hover effect */
+};
+
