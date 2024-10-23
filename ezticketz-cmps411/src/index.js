@@ -13,6 +13,7 @@ import ClientDetails from './ClientDetails'; // Import ClientDetails component
 import NewClient from './NewClient'; // Import NewClient component
 import NewTechUser from './NewTechUser';
 import Technicians from './Technicians';
+import TicketDetails from './TicketDetails';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from './Layout'; // Import Layout for global NavBar
 
@@ -97,7 +98,10 @@ const router = createBrowserRouter([
       </Layout>
     ),
   },
-  
+  {
+    path: "tickets/:ticketId",  // Add the route for individual ticket details
+    element: <TicketDetails />, // TicketDetails component for individual ticket page
+  },
   {
     path: "technicians", // Add a new route for the Technicians page
     element: (
