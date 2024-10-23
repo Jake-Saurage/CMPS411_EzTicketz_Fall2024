@@ -8,42 +8,84 @@ import TechUserDetails from './TechUserDetails'; // Import TechUserDetails compo
 import CompanyPage from './CompanyPage';
 import SignIn from './SignIn';
 import TicketsPage from './TicketsPage';
-import CompanyDetail from './CompanyDetail'; // Assuming you have CompanyDetail component
-import ClientDetails from './ClientDetails'; // Import the ClientDetails component
+import CompanyDetail from './CompanyDetail'; // Import CompanyDetail component
+import ClientDetails from './ClientDetails'; // Import ClientDetails component
+import NewClient from './NewClient'; // Import NewClient component
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from './Layout'; // Import Layout for global NavBar
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />, // App component for homepage or main content
+    element: (
+      <Layout>
+        <App /> {/* App component for homepage or main content */}
+      </Layout>
+    ),
   },
   {
     path: "techUser",
-    element: <TechUserPage />, // Route for TechUser page
+    element: (
+      <Layout>
+        <TechUserPage />
+      </Layout>
+    ),
   },
   {
     path: "techusers/:id",  // New route for individual TechUser details
-    element: <TechUserDetails />,  // TechUserDetails component to display tech user information
+    element: (
+      <Layout>
+        <TechUserDetails /> {/* TechUserDetails component */}
+      </Layout>
+    ),
   },
   {
     path: "company",
-    element: <CompanyPage />, // Route for Company page
+    element: (
+      <Layout>
+        <CompanyPage /> {/* Company page route */}
+      </Layout>
+    ),
   },
   {
     path: "signin",
-    element: <SignIn />, // Route for SignIn page
+    element: (
+      <Layout>
+        <SignIn /> {/* SignIn page */}
+      </Layout>
+    ),
   },
   {
     path: "tickets",
-    element: <TicketsPage />, // Route for Tickets page
+    element: (
+      <Layout>
+        <TicketsPage /> {/* Tickets page */}
+      </Layout>
+    ),
   },
   {
     path: "companies/:companyId",
-    element: <CompanyDetail />, // Route for individual company details
+    element: (
+      <Layout>
+        <CompanyDetail /> {/* Individual company details */}
+      </Layout>
+    ),
   },
   {
     path: "clients/:id",  // Route for individual client details
-    element: <ClientDetails />,  // ClientDetails component to display individual client information
+    element: (
+      <Layout>
+        <ClientDetails /> {/* ClientDetails component */}
+      </Layout>
+    ),
+  },
+  {
+    path: "createClient",  // Route for creating a new client
+    element: (
+      <Layout>
+        <NewClient /> {/* NewClient component */}
+      </Layout>
+    ),
   },
 ]);
 
