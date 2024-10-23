@@ -8,7 +8,7 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         public int Id { get; set; }
         public required string Name { get; set; }
         public required int TechLevel { get; set; } 
-        public required string Username { get; set; }
+        public required string Email { get; set; }
         public required string Password { get; set; }
     }
     // DTO for creating a TechUser
@@ -21,7 +21,7 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         public int TechLevel { get; set; }
 
         [Required]
-        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
         [Required]
         public string Password { get; set; } = string.Empty;
@@ -40,7 +40,7 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         public int TechLevel { get; set; }
 
         [Required]
-        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
         [Required]
         public string Password { get; set; } = string.Empty;
@@ -56,7 +56,7 @@ namespace CMPS411_EzTicketz_Fall2024.Models
 
         public int? TechLevel { get; set; }
 
-        public string? Username { get; set; }
+        public string? Email { get; set; }
 
         public string? Password { get; set; }
     }
@@ -77,6 +77,6 @@ namespace CMPS411_EzTicketz_Fall2024.Models
 
         public int TechLevel { get; set; }
 
-        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
     }
 }
