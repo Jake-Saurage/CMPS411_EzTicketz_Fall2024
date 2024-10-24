@@ -84,9 +84,14 @@ const ClientDetails = () => {
             <ul style={styles.ticketsList}>
               {tickets.map(ticket => (
                 <li key={ticket.id} style={styles.ticketItem}>
-                  <p><strong>Ticket ID:</strong> {ticket.id}</p>
-                  <p><strong>Description:</strong> {ticket.description}</p>
-                  <p><strong>Status:</strong> {ticket.status}</p>
+                  <p>
+                    <strong>Ticket Title:</strong> 
+                    <Link to={`/tickets/${ticket.id}`} style={styles.ticketLink}>
+                      {ticket.ticketTitle}
+                    </Link>
+                  </p>
+                  <p><strong>Description:</strong> {ticket.ticketDescription}</p>
+                  <p><strong>Status:</strong> {ticket.resolution || 'Open'}</p>
                 </li>
               ))}
             </ul>
@@ -99,87 +104,98 @@ const ClientDetails = () => {
   );
 };
 
-// CSS styles for the page, similar to CompanyPage
+// CSS styles for the page
 const styles = {
-    container: {
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      maxWidth: '800px',
-      margin: '20px auto',
-      padding: '20px',
-      backgroundColor: '#f5f5f5',
-      borderRadius: '10px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    },
-    header: {
-      fontSize: '2rem',
-      color: '#333',
-      textAlign: 'center',
-      marginBottom: '20px',
-    },
-    clientCard: {
-      backgroundColor: '#fff',
-      padding: '20px',
-      borderRadius: '8px',
-      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-      border: '1px solid #ccc',
-    },
-    clientName: {
-      fontSize: '1.75rem',
-      fontWeight: 'bold',
-      color: '#0056b3',
-      marginBottom: '15px',
-    },
-    clientInfo: {
-      fontSize: '1.1rem',
-      marginBottom: '10px',
-      color: '#555',
-    },
-    companyLink: {
-      textDecoration: 'none',
-      color: '#007bff',
-      fontWeight: 'bold',
-      transition: 'color 0.3s ease',
-    },
-    companyLinkHover: {
-      textDecoration: 'none',
-      color: '#0056b3', // Darker blue on hover
-      fontWeight: 'bold',
-      transition: 'color 0.3s ease',
-    },
-    errorContainer: {
-      textAlign: 'center',
-      padding: '20px',
-      color: 'red',
-      fontWeight: 'bold',
-    },
-    loadingContainer: {
-      textAlign: 'center',
-      padding: '20px',
-      color: '#555',
-    },
-    ticketsBox: {
-      marginTop: '30px',
-      backgroundColor: '#fff',
-      padding: '20px',
-      borderRadius: '8px',
-      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-      border: '1px solid #ccc',
-    },
-    ticketsHeader: {
-      fontSize: '1.5rem',
-      color: '#333',
-      marginBottom: '20px',
-    },
-    ticketsList: {
-      listStyleType: 'none',
-      paddingLeft: '0',
-    },
-    ticketItem: {
-      backgroundColor: '#f9f9f9',
-      padding: '15px',
-      borderRadius: '8px',
-      border: '1px solid #ddd',
-      marginBottom: '10px',
-    },
-  };
+  container: {
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    maxWidth: '800px',
+    margin: '20px auto',
+    padding: '20px',
+    backgroundColor: '#f5f5f5',
+    borderRadius: '10px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  },
+  header: {
+    fontSize: '2rem',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: '20px',
+  },
+  clientCard: {
+    backgroundColor: '#fff',
+    padding: '20px',
+    borderRadius: '8px',
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+    border: '1px solid #ccc',
+  },
+  clientName: {
+    fontSize: '1.75rem',
+    fontWeight: 'bold',
+    color: '#0056b3',
+    marginBottom: '15px',
+  },
+  clientInfo: {
+    fontSize: '1.1rem',
+    marginBottom: '10px',
+    color: '#555',
+  },
+  companyLink: {
+    textDecoration: 'none',
+    color: '#007bff',
+    fontWeight: 'bold',
+    transition: 'color 0.3s ease',
+  },
+  companyLinkHover: {
+    textDecoration: 'none',
+    color: '#0056b3',
+    fontWeight: 'bold',
+    transition: 'color 0.3s ease',
+  },
+  ticketLink: {
+    textDecoration: 'none',
+    color: '#007bff',
+    transition: 'color 0.3s ease',
+  },
+  ticketLinkHover: {
+    textDecoration: 'none',
+    color: '#0056b3',
+    transition: 'color 0.3s ease',
+  },
+  errorContainer: {
+    textAlign: 'center',
+    padding: '20px',
+    color: 'red',
+    fontWeight: 'bold',
+  },
+  loadingContainer: {
+    textAlign: 'center',
+    padding: '20px',
+    color: '#555',
+  },
+  ticketsBox: {
+    marginTop: '30px',
+    backgroundColor: '#fff',
+    padding: '20px',
+    borderRadius: '8px',
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+    border: '1px solid #ccc',
+  },
+  ticketsHeader: {
+    fontSize: '1.5rem',
+    color: '#333',
+    marginBottom: '20px',
+  },
+  ticketsList: {
+    listStyleType: 'none',
+    paddingLeft: '0',
+  },
+  ticketItem: {
+    backgroundColor: '#f9f9f9',
+    padding: '15px',
+    borderRadius: '8px',
+    border: '1px solid #ddd',
+    marginBottom: '10px',
+  },
+};
+
 export default ClientDetails;
