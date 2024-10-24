@@ -87,39 +87,41 @@ const NewTicket = () => {
       ticketNotes: ticketNotes || '',
     };
 
-    try {
-      const response = await fetch('http://localhost:5099/api/tickets', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(ticketData),
-      });
+   // Inside your handleSubmit function:
+try {
+  const response = await fetch('http://localhost:5099/api/tickets', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(ticketData),
+  });
 
-      if (!response.ok) {
-        throw new Error('Failed to create ticket.');
-      }
+  if (!response.ok) {
+    throw new Error('Failed to create ticket.');
+  }
 
-      // Reset fields after successful creation
-      setTicketTitle('');
-      setTicketDescription('');
-      setResolution('');
-      setIssueId(0);
-      setSubIssueId(0);
-      setTechSearch('');
-      setClientSearch('');
-      setSelectedTechId(null);
-      setSelectedCompanyId(null);
-      setSelectedClientId(null);
-      setTicketNotes('');
-      setError('');
+  // Reset fields after successful creation
+  setTicketTitle('');
+  setTicketDescription('');
+  setResolution('');
+  setIssueId(0);
+  setSubIssueId(0);
+  setTechSearch('');
+  setClientSearch('');
+  setSelectedTechId(null);
+  setSelectedCompanyId(null);
+  setSelectedClientId(null);
+  setTicketNotes('');
+  setError('');
 
-      // Redirect to the ticket list page
-      navigate('/tickets');
-    } catch (error) {
-      console.error('Error creating ticket:', error);
-      setError('Failed to create ticket. Please try again.');
-    }
+  // Redirect to the tickets list page (ensure it's "/tickets-list")
+  navigate('/tickets-list');
+} catch (error) {
+  console.error('Error creating ticket:', error);
+  setError('Failed to create ticket. Please try again.');
+}
+
   };
 
   return (
