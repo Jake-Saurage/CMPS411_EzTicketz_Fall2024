@@ -1,54 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css'; // Ensure this file exists with appropriate styles
-
 
 function Ticket() {
   const [tickets, setTickets] = useState([]);
-  const [ticketTitle, setTicketTitle] = useState('');
-  const [ticketDescription, setTicketDescription] = useState('');
-  const [ticketStatus, setTicketStatus] = useState('Open');
-  const [assignedTech, setAssignedTech] = useState('');
-  const [client, setClient] = useState('');
-  const [issueType, setIssueType] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: '', direction: '' });
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5); // Default items per page
-
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   const [titleSearchTerm, setTitleSearchTerm] = useState('');
   const [techSearchTerm, setTechSearchTerm] = useState('');
   const [clientSearchTerm, setClientSearchTerm] = useState('');
   const [issueSearchTerm, setIssueSearchTerm] = useState('');
 
-
-  // Function to add a new ticket
-  const handleAddTicket = () => {
-    if (!ticketTitle || !assignedTech || !client || !issueType || !ticketDescription) {
-      alert('Please fill in all required fields.');
-      return;
-    }
-
-
-    const newTicket = {
-      title: ticketTitle,
-      description: ticketDescription,
-      status: ticketStatus,
-      assignedTech,
-      client,
-      issueType,
-      createdAt: new Date().toLocaleString(),
+  // Fetch tickets from the API
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const response = await fetch('http://localhost:5099/api/tickets'); // Your API endpoint
+        if (!response.ok) {
+          throw new Error('Failed to fetch tickets');
+        }
+        const data = await response.json();
+        setTickets(data);
+      } catch (error) {
+        console.error('Error fetching tickets:', error);
+      }
     };
 
-
-    setTickets([...tickets, newTicket]);
-    setTicketTitle('');
-    setTicketDescription('');
-    setTicketStatus('Open');
-    setAssignedTech('');
-    setClient('');
-    setIssueType('');
-  };
-
+    fetchTickets();
+  }, []);
 
   // Sorting function
   const handleSort = (key) => {
@@ -59,17 +39,22 @@ function Ticket() {
     setSortConfig({ key, direction });
   };
 
-
+  // Search and filter the tickets
   const filteredTickets = tickets.filter((ticket) => {
+    const title = ticket.title ? ticket.title.toLowerCase() : '';
+    const tech = ticket.assignedTech ? ticket.assignedTech.toLowerCase() : '';
+    const client = ticket.client ? ticket.client.toLowerCase() : '';
+    const issue = ticket.issueType ? ticket.issueType.toLowerCase() : '';
+
     return (
-      ticket.title.toLowerCase().includes(titleSearchTerm.toLowerCase()) &&
-      ticket.assignedTech.toLowerCase().includes(techSearchTerm.toLowerCase()) &&
-      ticket.client.toLowerCase().includes(clientSearchTerm.toLowerCase()) &&
-      ticket.issueType.toLowerCase().includes(issueSearchTerm.toLowerCase())
+      title.includes(titleSearchTerm.toLowerCase()) &&
+      tech.includes(techSearchTerm.toLowerCase()) &&
+      client.includes(clientSearchTerm.toLowerCase()) &&
+      issue.includes(issueSearchTerm.toLowerCase())
     );
   });
 
-
+  // Sorting based on current configuration
   const sortedTickets = [...filteredTickets].sort((a, b) => {
     if (sortConfig.key) {
       if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -82,20 +67,18 @@ function Ticket() {
     return 0;
   });
 
-
   // Pagination logic
   const indexOfLastTicket = currentPage * itemsPerPage;
   const indexOfFirstTicket = indexOfLastTicket - itemsPerPage;
   const currentTickets = sortedTickets.slice(indexOfFirstTicket, indexOfLastTicket);
   const totalPages = Math.ceil(sortedTickets.length / itemsPerPage);
 
-
+  // Pagination controls
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
-
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
@@ -103,11 +86,9 @@ function Ticket() {
     }
   };
 
-
-  // Highlighting function
+  // Highlight search terms
   const highlightText = (text, term) => {
     if (!term) return text;
-
 
     const parts = text.split(new RegExp(`(${term})`, 'gi'));
     return parts.map((part, index) =>
@@ -117,7 +98,6 @@ function Ticket() {
     );
   };
 
-
   return (
     <div className="App">
       {/* Header */}
@@ -126,76 +106,10 @@ function Ticket() {
         <p>Create and manage your tickets with ease!</p>
       </header>
 
-
-      {/* Ticket Form */}
-      <div className="ticket-form-container">
-        <h2>Create a Ticket</h2>
-
-
-        <input
-          type="text"
-          placeholder="Ticket Title*"
-          value={ticketTitle}
-          onChange={(e) => setTicketTitle(e.target.value)}
-          className="form-input"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Assigned Tech*"
-          value={assignedTech}
-          onChange={(e) => setAssignedTech(e.target.value)}
-          className="form-input"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Client*"
-          value={client}
-          onChange={(e) => setClient(e.target.value)}
-          className="form-input"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Issue Type*"
-          value={issueType}
-          onChange={(e) => setIssueType(e.target.value)}
-          className="form-input"
-          required
-        />
-        <textarea
-          placeholder="Ticket Description*"
-          value={ticketDescription}
-          onChange={(e) => setTicketDescription(e.target.value)}
-          className="form-textarea"
-          required
-        />
-
-
-        <select
-          value={ticketStatus}
-          onChange={(e) => setTicketStatus(e.target.value)}
-          className="form-select"
-        >
-          <option value="Open">Open</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
-          <option value="Closed">Closed</option>
-        </select>
-
-
-        <button onClick={handleAddTicket} className="form-button">
-          Add Ticket
-        </button>
-      </div>
-
-
       {/* Ticket List */}
       {tickets.length > 0 && (
         <div className="ticket-list">
           <h2>Your Tickets</h2>
-
 
           {/* Ticket Table */}
           <table className="ticket-table">
@@ -250,10 +164,10 @@ function Ticket() {
               ) : (
                 currentTickets.map((ticket, index) => (
                   <tr key={index}>
-                    <td>{highlightText(ticket.title, titleSearchTerm)}</td>
-                    <td>{highlightText(ticket.assignedTech, techSearchTerm)}</td>
-                    <td>{highlightText(ticket.client, clientSearchTerm)}</td>
-                    <td>{highlightText(ticket.issueType, issueSearchTerm)}</td>
+                    <td>{highlightText(ticket.title || '', titleSearchTerm)}</td>
+                    <td>{highlightText(ticket.assignedTech || '', techSearchTerm)}</td>
+                    <td>{highlightText(ticket.client || '', clientSearchTerm)}</td>
+                    <td>{highlightText(ticket.issueType || '', issueSearchTerm)}</td>
                     <td>{ticket.createdAt}</td>
                   </tr>
                 ))
@@ -261,8 +175,7 @@ function Ticket() {
             </tbody>
           </table>
 
-
-          {/* Dropdown for items per page (now placed under the table) */}
+          {/* Dropdown for items per page */}
           <div className="items-per-page">
             <label htmlFor="itemsPerPage">Tickets per page: </label>
             <select
@@ -270,7 +183,7 @@ function Ticket() {
               value={itemsPerPage}
               onChange={(e) => {
                 setItemsPerPage(Number(e.target.value));
-                setCurrentPage(1); // Reset to the first page when items per page changes
+                setCurrentPage(1);
               }}
               className="form-select"
             >
@@ -280,7 +193,6 @@ function Ticket() {
               <option value={20}>20</option>
             </select>
           </div>
-
 
           {/* Pagination controls */}
           <div className="pagination-controls">
@@ -294,8 +206,4 @@ function Ticket() {
   );
 }
 
-
 export default Ticket;
-
-
-

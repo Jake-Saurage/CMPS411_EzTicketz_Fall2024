@@ -14,6 +14,8 @@ import NewClient from './NewClient'; // Import NewClient component
 import NewTechUser from './NewTechUser';
 import Technicians from './Technicians';
 import TicketDetails from './TicketDetails';
+import TicketsList from './TicketList';
+import NewTicket from './NewTicket'; // Import NewTicket component
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from './Layout'; // Import Layout for global NavBar
 
@@ -67,6 +69,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "tickets/:ticketId",  // Add the route for individual ticket details
+    element: (
+      <Layout>
+        <TicketDetails /> {/* TicketDetails component for individual ticket page */}
+      </Layout>
+    ),
+  },
+  {
     path: "companies/:companyId",
     element: (
       <Layout>
@@ -99,10 +109,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "tickets/:ticketId",  // Add the route for individual ticket details
-    element: <TicketDetails />, // TicketDetails component for individual ticket page
-  },
-  {
     path: "technicians", // Add a new route for the Technicians page
     element: (
       <Layout>
@@ -110,7 +116,25 @@ const router = createBrowserRouter([
       </Layout>
     ),
   },
+  {
+    path: "new-ticket", // Add a route for the NewTicket page
+    element: (
+      <Layout>
+        <NewTicket /> {/* NewTicket component */}
+      </Layout>
+    ),
+  },
 
+  {
+    path: "tickets-list", // New route for the TicketsList page
+    element: (
+      <Layout>
+        <TicketsList /> {/* TicketsList component */}
+      </Layout>
+    ),
+  },
+
+  
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
