@@ -5,10 +5,14 @@ function App() {
   return (
     <div className="App">
       <NavBar />
-      <h2>Hello, welcome to Ez Tickets</h2>
+      <h2>Hello, Welcome to Ez Tickets</h2>
       <div className="description-container">
         <p>
-          Our IT ticket platform streamlines the process of requesting and managing computer repairs and software issues. Whether your PC is malfunctioning or you're facing software glitches, our system ensures that technicians are promptly assigned to resolve the problem. Submit a ticket, track its status in real time, and receive updates throughout the repair process. We prioritize efficiency and clarity to get your devices and programs back in working order with minimal downtime. Let us handle your tech problems so you can focus on what matters.
+        Our IT ticket platform simplifies the process of requesting computer repairs and software assistance.
+
+        If your PC is malfunctioning or you’re facing software issues, we quickly assign a technician to help. You can submit a ticket, track its status, and receive updates throughout the repair.
+
+        We focus on getting your devices back to normal with minimal downtime, so you can concentrate on what matters.
         </p>
         <button className="sign-in-button" onClick={() => window.location.href = "/signin"}>
           Sign In

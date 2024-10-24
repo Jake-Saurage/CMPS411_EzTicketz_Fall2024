@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from "react-router-dom";
+import './App'; // Make sure to import your CSS file
 
 function NavBar() {
     return (
         <div className='navbar'>
             <div className='navbar-logo'>
-                Ez Tickets
+                <Link to="/" className="logo-link">Ez Tickets</Link>
             </div>
             <ul className='navbar-menu'>
                 <li><Link to="/">Home</Link></li>

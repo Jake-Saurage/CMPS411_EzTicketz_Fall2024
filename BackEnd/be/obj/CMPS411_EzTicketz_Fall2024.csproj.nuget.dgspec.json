@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jakes\\OneDrive\\Desktop\\CMPS 285\\Fork\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj": {}
+    "C:\\Users\\vladi\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jakes\\OneDrive\\Desktop\\CMPS 285\\Fork\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj": {
+    "C:\\Users\\vladi\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jakes\\OneDrive\\Desktop\\CMPS 285\\Fork\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
+        "projectUniqueName": "C:\\Users\\vladi\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
         "projectName": "CMPS411_EzTicketz_Fall2024",
-        "projectPath": "C:\\Users\\jakes\\OneDrive\\Desktop\\CMPS 285\\Fork\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
-        "packagesPath": "C:\\Users\\jakes\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jakes\\OneDrive\\Desktop\\CMPS 285\\Fork\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\obj\\",
+        "projectPath": "C:\\Users\\vladi\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\CMPS411_EzTicketz_Fall2024.csproj",
+        "packagesPath": "C:\\Users\\vladi\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\vladi\\CMPS411_EzTicketz_Fall2024\\BackEnd\\be\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\jakes\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\vladi\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
