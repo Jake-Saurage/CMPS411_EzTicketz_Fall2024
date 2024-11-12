@@ -3,8 +3,9 @@
 # Reference: https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 ## Ignore build outputs
-[Bb]in/
-[Oo]bj/
+**/[Bb]in/
+**/[Oo]bj/
+
 
 ## Ignore Visual Studio project files
 *.user
