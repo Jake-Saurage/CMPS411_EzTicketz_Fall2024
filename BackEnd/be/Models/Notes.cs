@@ -1,27 +1,22 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-
 namespace CMPS411_EzTicketz_Fall2024.Models
 {
-   public class Note
-{
-    public int Id { get; set; }
-    public int UserId { get; set; }
-    public required string NoteDescription { get; set; }
-    public DateTimeOffset NoteTimePosted { get; set; }
+    public class Note
+    {
+        public int Id { get; set; }
+        public required string NoteDescription { get; set; }
+        public DateTimeOffset NoteTimePosted { get; set; }
 
-    // Navigation properties
-    public TechUser? Tech { get; set; }  // Nullable
-    public Client? Client { get; set; }  // Nullable
-}
+        // Navigation properties
+        public TechUser? Tech { get; set; }  // Nullable
+        public Client? Client { get; set; }  // Nullable
+    }
 
-  // DTO for creating a Note
+    // DTO for creating a Note
     public class NoteCreateDto
     {
-        [Required]
-        public int UserId { get; set; }
-
         [Required]
         public string NoteDescription { get; set; } = string.Empty;
     }
@@ -33,9 +28,6 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         public int Id { get; set; }
 
         [Required]
-        public int UserId { get; set; }
-
-        [Required]
         public string NoteDescription { get; set; } = string.Empty;
     }
 
@@ -45,24 +37,13 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         [Required]
         public int Id { get; set; }
 
-        public int? UserId { get; set; }
-
         public string? NoteDescription { get; set; }
-    }
-
-    // DTO for deleting a Note
-    public class NoteDeleteDto
-    {
-        [Required]
-        public int Id { get; set; }
     }
 
     // DTO for getting a Note (read-only)
     public class NoteGetDto
     {
         public int Id { get; set; }
-
-        public int UserId { get; set; }
 
         public string NoteDescription { get; set; } = string.Empty;
 
@@ -72,5 +53,4 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         public string? TechName { get; set; }  // If a TechUser posted the note
         public string? ClientName { get; set; }  // If a Client posted the note
     }
-
 }
