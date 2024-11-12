@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './App.css'; // Import the CSS file
+import './App.css';
 
 const SignIn = () => {
   const [username, setUsername] = useState('');
@@ -8,26 +8,38 @@ const SignIn = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSignIn = () => {
-    fetch('http://localhost:5099/api/techusers')
-      .then(response => response.json())
-      .then(users => {
-        const foundUser = users.find(user => user.username === username && user.password === password);
-        if (foundUser) {
-          navigate('/');
-        } else {
-          fetch('http://localhost:5099/api/clients')
-            .then(response => response.json())
-            .then(clients => {
-              const foundClient = clients.find(client => client.email === username && client.phone === password);
-              if (foundClient) {
-                navigate('/');
-              } else {
-                setError('Invalid username or password');
-              }
-            });
-        }
+  const handleSignIn = async () => {
+    setError(''); // Clear any previous errors
+
+    try {
+      const response = await fetch('http://localhost:5099/api/authentication/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: username, password: password }),
       });
+
+      console.log("Response Status:", response.status); // Log response status
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Sign-in Successful:", result.message); // Log successful message
+
+        // Check if the user is a client or tech user and navigate accordingly
+        if (result.userType === "Client") {
+          navigate(`/clients/${result.userId}`);
+        } else if (result.userType === "TechUser") {
+          navigate(`/techusers/${result.userId}`);
+        }
+      } else if (response.status === 401) {
+        setError('Invalid username or password');
+      } else {
+        setError('An error occurred. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error signing in:', error);
+      setError('An error occurred. Please try again.');
+    }
   };
 
   return (

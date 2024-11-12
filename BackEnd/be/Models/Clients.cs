@@ -99,6 +99,12 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         public int Id { get; set; }
     }
 
+    public class ClientLoginDto
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
     public class ClientGetDto
     {
         public int Id { get; set; }

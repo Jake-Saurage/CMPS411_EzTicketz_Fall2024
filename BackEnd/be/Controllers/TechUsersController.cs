@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using CMPS411_EzTicketz_Fall2024.Models;
 using CMPS411_EzTicketz_Fall2024.Data;
-namespace CMPS411_EzTicketz_Fall2024.Controllers
 
+namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -124,6 +124,19 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        // POST: api/techusers/SignIn
+        [HttpPost("SignIn")]
+        public async Task<IActionResult> SignIn(string email, string password)
+        {
+            var techUser = await _context.TechUsers.SingleOrDefaultAsync(t => t.Email == email);
+            if (techUser == null || techUser.Password != password)
+            {
+                return Unauthorized("Invalid credentials.");
+            }
+
+            return Ok("Signed in successfully");
         }
 
         // DELETE: api/techusers/{id}
