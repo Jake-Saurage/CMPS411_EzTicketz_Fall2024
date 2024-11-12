@@ -24,6 +24,7 @@ public class TicketsController : ControllerBase
         var tickets = await _context.Tickets.Include(t => t.Client)
                                             .Include(t => t.Company)
                                             .Include(t => t.Tech)
+                                            .Include(t => t.IssueType)
                                             .ToListAsync();
 
         var ticketDtos = tickets.Select(ticket => new TicketGetDto
@@ -34,6 +35,7 @@ public class TicketsController : ControllerBase
             Resolution = ticket.Resolution,
             CreationDate = ticket.CreationDate,
             IssueId = ticket.IssueId,
+            IssueTypeName = ticket.IssueType?.IssueTypeName ?? string.Empty,
             SubIssueId = ticket.SubIssueId,
             ClientId = ticket.ClientId,
             ClientName = ticket.Client?.Name ?? string.Empty, // Check if Client exists
@@ -86,14 +88,15 @@ public class TicketsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<TicketGetDto>> PostTicket(TicketCreateDto ticketDto)
     {
-        // Find existing entities by their IDs
+         // Find existing entities by their IDs
         var client = await _context.Clients.FindAsync(ticketDto.ClientId);
         var company = await _context.Companies.FindAsync(ticketDto.CompanyId);
         var techUser = await _context.TechUsers.FindAsync(ticketDto.TechId);
+        var issueType = await _context.IssueTypes.FindAsync(ticketDto.IssueId);
 
-        if (client == null || company == null || techUser == null)
+        if (client == null || company == null || techUser == null || issueType == null)
         {
-            return BadRequest("Client, Company, or TechUser not found.");
+            return BadRequest("Client, Company, TechUser, or IssueType not found.");
         }
 
         // Create the new ticket and set the related entities
@@ -104,6 +107,7 @@ public class TicketsController : ControllerBase
             Resolution = ticketDto.Resolution,
             CreationDate = DateTimeOffset.Now,
             IssueId = ticketDto.IssueId,
+            IssueType = issueType, // Set the IssueType from the database
             SubIssueId = ticketDto.SubIssueId,
             ClientId = ticketDto.ClientId,
             CompanyId = ticketDto.CompanyId,
@@ -114,6 +118,7 @@ public class TicketsController : ControllerBase
         _context.Tickets.Add(ticket);
         await _context.SaveChangesAsync();
 
+        // Create the response DTO
         var createdTicketDto = new TicketGetDto
         {
             Id = ticket.Id,
@@ -122,6 +127,7 @@ public class TicketsController : ControllerBase
             Resolution = ticket.Resolution,
             CreationDate = ticket.CreationDate,
             IssueId = ticket.IssueId,
+            IssueTypeName = issueType.IssueTypeName, // Add IssueTypeName to response
             SubIssueId = ticket.SubIssueId,
             ClientId = ticket.ClientId,
             ClientName = client.Name,
@@ -132,8 +138,9 @@ public class TicketsController : ControllerBase
             TicketNotes = ticket.TicketNotes
         };
 
-        return CreatedAtAction(nameof(GetTicket), new { id = ticket.Id }, createdTicketDto);
-    }
+    return CreatedAtAction(nameof(GetTicket), new { id = ticket.Id }, createdTicketDto);
+}
+
 
     // PUT: api/tickets/{id}
     [HttpPut("{id}")]

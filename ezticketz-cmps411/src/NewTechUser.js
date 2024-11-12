@@ -8,12 +8,13 @@ const NewTechUser = () => {
   const [techLevel, setTechLevel] = useState(1);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState(''); // Password field
+  const [confirmPassword, setConfirmPassword] = useState(''); // Confirm Password field
   const [error, setError] = useState('');
   const [passwordErrors, setPasswordErrors] = useState({
-    length: true,
-    uppercase: true,
-    specialChar: true,
-    number: true,
+    length: false,
+    uppercase: false,
+    specialChar: false,
+    number: false,
   });
 
   const navigate = useNavigate(); // Hook to handle navigation
@@ -43,8 +44,8 @@ const NewTechUser = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Ensure both firstName and lastName are filled out
-    if (!firstName || !lastName || !techLevel || !email || !password) {
+    // Ensure all required fields are filled out
+    if (!firstName || !lastName || !techLevel || !email || !password || !confirmPassword) {
       setError('Please fill out all fields.');
       return;
     }
@@ -56,6 +57,11 @@ const NewTechUser = () => {
 
     if (Object.values(passwordErrors).some((error) => error)) {
       setError('Password must meet all the requirements.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
       return;
     }
 
@@ -84,6 +90,7 @@ const NewTechUser = () => {
         setTechLevel(1);
         setEmail('');
         setPassword('');
+        setConfirmPassword('');
         setError('');
 
         // Redirect to the Technicians page after successful creation
@@ -163,11 +170,22 @@ const NewTechUser = () => {
             required
           />
           <ul className="password-requirements">
-            {passwordErrors.length && <li>At least 8 characters</li>}
-            {passwordErrors.uppercase && <li>One uppercase letter</li>}
-            {passwordErrors.specialChar && <li>One special character</li>}
-            {passwordErrors.number && <li>One number</li>}
+            {password && passwordErrors.length && <li>At least 8 characters</li>}
+            {password && passwordErrors.uppercase && <li>One uppercase letter</li>}
+            {password && passwordErrors.specialChar && <li>One special character</li>}
+            {password && passwordErrors.number && <li>One number</li>}
           </ul>
+        </div>
+        <div className="form-group">
+          <label>Confirm Password:
+            {confirmPassword === '' && <span className="required-asterisk"> *</span>}
+          </label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
         </div>
         {error && <p className="error-message">{error}</p>}
         <button type="submit" className="submit-button">Create Tech User</button>

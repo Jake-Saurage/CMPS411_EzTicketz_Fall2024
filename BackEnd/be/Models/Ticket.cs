@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CMPS411_EzTicketz_Fall2024.Models
 {
@@ -11,6 +12,9 @@ namespace CMPS411_EzTicketz_Fall2024.Models
     public string? Resolution { get; set; }  // Nullable
     public DateTimeOffset CreationDate { get; set; }
     public int IssueId { get; set; }
+   
+   [ForeignKey("IssueId")] // Explicitly specify the foreign key column
+    public required IssueType IssueType { get; set; }
     public int SubIssueId { get; set; }
     public int ClientId { get; set; }
     public int CompanyId { get; set; }
@@ -152,6 +156,7 @@ namespace CMPS411_EzTicketz_Fall2024.Models
         public string TechName { get; set; } = string.Empty;  // For convenience, include TechUser's name
 
         public string? TicketNotes { get; set; }
+        public string? IssueTypeName { get; internal set; }
     }
 
 
