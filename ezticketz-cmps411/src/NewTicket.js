@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 
@@ -6,16 +6,18 @@ const NewTicket = () => {
   const [ticketTitle, setTicketTitle] = useState('');
   const [ticketDescription, setTicketDescription] = useState('');
   const [resolution, setResolution] = useState('');
-  const [issueId, setIssueId] = useState(0);
-  const [subIssueId, setSubIssueId] = useState(0);
+  const [issueId, setIssueId] = useState('');
+  const [subIssueId, setSubIssueId] = useState('');
   const [ticketNotes, setTicketNotes] = useState('');
+
+  const [issueTypes, setIssueTypes] = useState([]);
+  const [subIssueTypes, setSubIssueTypes] = useState([]);
+  const [companies, setCompanies] = useState([]);
 
   const [techSearch, setTechSearch] = useState('');
   const [clientSearch, setClientSearch] = useState('');
-
   const [techSuggestions, setTechSuggestions] = useState([]);
   const [clientSuggestions, setClientSuggestions] = useState([]);
-  const [companies, setCompanies] = useState([]); // Store all available companies
 
   const [selectedTechId, setSelectedTechId] = useState(null);
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
@@ -25,22 +27,41 @@ const NewTicket = () => {
 
   const navigate = useNavigate();
 
-  const fetchSuggestions = async (endpoint, searchQuery, setSuggestions) => {
-    if (searchQuery.length === 0) {
-      setSuggestions([]);
-      return;
-    }
+  // Fetch issue types when component mounts
+  const fetchIssueTypes = async () => {
     try {
-      const response = await fetch(`http://localhost:5099/api/${endpoint}?search=${searchQuery}`);
+      const response = await fetch('http://localhost:5099/api/issuetypes');
       if (!response.ok) {
-        throw new Error(`Failed to fetch ${endpoint} suggestions`);
+        throw new Error('Failed to fetch issue types');
       }
       const data = await response.json();
-      setSuggestions(data);
+      setIssueTypes(data);
     } catch (error) {
-      console.error(error.message);
+      console.error('Error fetching issue types:', error.message);
     }
   };
+
+  // Fetch sub-issue types based on selected issue type
+  const fetchSubIssueTypes = useCallback(async (issueTypeId) => {
+    if (!issueTypeId) {
+      setSubIssueTypes([]);
+      return;
+    }
+
+    try {
+      // Find the selected issue type
+      const selectedIssueType = issueTypes.find(issue => issue.id === Number(issueTypeId));
+      if (selectedIssueType && selectedIssueType.subIssueTypeName) {
+        // Use the sub-issue type name directly from the selected issue type
+        setSubIssueTypes([{ id: selectedIssueType.subIssueTypeName, subIssueName: selectedIssueType.subIssueTypeName }]);
+      } else {
+        setSubIssueTypes([]);
+      }
+    } catch (error) {
+      console.error('Error fetching sub-issue types:', error.message);
+      setSubIssueTypes([]);
+    }
+  }, [issueTypes]);
 
   const fetchCompanies = async () => {
     try {
@@ -49,28 +70,60 @@ const NewTicket = () => {
         throw new Error('Failed to fetch companies');
       }
       const data = await response.json();
-      setCompanies(data); // Store fetched companies in state
+      setCompanies(data);
     } catch (error) {
       console.error('Error fetching companies:', error.message);
     }
   };
 
+  const fetchTechSuggestions = async (searchTerm) => {
+    try {
+      const response = await fetch(`http://localhost:5099/api/techusers`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch tech users');
+      }
+      const data = await response.json();
+      setTechSuggestions(
+        data.filter((tech) => tech.name.toLowerCase().startsWith(searchTerm.toLowerCase()))
+      );
+    } catch (error) {
+      console.error('Error fetching tech users:', error.message);
+    }
+  };
+
+  const fetchClientSuggestions = async (searchTerm) => {
+    try {
+      const response = await fetch(`http://localhost:5099/api/clients`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch clients');
+      }
+      const data = await response.json();
+      setClientSuggestions(
+        data.filter((client) => client.name.toLowerCase().startsWith(searchTerm.toLowerCase()))
+      );
+    } catch (error) {
+      console.error('Error fetching clients:', error.message);
+    }
+  };
+
   useEffect(() => {
-    fetchCompanies(); // Fetch all companies when the component loads
+    fetchCompanies();
+    fetchIssueTypes();
   }, []);
 
+  // Fetch sub-issues when issueId changes
   useEffect(() => {
-    fetchSuggestions('techusers', techSearch, setTechSuggestions);
-  }, [techSearch]);
-
-  useEffect(() => {
-    fetchSuggestions('clients', clientSearch, setClientSuggestions);
-  }, [clientSearch]);
+    if (issueId) {
+      fetchSubIssueTypes(issueId);
+    } else {
+      setSubIssueTypes([]);
+    }
+  }, [issueId, fetchSubIssueTypes]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!ticketTitle || !ticketDescription || !issueId || !subIssueId || !selectedClientId || !selectedCompanyId || !selectedTechId) {
+    if (!ticketTitle || !ticketDescription || !issueId || !selectedClientId || !selectedCompanyId || !selectedTechId) {
       setError('Please fill out all required fields.');
       return;
     }
@@ -79,49 +132,47 @@ const NewTicket = () => {
       ticketTitle,
       ticketDescription,
       resolution: resolution || '',
-      issueId,
-      subIssueId,
+      issueId: Number(issueId),
+      subIssueId: subIssueId ? subIssueId : null,
       clientId: selectedClientId,
       companyId: selectedCompanyId,
       techId: selectedTechId,
       ticketNotes: ticketNotes || '',
     };
 
-   // Inside your handleSubmit function:
-try {
-  const response = await fetch('http://localhost:5099/api/tickets', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(ticketData),
-  });
+    try {
+      const response = await fetch('http://localhost:5099/api/tickets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(ticketData),
+      });
 
-  if (!response.ok) {
-    throw new Error('Failed to create ticket.');
-  }
+      if (!response.ok) {
+        throw new Error('Failed to create ticket.');
+      }
 
-  // Reset fields after successful creation
-  setTicketTitle('');
-  setTicketDescription('');
-  setResolution('');
-  setIssueId(0);
-  setSubIssueId(0);
-  setTechSearch('');
-  setClientSearch('');
-  setSelectedTechId(null);
-  setSelectedCompanyId(null);
-  setSelectedClientId(null);
-  setTicketNotes('');
-  setError('');
+      // Reset fields after successful creation
+      setTicketTitle('');
+      setTicketDescription('');
+      setResolution('');
+      setIssueId('');
+      setSubIssueId('');
+      setTechSearch('');
+      setClientSearch('');
+      setSelectedTechId(null);
+      setSelectedCompanyId(null);
+      setSelectedClientId(null);
+      setTicketNotes('');
+      setError('');
 
-  // Redirect to the tickets list page (ensure it's "/tickets-list")
-  navigate('/tickets-list');
-} catch (error) {
-  console.error('Error creating ticket:', error);
-  setError('Failed to create ticket. Please try again.');
-}
-
+      // Redirect to the tickets list page
+      navigate('/tickets-list');
+    } catch (error) {
+      console.error('Error creating ticket:', error);
+      setError('Failed to create ticket. Please try again.');
+    }
   };
 
   return (
@@ -129,7 +180,7 @@ try {
       <h1>Create New Ticket</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Ticket Title:</label>
+          <label>Ticket Title</label>
           <input
             type="text"
             value={ticketTitle}
@@ -139,7 +190,7 @@ try {
         </div>
 
         <div className="form-group">
-          <label>Ticket Description:</label>
+          <label>Ticket Description</label>
           <textarea
             value={ticketDescription}
             onChange={(e) => setTicketDescription(e.target.value)}
@@ -148,36 +199,38 @@ try {
         </div>
 
         <div className="form-group">
-          <label>Resolution (Optional):</label>
-          <input
-            type="text"
-            value={resolution}
-            onChange={(e) => setResolution(e.target.value)}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Issue ID:</label>
-          <input
-            type="number"
+          <label>Issue Type</label>
+          <select
             value={issueId}
-            onChange={(e) => setIssueId(Number(e.target.value))}
+            onChange={(e) => setIssueId(e.target.value)}
             required
-          />
+          >
+            <option value="">Select an Issue Type</option>
+            {issueTypes.map((issue) => (
+              <option key={issue.id} value={issue.id}>
+                {issue.issueTypeName}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="form-group">
-          <label>Sub Issue ID:</label>
-          <input
-            type="number"
+          <label>Sub Issue Type</label>
+          <select
             value={subIssueId}
-            onChange={(e) => setSubIssueId(Number(e.target.value))}
-            required
-          />
+            onChange={(e) => setSubIssueId(e.target.value)}
+          >
+            <option value="">Select a Sub Issue Type</option>
+            {subIssueTypes.map((subIssue, index) => (
+              <option key={index} value={subIssue.subIssueName}>
+                {subIssue.subIssueName}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="form-group">
-          <label>Select Company:</label>
+          <label>Select Company</label>
           <select
             value={selectedCompanyId || ''}
             onChange={(e) => setSelectedCompanyId(e.target.value)}
@@ -193,57 +246,76 @@ try {
         </div>
 
         <div className="form-group">
-          <label>Search Client:</label>
-          <input
-            type="text"
-            value={clientSearch}
-            onChange={(e) => setClientSearch(e.target.value)}
-          />
-          {clientSuggestions.length > 0 && (
-            <ul className="suggestions-list" style={{ width: '100%' }}>
-              {clientSuggestions.map((client) => (
-                <li
-                  key={client.id}
-                  onClick={() => {
-                    setSelectedClientId(client.id);
-                    setClientSearch(client.name);
-                    setClientSuggestions([]);
-                  }}
-                >
-                  {client.name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <div className="form-group">
-          <label>Search Tech User:</label>
+          <label>Tech User</label>
           <input
             type="text"
             value={techSearch}
-            onChange={(e) => setTechSearch(e.target.value)}
+            onChange={(e) => {
+              setTechSearch(e.target.value);
+              fetchTechSuggestions(e.target.value);
+            }}
+            placeholder="Search for Tech User"
           />
-          {techSuggestions.length > 0 && (
-            <ul className="suggestions-list" style={{ width: '100%' }}>
+          {techSearch && techSuggestions.length > 0 && (
+            <div className="dropdown polished-dropdown">
               {techSuggestions.map((tech) => (
-                <li
+                <div
                   key={tech.id}
+                  className="dropdown-item polished-dropdown-item"
                   onClick={() => {
                     setSelectedTechId(tech.id);
-                    setTechSearch(tech.name);
-                    setTechSuggestions([]);
+                    setTechSearch(tech.name); // Set the selected tech user name in the input
+                    setTechSuggestions([]); // Clear the suggestions
                   }}
                 >
                   {tech.name}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
 
         <div className="form-group">
-          <label>Ticket Notes (Optional):</label>
+          <label>Client</label>
+          <input
+            type="text"
+            value={clientSearch}
+            onChange={(e) => {
+              setClientSearch(e.target.value);
+              fetchClientSuggestions(e.target.value);
+            }}
+            placeholder="Search for Client"
+          />
+          {clientSearch && clientSuggestions.length > 0 && (
+            <div className="dropdown polished-dropdown">
+              {clientSuggestions.map((client) => (
+                <div
+                  key={client.id}
+                  className="dropdown-item polished-dropdown-item"
+                  onClick={() => {
+                    setSelectedClientId(client.id);
+                    setClientSearch(client.name); // Set the selected client name in the input
+                    setClientSuggestions([]); // Clear the suggestions
+                  }}
+                >
+                  {client.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="form-group">
+          <label>Resolution</label>
+          <input
+            type="text"
+            value={resolution}
+            onChange={(e) => setResolution(e.target.value)}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Ticket Notes</label>
           <textarea
             value={ticketNotes}
             onChange={(e) => setTicketNotes(e.target.value)}
