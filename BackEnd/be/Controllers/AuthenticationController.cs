@@ -20,21 +20,41 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
         [HttpPost("SignIn")]
         public async Task<IActionResult> SignIn([FromBody] SignInDto signInDto)
         {
+            if (signInDto == null || string.IsNullOrWhiteSpace(signInDto.Email) || string.IsNullOrWhiteSpace(signInDto.Password))
+            {
+                return BadRequest("Email and password are required.");
+            }
+
+            // Attempt to authenticate as Client
             var client = await _authService.AuthenticateClientAsync(signInDto.Email, signInDto.Password);
             if (client != null)
             {
-                // Include userId in the response for client
-                return Ok(new { message = "Client signed in successfully", userType = "Client", userId = client.Id });
+                var token = _authService.GenerateToken(client.Email);
+                return Ok(new 
+                { 
+                    message = "Client signed in successfully", 
+                    userType = "Client", 
+                    userId = client.Id,
+                    token 
+                });
             }
 
+            // Attempt to authenticate as TechUser
             var techUser = await _authService.AuthenticateTechUserAsync(signInDto.Email, signInDto.Password);
             if (techUser != null)
             {
-                // Include userId in the response for tech user
-                return Ok(new { message = "Tech user signed in successfully", userType = "TechUser", userId = techUser.Id });
+                var token = _authService.GenerateToken(techUser.Email);
+                return Ok(new 
+                { 
+                    message = "Tech user signed in successfully", 
+                    userType = "TechUser", 
+                    userId = techUser.Id,
+                    token 
+                });
             }
 
-            return Unauthorized("Invalid email or password");
+            // If both attempts fail, return Unauthorized
+            return Unauthorized("Invalid email or password.");
         }
     }
 }

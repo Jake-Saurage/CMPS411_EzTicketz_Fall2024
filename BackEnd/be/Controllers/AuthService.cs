@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using CMPS411_EzTicketz_Fall2024.Data;
 using CMPS411_EzTicketz_Fall2024.Models;
@@ -11,21 +12,27 @@ namespace CMPS411_EzTicketz_Fall2024.Services
 
         public AuthService(YourDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        // Authenticate Client by email and password
-        public async Task<Client> AuthenticateClientAsync(string email, string password)
+        // Asynchronously authenticate a TechUser and return the user object
+        public async Task<TechUser?> AuthenticateTechUserAsync(string username, string password)
         {
-            var client = await _context.Clients.SingleOrDefaultAsync(c => c.Email == email && c.Password == password);
-            return client; // Returns null if authentication fails
+            return await _context.TechUsers
+                .SingleOrDefaultAsync(t => t.Email == username && t.Password == password);
         }
 
-        // Authenticate TechUser by email and password
-        public async Task<TechUser> AuthenticateTechUserAsync(string email, string password)
+        // Asynchronously authenticate a Client and return the user object
+        public async Task<Client?> AuthenticateClientAsync(string email, string password)
         {
-            var techUser = await _context.TechUsers.SingleOrDefaultAsync(t => t.Email == email && t.Password == password);
-            return techUser; // Returns null if authentication fails
+            return await _context.Clients
+                .SingleOrDefaultAsync(c => c.Email == email && c.Password == password);
+        }
+
+        // Generate a token (dummy implementation)
+        public string GenerateToken(string email)
+        {
+            return Convert.ToBase64String(Guid.NewGuid().ToByteArray()); // Replace with JWT for production
         }
     }
 }
