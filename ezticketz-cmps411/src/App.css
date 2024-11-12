@@ -1,5 +1,4 @@
 
-
 /* Add margin to the content below the navbar */
 .page-content {
   margin-top: 60px; /* Adjust to match the navbar height */
@@ -1273,6 +1272,36 @@ h1 {
   position: absolute; /* Use absolute positioning to align suggestions */
   z-index: 10; /* Ensure suggestions show above other elements */
 }
+
+/*Autofill suggestions for client and tech user*/
+.dropdown {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: #fff;
+  position: absolute;
+  width: 100%; /* Match the input width */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  top: calc(100% + 5px); /* Small gap between input and dropdown */
+  z-index: 1000; /* Ensure dropdown appears above other content */
+}
+
+.dropdown-item {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.form-group {
+  position: relative; /* Ensure dropdown is positioned relative to input */
+  margin-bottom: 20px; /* Spacing between form groups */
+}
+
 
 .suggestions-list li {
   padding: 8px;
