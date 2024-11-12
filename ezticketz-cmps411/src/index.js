@@ -4,27 +4,33 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import TechUserPage from './TechUsersPage';
-import TechUserDetails from './TechUserDetails'; // Import TechUserDetails component
+import TechUserDetails from './TechUserDetails';
 import CompanyPage from './CompanyPage';
 import SignIn from './SignIn';
 import TicketsPage from './TicketsPage';
-import CompanyDetail from './CompanyDetail'; // Import CompanyDetail component
-import ClientDetails from './ClientDetails'; // Import ClientDetails component
-import NewClient from './NewClient'; // Import NewClient component
+import CompanyDetail from './CompanyDetail';
+import ClientDetails from './ClientDetails';
+import NewClient from './NewClient';
 import NewTechUser from './NewTechUser';
 import Technicians from './Technicians';
 import TicketDetails from './TicketDetails';
 import TicketsList from './TicketList';
-import NewTicket from './NewTicket'; // Import NewTicket component
+import NewTicket from './NewTicket';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Layout from './Layout'; // Import Layout for global NavBar
+import Layout from './Layout';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/", // Root path now points to SignIn
+    element: (
+      <SignIn /> // SignIn page as the default landing page
+    ),
+  },
+  {
+    path: "home", // New route for the App's main content/homepage
     element: (
       <Layout>
-        <App /> {/* App component for homepage or main content */}
+        <App />
       </Layout>
     ),
   },
@@ -37,10 +43,10 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "techusers/:id",  // New route for individual TechUser details
+    path: "techusers/:id",
     element: (
       <Layout>
-        <TechUserDetails /> {/* TechUserDetails component */}
+        <TechUserDetails />
       </Layout>
     ),
   },
@@ -48,15 +54,7 @@ const router = createBrowserRouter([
     path: "company",
     element: (
       <Layout>
-        <CompanyPage /> {/* Company page route */}
-      </Layout>
-    ),
-  },
-  {
-    path: "signin",
-    element: (
-      <Layout>
-        <SignIn /> {/* SignIn page */}
+        <CompanyPage />
       </Layout>
     ),
   },
@@ -64,15 +62,15 @@ const router = createBrowserRouter([
     path: "tickets",
     element: (
       <Layout>
-        <TicketsPage /> {/* Tickets page */}
+        <TicketsPage />
       </Layout>
     ),
   },
   {
-    path: "tickets/:ticketId",  // Add the route for individual ticket details
+    path: "tickets/:ticketId",
     element: (
       <Layout>
-        <TicketDetails /> {/* TicketDetails component for individual ticket page */}
+        <TicketDetails />
       </Layout>
     ),
   },
@@ -80,61 +78,58 @@ const router = createBrowserRouter([
     path: "companies/:companyId",
     element: (
       <Layout>
-        <CompanyDetail /> {/* Individual company details */}
+        <CompanyDetail />
       </Layout>
     ),
   },
   {
-    path: "clients/:id",  // Route for individual client details
+    path: "clients/:id",
     element: (
       <Layout>
-        <ClientDetails /> {/* ClientDetails component */}
+        <ClientDetails />
       </Layout>
     ),
   },
   {
-    path: "createClient",  // Route for creating a new client
+    path: "createClient",
     element: (
       <Layout>
-        <NewClient /> {/* NewClient component */}
+        <NewClient />
       </Layout>
     ),
   },
   {
-    path: "createTechUser",  // Route for creating a new tech user
+    path: "createTechUser",
     element: (
       <Layout>
-        <NewTechUser /> {/* NewTechUser component for creating a tech user */}
+        <NewTechUser />
       </Layout>
     ),
   },
   {
-    path: "technicians", // Add a new route for the Technicians page
+    path: "technicians",
     element: (
       <Layout>
-        <Technicians /> {/* Technicians component */}
+        <Technicians />
       </Layout>
     ),
   },
   {
-    path: "new-ticket", // Add a route for the NewTicket page
+    path: "new-ticket",
     element: (
       <Layout>
-        <NewTicket /> {/* NewTicket component */}
+        <NewTicket />
       </Layout>
     ),
   },
-
   {
-    path: "tickets-list", // New route for the TicketsList page
+    path: "tickets-list",
     element: (
       <Layout>
-        <TicketsList /> {/* TicketsList component */}
+        <TicketsList />
       </Layout>
     ),
   },
-
-  
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -142,6 +137,4 @@ root.render(
   <RouterProvider router={router} />
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
 reportWebVitals();

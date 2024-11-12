@@ -1,15 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using CMPS411_EzTicketz_Fall2024.Data;
 using CMPS411_EzTicketz_Fall2024.Controllers;
+using CMPS411_EzTicketz_Fall2024.Services; // Ensure this matches the AuthService namespace
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Register your DbContext
+// Register your DbContext with the connection string from appsettings.json
 builder.Services.AddDbContext<YourDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("YourConnectionString"))); 
+    options.UseSqlServer(builder.Configuration.GetConnectionString("YourConnectionString")));
+
+// Register AuthService as a scoped dependency
+builder.Services.AddScoped<AuthService>();
 
 // Register HttpClient for CompanyController
 builder.Services.AddHttpClient<CompanyController>();
@@ -26,7 +30,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Enable Swagger/OpenAPI for API documentation in development
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

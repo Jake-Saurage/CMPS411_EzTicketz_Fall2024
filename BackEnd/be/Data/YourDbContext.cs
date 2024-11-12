@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using CMPS411_EzTicketz_Fall2024.Models; // Adjust this namespace as needed
-
+using CMPS411_EzTicketz_Fall2024.Services;
 
 namespace CMPS411_EzTicketz_Fall2024.Data
 {

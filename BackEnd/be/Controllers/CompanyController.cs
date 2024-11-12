@@ -79,6 +79,11 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
         [HttpPost]
         public async Task<ActionResult<GetCompanyDTO>> AddCompany(CreateCompanyDTO createCompanyDTO)
         {
+            if (createCompanyDTO == null)
+            {
+                return BadRequest("Company data is required.");
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -110,6 +115,11 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 return BadRequest("ID in URL does not match ID in request body.");
             }
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var company = await _context.Companies.FindAsync(id);
             if (company == null)
             {
@@ -126,11 +136,11 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             {
                 if (!_context.Companies.Any(c => c.Id == id))
                 {
-                    return NotFound();
+                    return NotFound("The company you're trying to update does not exist.");
                 }
                 else
                 {
-                    throw;
+                    return Conflict("The company was modified by another user. Please refresh and try again.");
                 }
             }
 
@@ -141,6 +151,11 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> EditCompany(int id, EditCompanyDTO editCompanyDTO)
         {
+            if (editCompanyDTO == null)
+            {
+                return BadRequest("Company data is required.");
+            }
+
             var company = await _context.Companies.FindAsync(id);
             if (company == null)
             {
@@ -160,11 +175,11 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
             {
                 if (!_context.Companies.Any(c => c.Id == id))
                 {
-                    return NotFound();
+                    return NotFound("The company you're trying to update does not exist.");
                 }
                 else
                 {
-                    throw;
+                    return Conflict("The company was modified by another user. Please refresh and try again.");
                 }
             }
 

@@ -57,7 +57,8 @@ const TicketsList = () => {
             tickets.map((ticket) => (
               <tr key={ticket.id}>
                 <td>
-                  <Link to={`/companies/${ticket.companyId}`} className="ticket-link">
+                  {/* Link to the specific ticket details page */}
+                  <Link to={`/tickets/${ticket.id}`} className="ticket-link">
                     {ticket.ticketTitle}
                   </Link>
                 </td>
