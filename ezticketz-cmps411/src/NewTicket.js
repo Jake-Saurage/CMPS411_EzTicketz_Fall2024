@@ -91,26 +91,43 @@ const NewTicket = () => {
     }
   };
 
-  const fetchClientSuggestions = async (searchTerm) => {
+  const fetchClientSuggestions = async (searchTerm, companyId) => {
+    if (!companyId) {
+      setClientSuggestions([]);
+      return;
+    }
+  
     try {
       const response = await fetch(`http://localhost:5099/api/clients`);
       if (!response.ok) {
         throw new Error('Failed to fetch clients');
       }
       const data = await response.json();
+  
+      // Filter clients based on both companyId and searchTerm
       setClientSuggestions(
-        data.filter((client) => client.name.toLowerCase().startsWith(searchTerm.toLowerCase()))
+        data.filter((client) => 
+          client.companyId === Number(companyId) &&
+          client.name.toLowerCase().startsWith(searchTerm.toLowerCase())
+        )
       );
     } catch (error) {
       console.error('Error fetching clients:', error.message);
     }
   };
+  
 
   useEffect(() => {
     fetchCompanies();
     fetchIssueTypes();
   }, []);
-
+ 
+  useEffect(() => {
+    if (selectedCompanyId) {
+      fetchClientSuggestions(clientSearch, selectedCompanyId);
+    }
+  }, [selectedCompanyId, clientSearch]);
+  
   // Fetch sub-issues when issueId changes
   useEffect(() => {
     if (issueId) {
