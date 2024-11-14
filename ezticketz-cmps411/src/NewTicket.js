@@ -115,7 +115,6 @@ const NewTicket = () => {
       console.error('Error fetching clients:', error.message);
     }
   };
-  
 
   useEffect(() => {
     fetchCompanies();
@@ -195,9 +194,10 @@ const NewTicket = () => {
   return (
     <div className="new-ticket-container">
       <h1>Create New Ticket</h1>
+      <p style={{ color: 'red' }}>* = required field</p>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Ticket Title</label>
+          <label>Ticket Title <span style={{ color: 'red' }}>*</span></label>
           <input
             type="text"
             value={ticketTitle}
@@ -207,7 +207,7 @@ const NewTicket = () => {
         </div>
 
         <div className="form-group">
-          <label>Ticket Description</label>
+          <label>Ticket Description <span style={{ color: 'red' }}>*</span></label>
           <textarea
             value={ticketDescription}
             onChange={(e) => setTicketDescription(e.target.value)}
@@ -216,7 +216,7 @@ const NewTicket = () => {
         </div>
 
         <div className="form-group">
-          <label>Issue Type</label>
+          <label>Issue Type <span style={{ color: 'red' }}>*</span></label>
           <select
             value={issueId}
             onChange={(e) => setIssueId(e.target.value)}
@@ -247,7 +247,7 @@ const NewTicket = () => {
         </div>
 
         <div className="form-group">
-          <label>Select Company</label>
+          <label>Select Company <span style={{ color: 'red' }}>*</span></label>
           <select
             value={selectedCompanyId || ''}
             onChange={(e) => setSelectedCompanyId(e.target.value)}
@@ -263,7 +263,7 @@ const NewTicket = () => {
         </div>
 
         <div className="form-group">
-          <label>Tech User</label>
+          <label>Tech User <span style={{ color: 'red' }}>*</span></label>
           <input
             type="text"
             value={techSearch}
@@ -293,7 +293,7 @@ const NewTicket = () => {
         </div>
 
         <div className="form-group">
-          <label>Client</label>
+          <label>Client <span style={{ color: 'red' }}>*</span></label>
           <input
             type="text"
             value={clientSearch}

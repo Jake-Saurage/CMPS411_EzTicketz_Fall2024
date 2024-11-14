@@ -12,6 +12,7 @@ const CompanyManager = () => {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false); // State to control modal visibility
   const [companyToDelete, setCompanyToDelete] = useState(null); // State to track the company being deleted
+  const [searchQuery, setSearchQuery] = useState(''); // State to track the search query
 
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -122,6 +123,11 @@ const CompanyManager = () => {
     setCompanyName('');
   };
 
+  // Filter companies based on the search query
+  const filteredCompanies = companies.filter(company =>
+    company.companyName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div style={styles.container}>
       <h1 style={styles.header}>Company Manager</h1>
@@ -141,9 +147,17 @@ const CompanyManager = () => {
         {isEditing && <button type="button" onClick={resetForm} style={styles.cancelButton}>Cancel</button>}
       </form>
 
+      <input
+        type="text"
+        placeholder="Search Companies"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        style={{ ...styles.input}}
+      />
+
       <div style={styles.companyList}>
         <h2 style={styles.subHeader}>Company List</h2>
-        {companies.map((company) => {
+        {filteredCompanies.map((company) => {
           return (
             <div key={company.id.toString()} style={styles.companyCard}>
               <Link to={`/companies/${company.id}`} className="company-link">
@@ -178,6 +192,7 @@ const styles = {
     backgroundColor: '#f9f9f9',
     borderRadius: '8px',
     boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+    marginTop:'65px'
   },
   header: {
     textAlign: 'center',
