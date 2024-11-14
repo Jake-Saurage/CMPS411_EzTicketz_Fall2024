@@ -7,7 +7,9 @@ const TicketDetails = () => {
   const { ticketId } = useParams(); 
   const [ticket, setTicket] = useState(null); 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
+  const [issueTypeName, setIssueTypeName] = useState('');
+  const [subIssueTypeName, setSubIssueTypeName] = useState('');
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -17,7 +19,31 @@ const TicketDetails = () => {
           throw new Error('Failed to fetch ticket');
         }
         const data = await response.json();
+        console.log('Fetched ticket data:', data); // Debug: Check the full ticket data
         setTicket(data);
+
+        // Fetch Issue Type Name
+        if (data.issueId) {
+          const issueResponse = await fetch(`http://localhost:5099/api/issuetypes/${data.issueId}`);
+          if (issueResponse.ok) {
+            const issueData = await issueResponse.json();
+            setIssueTypeName(issueData.issueTypeName);
+          } else {
+            console.error('Failed to fetch issue type name');
+          }
+        }
+
+        // Fetch Sub-Issue Type Name
+        if (data.subIssueId) {
+          const subIssueResponse = await fetch(`http://localhost:5099/api/subissuetypes/${data.subIssueId}`);
+          if (subIssueResponse.ok) {
+            const subIssueData = await subIssueResponse.json();
+            setSubIssueTypeName(subIssueData.subIssueName);
+          } else {
+            console.error('Failed to fetch sub-issue type name');
+          }
+        }
+
         setLoading(false);
       } catch (error) {
         setError(error.message);
@@ -73,11 +99,11 @@ const TicketDetails = () => {
 
             <div className="issue-info-container">
               <div className="issue-type">
-                <p><strong>Issue Type: </strong> {ticket.issueId}</p>
+                <p><strong>Issue Type: </strong> {issueTypeName ? issueTypeName : 'No issue type available'}</p>
               </div>
 
               <div className="sub-issue-type">
-                <p><strong>Sub-Issue Type: </strong> {ticket.subIssueId}</p>
+                <p><strong>Sub-Issue Type: </strong> {subIssueTypeName ? subIssueTypeName : 'No sub-issue type available'}</p>
               </div>
             </div>
           </div>
