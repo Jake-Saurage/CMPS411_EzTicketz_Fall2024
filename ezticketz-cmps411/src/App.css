@@ -1523,3 +1523,99 @@ h1 {
   background-color: #357ABD; /* Change button color on hover */
 
 }
+/* Ticket edit page*/
+/* Edit Form Styling */
+.ticket-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ticket-edit-form label {
+  font-weight: bold;
+  color: #333;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+.ticket-edit-form input,
+.ticket-edit-form textarea,
+.ticket-edit-form select {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.ticket-edit-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.ticket-edit-form button[type="submit"] {
+  margin-top: 20px;
+  background-color: #4066FA;
+  color: white;
+  padding: 10px 15px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.ticket-edit-form button[type="submit"]:hover {
+  background-color: #3054d3;
+}
+
+
+/* Adjust dropdown style to align directly under the input */
+.search-dropdown {
+  position: absolute;
+  width: 100%; /* Make it as wide as the input */
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.search-dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.search-dropdown-item:hover {
+  background-color: #f1f1f1;
+}
+
+.edit-button {
+  background-color: #4066FA; /* Blue color matching the theme */
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+  background-color: #3053c3; /* Slightly darker blue for hover */
+}
+
+.edit-button:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(64, 102, 250, 0.6);
+}

@@ -147,62 +147,50 @@ public class TicketsController : ControllerBase
         return CreatedAtAction(nameof(GetTicket), new { id = ticket.Id }, createdTicketDto);
     }
 
-    // PUT: api/tickets/{id}
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutTicket(int id, TicketUpdateDto ticketDto)
+ // PUT: api/tickets/{id}
+[HttpPut("{id}")]
+public async Task<IActionResult> PutTicket(int id, TicketUpdateDto ticketDto)
+{
+    if (id != ticketDto.Id)
     {
-        if (id != ticketDto.Id)
-        {
-            return BadRequest();
-        }
+        return BadRequest();
+    }
 
-        var client = await _context.Clients.FindAsync(ticketDto.ClientId);
-        var company = await _context.Companies.FindAsync(ticketDto.CompanyId);
-        var techUser = await _context.TechUsers.FindAsync(ticketDto.TechId);
-        var issueType = await _context.IssueTypes.FindAsync(ticketDto.IssueId);
-        var subIssueType = await _context.SubIssueTypes.FindAsync(ticketDto.SubIssueId);
+    var ticket = await _context.Tickets.FindAsync(id);
+    if (ticket == null)
+    {
+        return NotFound();
+    }
 
-        if (client == null || company == null || techUser == null || issueType == null || subIssueType == null)
-        {
-            return BadRequest("Client, Company, TechUser, IssueType, or SubIssueType not found.");
-        }
+    ticket.TicketTitle = ticketDto.TicketTitle;
+    ticket.TicketDescription = ticketDto.TicketDescription;
+    ticket.IssueId = ticketDto.IssueId;
+    ticket.SubIssueId = ticketDto.SubIssueId;
+    ticket.ClientId = ticketDto.ClientId;
+    ticket.CompanyId = ticketDto.CompanyId;
+    ticket.TechId = ticketDto.TechId;
 
-        var ticket = await _context.Tickets.FindAsync(id);
-        if (ticket == null)
+    _context.Entry(ticket).State = EntityState.Modified;
+
+    try
+    {
+        await _context.SaveChangesAsync();
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        if (!TicketExists(id))
         {
             return NotFound();
         }
-
-        ticket.TicketTitle = ticketDto.TicketTitle;
-        ticket.TicketDescription = ticketDto.TicketDescription;
-        ticket.Resolution = ticketDto.Resolution;
-        ticket.IssueId = ticketDto.IssueId;
-        ticket.SubIssueId = ticketDto.SubIssueId;
-        ticket.ClientId = ticketDto.ClientId;
-        ticket.CompanyId = ticketDto.CompanyId;
-        ticket.TechId = ticketDto.TechId;
-        ticket.TicketNotes = ticketDto.TicketNotes;
-
-        _context.Entry(ticket).State = EntityState.Modified;
-
-        try
+        else
         {
-            await _context.SaveChangesAsync();
+            throw;
         }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!TicketExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
     }
+
+    return NoContent();
+}
+
 
     // DELETE: api/tickets/{id}
     [HttpDelete("{id}")]
@@ -224,4 +212,8 @@ public class TicketsController : ControllerBase
     {
         return _context.Tickets.Any(e => e.Id == id);
     }
+
+
+
+    
 }
