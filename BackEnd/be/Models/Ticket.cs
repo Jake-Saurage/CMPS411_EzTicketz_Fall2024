@@ -17,6 +17,9 @@ namespace CMPS411_EzTicketz_Fall2024.Models
    [ForeignKey("IssueId")] // Explicitly specify the foreign key column
     public required IssueType IssueType { get; set; }
     public int SubIssueId { get; set; }
+
+[ForeignKey("SubIssueId")]
+public SubIssueType? SubIssueType { get; set; } // Add this navigation property
     public int ClientId { get; set; }
     public int CompanyId { get; set; }
     public int TechId { get; set; }
@@ -187,6 +190,8 @@ namespace CMPS411_EzTicketz_Fall2024.Models
 
 
         public int SubIssueId { get; set; }
+
+       public string? SubIssueTypeName { get; set; } // For convenience, include SubIssueType's name
 
 
         public int ClientId { get; set; }
