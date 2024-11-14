@@ -56,42 +56,44 @@ public class TicketsController : ControllerBase
 
 
     // GET: api/tickets/{id}
-    [HttpGet("{id}")]
-    public async Task<ActionResult<TicketGetDto>> GetTicket(int id)
+[HttpGet("{id}")]
+public async Task<ActionResult<TicketGetDto>> GetTicket(int id)
+{
+    var ticket = await _context.Tickets.Include(t => t.Client)
+                                        .Include(t => t.Company)
+                                        .Include(t => t.Tech)
+                                        .Include(t => t.IssueType)
+                                        .Include(t => t.SubIssueType) // Include SubIssueType
+                                        .FirstOrDefaultAsync(t => t.Id == id);
+
+    if (ticket == null)
     {
-        var ticket = await _context.Tickets.Include(t => t.Client)
-                                            .Include(t => t.Company)
-                                            .Include(t => t.Tech)
-                                            .FirstOrDefaultAsync(t => t.Id == id);
-
-
-        if (ticket == null)
-        {
-            return NotFound();
-        }
-
-
-        var ticketDto = new TicketGetDto
-        {
-            Id = ticket.Id,
-            TicketTitle = ticket.TicketTitle,
-            TicketDescription = ticket.TicketDescription,
-            Resolution = ticket.Resolution,
-            CreationDate = ticket.CreationDate,
-            IssueId = ticket.IssueId,
-            SubIssueId = ticket.SubIssueId,
-            ClientId = ticket.ClientId,
-            ClientName = ticket.Client?.Name ?? string.Empty,
-            CompanyId = ticket.CompanyId,
-            CompanyName = ticket.Company?.CompanyName ?? string.Empty,
-            TechId = ticket.TechId,
-            TechName = ticket.Tech?.Name ?? string.Empty,
-            TicketNotes = ticket.TicketNotes
-        };
-
-
-        return Ok(ticketDto);
+        return NotFound();
     }
+
+    var ticketDto = new TicketGetDto
+    {
+        Id = ticket.Id,
+        TicketTitle = ticket.TicketTitle,
+        TicketDescription = ticket.TicketDescription,
+        Resolution = ticket.Resolution,
+        CreationDate = ticket.CreationDate,
+        IssueId = ticket.IssueId,
+        IssueTypeName = ticket.IssueType?.IssueTypeName ?? string.Empty, // Include IssueTypeName
+        SubIssueId = ticket.SubIssueId,
+        SubIssueTypeName = ticket.SubIssueType?.SubIssueTypeName ?? string.Empty, // Include SubIssueTypeName
+        ClientId = ticket.ClientId,
+        ClientName = ticket.Client?.Name ?? string.Empty,
+        CompanyId = ticket.CompanyId,
+        CompanyName = ticket.Company?.CompanyName ?? string.Empty,
+        TechId = ticket.TechId,
+        TechName = ticket.Tech?.Name ?? string.Empty,
+        TicketNotes = ticket.TicketNotes
+    };
+
+    return Ok(ticketDto);
+}
+
 
 
     // POST: api/tickets
