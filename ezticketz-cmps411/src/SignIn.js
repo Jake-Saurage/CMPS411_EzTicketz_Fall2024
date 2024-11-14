@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext'; // Import useAuth
 import './App.css';
 
 const SignIn = () => {
@@ -7,6 +8,7 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { signIn } = useAuth(); // Get signIn from context
 
   const handleSignIn = async () => {
     setError(''); // Clear any previous errors
@@ -17,15 +19,29 @@ const SignIn = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: username, password: password }),
+        body: JSON.stringify({ email: username, password }),
       });
 
-      console.log("Response Status:", response.status); // Log response status
       if (response.ok) {
         const result = await response.json();
-        console.log("Sign-in Successful:", result.message); // Log successful message
 
-        // Check if the user is a client or tech user and navigate accordingly
+        // Store user info in the auth context, including name and userType
+        signIn({
+          userId: result.userId,
+          userType: result.userType,
+          name: result.name,
+          email: result.email,
+        });
+
+        // Store the signed-in user in localStorage as well
+        localStorage.setItem('user', JSON.stringify({
+          userId: result.userId,
+          userType: result.userType,
+          email: result.email,
+          name: result.name
+        }));
+
+        // Navigate based on user type
         if (result.userType === "Client") {
           navigate(`/clients/${result.userId}`);
         } else if (result.userType === "TechUser") {

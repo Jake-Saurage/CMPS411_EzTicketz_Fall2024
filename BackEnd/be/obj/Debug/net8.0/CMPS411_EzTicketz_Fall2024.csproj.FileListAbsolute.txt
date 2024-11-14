@@ -424,3 +424,4 @@ C:\Users\jakes\OneDrive\Desktop\CMPS 285\Fork\CMPS411_EzTicketz_Fall2024\BackEnd
 C:\Users\jakes\OneDrive\Desktop\CMPS 285\Fork\CMPS411_EzTicketz_Fall2024\BackEnd\be\obj\Debug\net8.0\CMPS411_.494C58AB.Up2Date
 C:\Users\jakes\OneDrive\Desktop\CMPS 285\Fork\CMPS411_EzTicketz_Fall2024\BackEnd\be\obj\Debug\net8.0\CMPS411_EzTicketz_Fall2024.genruntimeconfig.cache
 C:\Users\jakes\OneDrive\Desktop\CMPS 285\Fork\CMPS411_EzTicketz_Fall2024\BackEnd\be\obj\Debug\net8.0\ref\CMPS411_EzTicketz_Fall2024.dll
+C:\Users\jakes\OneDrive\Desktop\CMPS 285\Fork\CMPS411_EzTicketz_Fall2024\BackEnd\be\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

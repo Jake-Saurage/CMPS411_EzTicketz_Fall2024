@@ -1,6 +1,6 @@
-using System.Threading.Tasks;
 using CMPS411_EzTicketz_Fall2024.Data;
 using CMPS411_EzTicketz_Fall2024.Models;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMPS411_EzTicketz_Fall2024.Services
@@ -14,18 +14,18 @@ namespace CMPS411_EzTicketz_Fall2024.Services
             _context = context;
         }
 
-        // Authenticate Client by email and password
-        public async Task<Client> AuthenticateClientAsync(string email, string password)
+        public async Task<Client?> AuthenticateClientAsync(string email, string password)
         {
-            var client = await _context.Clients.SingleOrDefaultAsync(c => c.Email == email && c.Password == password);
-            return client; // Returns null if authentication fails
+            // Verify client credentials
+            return await _context.Clients
+                .SingleOrDefaultAsync(c => c.Email == email && c.Password == password);
         }
 
-        // Authenticate TechUser by email and password
-        public async Task<TechUser> AuthenticateTechUserAsync(string email, string password)
+        public async Task<TechUser?> AuthenticateTechUserAsync(string email, string password)
         {
-            var techUser = await _context.TechUsers.SingleOrDefaultAsync(t => t.Email == email && t.Password == password);
-            return techUser; // Returns null if authentication fails
+            // Verify tech user credentials
+            return await _context.TechUsers
+                .SingleOrDefaultAsync(t => t.Email == email && t.Password == password);
         }
     }
 }

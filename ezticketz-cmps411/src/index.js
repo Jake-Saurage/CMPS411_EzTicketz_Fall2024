@@ -1,8 +1,9 @@
+// index.js
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import App from './App';
 import TechUserPage from './TechUsersPage';
 import TechUserDetails from './TechUserDetails';
 import CompanyPage from './CompanyPage';
@@ -18,16 +19,16 @@ import TicketsList from './TicketList';
 import NewTicket from './NewTicket';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from './Layout';
+import { AuthProvider } from './AuthContext'; // Import AuthProvider for authentication
 
+// Define routes with `createBrowserRouter`
 const router = createBrowserRouter([
   {
-    path: "/", // Root path now points to SignIn
-    element: (
-      <SignIn /> // SignIn page as the default landing page
-    ),
+    path: "/", // Root path now points to SignIn (default landing page)
+    element: <SignIn />,
   },
   {
-    path: "home", // New route for the App's main content/homepage
+    path: "/home", // Route for the App's main content/homepage
     element: (
       <Layout>
         <App />
@@ -134,7 +135,9 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <RouterProvider router={router} />
+  <AuthProvider> {/* Wrap the entire app with AuthProvider */}
+    <RouterProvider router={router} />
+  </AuthProvider>
 );
 
 reportWebVitals();
