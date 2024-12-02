@@ -106,19 +106,22 @@ namespace CMPS411_EzTicketz_Fall2024.Models
     }
 
     public class ClientGetDto
-    {
-        public int Id { get; set; }
+{
+    public int Id { get; set; }
 
-        public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
-        public string Email { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
 
-        public string Phone { get; set; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
 
-        public string Password { get; set; } = string.Empty; // Added password property
+    public string Password { get; set; } = string.Empty; // Added password property
 
-        public int CompanyId { get; set; }
+    public int CompanyId { get; set; }
 
-        public string CompanyName { get; set; } = string.Empty; // For convenience, add Company name
-    }
+    public string CompanyName { get; set; } = string.Empty; // For convenience, add Company name
+
+    public List<TicketDto> Tickets { get; set; } = new List<TicketDto>(); // Added tickets property
+}
+
 }

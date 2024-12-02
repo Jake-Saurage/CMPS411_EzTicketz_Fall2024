@@ -18,9 +18,17 @@ namespace CMPS411_EzTicketz_Fall2024.Data
         // Add more DbSets as per your models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // You can configure your entity relationships here if necessary
-            base.OnModelCreating(modelBuilder);
-        }
+{
+    // Configure one-to-many relationship: A company can have many tickets
+    modelBuilder.Entity<Ticket>()
+        .HasOne(t => t.Company)
+        .WithMany(c => c.Tickets) // A company has a collection of tickets
+        .HasForeignKey(t => t.CompanyId)
+        .OnDelete(DeleteBehavior.Cascade); // Cascade delete tickets if company is deleted
+
+    // Configure other relationships here if necessary
+    base.OnModelCreating(modelBuilder);
+}
+
     }
 }

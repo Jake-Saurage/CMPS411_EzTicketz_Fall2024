@@ -91,20 +91,21 @@ const TicketDetails = () => {
     const { name, value } = e.target;
     setEditData((prev) => ({ ...prev, [name]: value }));
   };
+
   const handleAddNote = async () => {
     if (!newNote.trim()) {
       alert("Please write a note before submitting.");
       return;
     }
-  
+
     // Parse the user object from localStorage
     const user = JSON.parse(localStorage.getItem("user"));
-  
+
     if (!user || !user.userId || !user.userType || (user.userType !== "TechUser" && user.userType !== "Client")) {
       alert("User information is missing or invalid. Please log in again.");
       return;
     }
-  
+
     try {
       // Prepare the payload for the backend
       const payload = {
@@ -112,7 +113,7 @@ const TicketDetails = () => {
         techId: user.userType === "TechUser" ? user.userId : null,
         clientId: user.userType === "Client" ? user.userId : null,
       };
-  
+
       const response = await fetch(`http://localhost:5099/api/notes/ticket/${ticketId}`, {
         method: "POST",
         headers: {
@@ -120,13 +121,13 @@ const TicketDetails = () => {
         },
         body: JSON.stringify(payload),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to add note");
       }
-  
+
       const createdNote = await response.json();
-  
+
       // Add the new note to the existing notes list
       setNotes((prevNotes) => [...prevNotes, createdNote]);
       setNewNote(""); // Clear the input field
@@ -135,8 +136,7 @@ const TicketDetails = () => {
       alert("Failed to add note. Please try again.");
     }
   };
-  
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -220,40 +220,54 @@ const TicketDetails = () => {
             </div>
 
             <div className="ticket-side-container">
-              <div className="client-container">
-                <p>
-                  <strong>Client: </strong>
-                  <Link to={`/clients/${ticket.clientId}`} className="details-link">
-                    {ticket.clientName}
-                  </Link>
-                </p>
-              </div>
+  {/* Company Container */}
+  <div className="client-container">
+    <p>
+      <strong>Company: </strong>
+      <Link to={`/companies/${ticket.companyId}`} className="details-link">
+        {ticket.companyName}
+      </Link>
+    </p>
+  </div>
 
-              <div className="tech-container">
-                <p>
-                  <strong>Tech User: </strong>
-                  <Link to={`/techusers/${ticket.techId}`} className="details-link">
-                    {ticket.techName}
-                  </Link>
-                </p>
-              </div>
+  {/* Client Container */}
+  <div className="client-container">
+    <p>
+      <strong>Client: </strong>
+      <Link to={`/clients/${ticket.clientId}`} className="details-link">
+        {ticket.clientName}
+      </Link>
+    </p>
+  </div>
 
-              <div className="issue-info-container">
-                <div className="issue-type">
-                  <p>
-                    <strong>Issue Type: </strong>
-                    {issueTypeName || "No issue type available"}
-                  </p>
-                </div>
+  {/* Tech User Container */}
+  <div className="tech-container">
+    <p>
+      <strong>Tech User: </strong>
+      <Link to={`/techusers/${ticket.techId}`} className="details-link">
+        {ticket.techName}
+      </Link>
+    </p>
+  </div>
 
-                <div className="sub-issue-type">
-                  <p>
-                    <strong>Sub-Issue Type: </strong>
-                    {subIssueTypeName || "No sub-issue type available"}
-                  </p>
-                </div>
-              </div>
-            </div>
+  {/* Issue Information */}
+  <div className="issue-info-container">
+    <div className="issue-type">
+      <p>
+        <strong>Issue Type: </strong>
+        {issueTypeName || "No issue type available"}
+      </p>
+    </div>
+
+    <div className="sub-issue-type">
+      <p>
+        <strong>Sub-Issue Type: </strong>
+        {subIssueTypeName || "No sub-issue type available"}
+      </p>
+    </div>
+  </div>
+</div>
+
           </div>
         )}
 
@@ -261,32 +275,31 @@ const TicketDetails = () => {
         <div className="ticket-notes-container">
           <h2>Notes</h2>
           {notes.length > 0 ? (
-  <ul className="notes-list">
-    {notes.map((note) => (
-      <li key={note.id} className="note-item">
-        <p>{note.noteDescription}</p>
-        <small>
-          Posted by:{" "}
-          {note.techName ? (
-            <Link to={`/techusers/${note.techId}`} className="details-link">
-              {note.techName}
-            </Link>
-          ) : note.clientName ? (
-            <Link to={`/clients/${note.clientId}`} className="details-link">
-              {note.clientName}
-            </Link>
+            <ul className="notes-list">
+              {notes.map((note) => (
+                <li key={note.id} className="note-item">
+                  <p>{note.noteDescription}</p>
+                  <small>
+                    Posted by:{" "}
+                    {note.techName ? (
+                      <Link to={`/techusers/${note.techId}`} className="details-link">
+                        {note.techName}
+                      </Link>
+                    ) : note.clientName ? (
+                      <Link to={`/clients/${note.clientId}`} className="details-link">
+                        {note.clientName}
+                      </Link>
+                    ) : (
+                      "Unknown"
+                    )}{" "}
+                    at {new Date(note.noteTimePosted).toLocaleString()}
+                  </small>
+                </li>
+              ))}
+            </ul>
           ) : (
-            "Unknown"
-          )}{" "}
-          at {new Date(note.noteTimePosted).toLocaleString()}
-        </small>
-      </li>
-    ))}
-  </ul>
-) : (
-  <p>No notes available</p>
-)}
-
+            <p>No notes available</p>
+          )}
 
           {/* Add New Note */}
           <div className="add-note-container">
