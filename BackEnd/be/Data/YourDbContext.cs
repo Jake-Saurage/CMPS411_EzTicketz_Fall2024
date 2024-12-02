@@ -11,6 +11,7 @@ namespace CMPS411_EzTicketz_Fall2024.Data
         public DbSet<Client> Clients { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Note> Notes {get; set;}
         public DbSet<IssueType> IssueTypes { get; set; }
         public DbSet<SubIssueType> SubIssueTypes { get; set; }
         public DbSet<TechUser> TechUsers { get; set; }

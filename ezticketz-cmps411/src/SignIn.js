@@ -47,7 +47,7 @@ const SignIn = () => {
       <h2>Sign In</h2>
       <div className="input-container">
         <label>
-          Username / Email:
+          Email:
           <input
             type="text"
             className="input-field"

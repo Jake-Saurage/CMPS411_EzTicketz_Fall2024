@@ -1619,3 +1619,49 @@ h1 {
   outline: none;
   box-shadow: 0 0 5px rgba(64, 102, 250, 0.6);
 }
+
+/* Notes styaliing */
+.ticket-notes-container {
+  margin-top: 20px;
+  padding: 15px;
+  border-top: 1px solid #ccc;
+}
+
+.notes-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.note-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.add-note-container {
+  margin-top: 20px;
+}
+
+.note-input {
+  width: 100%;
+  height: 80px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.add-note-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-note-button:hover {
+  background-color: #0056b3;
+}
