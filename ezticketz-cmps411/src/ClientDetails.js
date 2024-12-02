@@ -1,47 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import NavBar from './NavBar'; // Import the NavBar component
+import NavBar from './NavBar';
 
 const ClientDetails = () => {
   const { id } = useParams(); // Extract the client ID from the URL
   const [client, setClient] = useState(null);
   const [tickets, setTickets] = useState([]); // State to hold the tickets data
   const [error, setError] = useState('');
-  const [isHovered, setIsHovered] = useState(false); // Add hover state
 
   useEffect(() => {
     // Fetch the specific client data from the backend
     fetch(`http://localhost:5099/api/clients/${id}`)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data) {
-          setClient(data); // Set the client data if found
+          setClient(data);
         } else {
           setError('Client not found');
         }
       })
-      .catch(error => setError('Error fetching client data: ' + error));
+      .catch((error) => setError('Error fetching client data: ' + error));
   }, [id]);
 
   useEffect(() => {
     // Fetch the tickets assigned to the client
-    fetch(`http://localhost:5099/api/tickets/client/${id}`)
-      .then(response => response.json())
-      .then(data => {
+    fetch(`http://localhost:5099/api/clients/${id}/tickets`)
+      .then((response) => response.json())
+      .then((data) => {
         if (data) {
           setTickets(data); // Set the tickets data
         }
       })
-      .catch(error => console.error('Error fetching tickets:', error));
+      .catch((error) => console.error('Error fetching tickets:', error));
   }, [id]);
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
 
   if (error) {
     return <div style={styles.errorContainer}><p>{error}</p></div>;
@@ -53,28 +44,19 @@ const ClientDetails = () => {
 
   return (
     <div>
-      <NavBar /> {/* Include the NavBar */}
+      <NavBar />
       <div style={styles.container}>
         <h1 style={styles.header}>Client Details</h1>
         <div style={styles.clientCard}>
           <h2 style={styles.clientName}>{client.name}</h2>
           <p style={styles.clientInfo}><strong>Email:</strong> {client.email}</p>
           <p style={styles.clientInfo}><strong>Phone:</strong> {client.phone}</p>
-          {client.companyId ? (
-            <p style={styles.clientInfo}>
-              <strong>Company: </strong> 
-              <Link
-                to={`/companies/${client.companyId}`}
-                style={isHovered ? styles.companyLinkHover : styles.companyLink}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-              >
-                {client.companyName}
-              </Link>
-            </p>
-          ) : (
-            <p style={styles.clientInfo}><strong>Company:</strong> No company assigned</p>
-          )}
+          <p style={styles.clientInfo}>
+            <strong>Company: </strong>
+            <Link to={`/companies/${client.companyId}`} style={styles.companyLink}>
+              {client.companyName}
+            </Link>
+          </p>
         </div>
 
         {/* Tickets Section */}
@@ -82,16 +64,16 @@ const ClientDetails = () => {
           <h2 style={styles.ticketsHeader}>Tickets Assigned to {client.name}</h2>
           {tickets.length > 0 ? (
             <ul style={styles.ticketsList}>
-              {tickets.map(ticket => (
+              {tickets.map((ticket) => (
                 <li key={ticket.id} style={styles.ticketItem}>
                   <p>
-                    <strong>Ticket Title:</strong> 
+                    <strong>Ticket Title: </strong>
                     <Link to={`/tickets/${ticket.id}`} style={styles.ticketLink}>
                       {ticket.ticketTitle}
                     </Link>
                   </p>
                   <p><strong>Description:</strong> {ticket.ticketDescription}</p>
-                  <p><strong>Status:</strong> {ticket.resolution || 'Open'}</p>
+                  {ticket.techName && <p><strong>Assigned Tech:</strong> {ticket.techName}</p>}
                 </li>
               ))}
             </ul>
@@ -104,7 +86,7 @@ const ClientDetails = () => {
   );
 };
 
-// CSS styles for the page
+// CSS styles
 const styles = {
   container: {
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
@@ -145,33 +127,6 @@ const styles = {
     fontWeight: 'bold',
     transition: 'color 0.3s ease',
   },
-  companyLinkHover: {
-    textDecoration: 'none',
-    color: '#0056b3',
-    fontWeight: 'bold',
-    transition: 'color 0.3s ease',
-  },
-  ticketLink: {
-    textDecoration: 'none',
-    color: '#007bff',
-    transition: 'color 0.3s ease',
-  },
-  ticketLinkHover: {
-    textDecoration: 'none',
-    color: '#0056b3',
-    transition: 'color 0.3s ease',
-  },
-  errorContainer: {
-    textAlign: 'center',
-    padding: '20px',
-    color: 'red',
-    fontWeight: 'bold',
-  },
-  loadingContainer: {
-    textAlign: 'center',
-    padding: '20px',
-    color: '#555',
-  },
   ticketsBox: {
     marginTop: '30px',
     backgroundColor: '#fff',
@@ -195,6 +150,11 @@ const styles = {
     borderRadius: '8px',
     border: '1px solid #ddd',
     marginBottom: '10px',
+  },
+  ticketLink: {
+    textDecoration: 'none',
+    color: '#007bff',
+    transition: 'color 0.3s ease',
   },
 };
 

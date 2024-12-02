@@ -4,18 +4,19 @@ using System.ComponentModel.DataAnnotations;
 namespace CMPS411_EzTicketz_Fall2024.Models
 {
     public class Company
-    {
-        public int Id { get; set; }
+{
+    public int Id { get; set; }
 
-        [Required]
-        public required string CompanyName { get; set; }
+    [Required]
+    public required string CompanyName { get; set; }
 
-        // Navigation property for the associated Clients
-        public ICollection<Client> Clients { get; set; } = new List<Client>();  // A company has many clients
+    // Navigation property for associated Clients
+    public ICollection<Client> Clients { get; set; } = new List<Client>();
 
-        // Remove or keep the Ticket property depending on your needs
-        public Ticket? Ticket { get; set; }
-    }
+    // Navigation property for associated Tickets
+    public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+}
+
 
     // DTO for creating a new company
     public class CreateCompanyDTO
@@ -52,11 +53,17 @@ namespace CMPS411_EzTicketz_Fall2024.Models
 
     // DTO for getting company details
     public class GetCompanyDTO
-    {
-        public int Id { get; set; }
-        public required string CompanyName { get; set; }
+{
+    public int Id { get; set; }
+    public required string CompanyName { get; set; }
 
-        // Include the list of clients in the response DTO
-        public List<ClientGetDto> Clients { get; set; } = new List<ClientGetDto>();
-    }
+    // Include the list of clients
+    public List<ClientGetDto> Clients { get; set; } = new List<ClientGetDto>();
+
+    public int AssignedTickets { get; set; } // Add this to hold ticket count
+
+    // Include the list of tickets
+    public List<TicketGetDto> Tickets { get; set; } = new List<TicketGetDto>();
+}
+
 }

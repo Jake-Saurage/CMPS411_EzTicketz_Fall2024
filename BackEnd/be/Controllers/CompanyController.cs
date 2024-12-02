@@ -21,59 +21,108 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
 
         // GET: api/company
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetCompanyDTO>>> GetCompanies()
+        [HttpGet]
+public async Task<ActionResult<IEnumerable<GetCompanyDTO>>> GetCompanies()
+{
+    var companies = await _context.Companies
+        .Include(c => c.Clients)
+        .Include(c => c.Tickets) // Include tickets to count them
+        .ToListAsync();
+
+    var companyDTOs = companies.Select(c => new GetCompanyDTO
+    {
+        Id = c.Id,
+        CompanyName = c.CompanyName,
+        AssignedTickets = c.Tickets.Count, // Count the tickets
+        Clients = c.Clients.Select(cl => new ClientGetDto
         {
-            var companies = await _context.Companies
-                .Include(c => c.Clients) // Include clients in the list
-                .ToListAsync();
+            Id = cl.Id,
+            Name = cl.Name,
+            Email = cl.Email,
+            Phone = cl.Phone,
+            CompanyName = c.CompanyName
+        }).ToList()
+    }).ToList();
 
-            var companyDTOs = companies.Select(c => new GetCompanyDTO
-            {
-                Id = c.Id,
-                CompanyName = c.CompanyName,
-                Clients = c.Clients.Select(cl => new ClientGetDto
-                {
-                    Id = cl.Id,
-                    Name = cl.Name,
-                    Email = cl.Email,
-                    Phone = cl.Phone,
-                    CompanyName = c.CompanyName
-                }).ToList()
-            }).ToList();
+    return Ok(companyDTOs);
+}
 
-            return Ok(companyDTOs);
-        }
 
         // GET: api/company/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetCompanyDTO>> GetCompany(int id)
+public async Task<ActionResult<GetCompanyDTO>> GetCompany(int id)
+{
+    var company = await _context.Companies
+        .Include(c => c.Clients) // Include Clients
+        .Include(c => c.Tickets) // Include Tickets
+        .ThenInclude(t => t.Client) // Include Client in Tickets
+        .Include(c => c.Tickets)
+        .ThenInclude(t => t.Tech) // Include TechUser in Tickets
+        .FirstOrDefaultAsync(c => c.Id == id);
+
+    if (company == null)
+    {
+        return NotFound();
+    }
+
+    // Create the response with company details, clients, and tickets
+    var companyDTO = new GetCompanyDTO
+    {
+        Id = company.Id,
+        CompanyName = company.CompanyName,
+        Clients = company.Clients.Select(client => new ClientGetDto
         {
-            var company = await _context.Companies
-                .Include(c => c.Clients)  // Include the Clients navigation property
-                .FirstOrDefaultAsync(c => c.Id == id);
+            Id = client.Id,
+            Name = client.Name,
+            Email = client.Email,
+            Phone = client.Phone,
+            CompanyName = company.CompanyName
+        }).ToList(),
+        Tickets = company.Tickets.Select(ticket => new TicketGetDto
+        {
+            Id = ticket.Id,
+            TicketTitle = ticket.TicketTitle,
+            TicketDescription = ticket.TicketDescription,
+            CreationDate = ticket.CreationDate,
+            ClientName = ticket.Client?.Name,
+            TechName = ticket.Tech?.Name
+        }).ToList()
+    };
 
-            if (company == null)
-            {
-                return NotFound();
-            }
+    return Ok(companyDTO);
+}
 
-            // Create the response with company details and clients
-            var companyDTO = new GetCompanyDTO
-            {
-                Id = company.Id,
-                CompanyName = company.CompanyName,
-                Clients = company.Clients.Select(client => new ClientGetDto
-                {
-                    Id = client.Id,
-                    Name = client.Name,
-                    Email = client.Email,
-                    Phone = client.Phone,
-                    CompanyName = company.CompanyName
-                }).ToList()
-            };
 
-            return Ok(companyDTO);
-        }
+        // NEW ENDPOINT: Get Tickets for a Company
+        // GET: api/company/{id}/tickets
+        [HttpGet("{id}/tickets")]
+public async Task<ActionResult<IEnumerable<TicketGetDto>>> GetTicketsForCompany(int id)
+{
+    var tickets = await _context.Tickets
+        .Where(t => t.CompanyId == id)
+        .Include(t => t.Client) // Include Client info
+        .Include(t => t.Tech)   // Include TechUser info
+        .ToListAsync();
+
+    if (!tickets.Any())
+    {
+        Console.WriteLine($"No tickets found for company ID: {id}");
+        return NotFound("No tickets found for this company.");
+    }
+
+    var ticketDtos = tickets.Select(t => new TicketGetDto
+    {
+        Id = t.Id,
+        TicketTitle = t.TicketTitle,
+        TicketDescription = t.TicketDescription,
+        ClientName = t.Client?.Name, // Nullable
+        TechName = t.Tech?.Name,     // Nullable
+        CreationDate = t.CreationDate
+    });
+
+    return Ok(ticketDtos);
+}
+
 
         // POST: api/company
         [HttpPost]
@@ -140,7 +189,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 }
                 else
                 {
-                    return Conflict("The company was modified by another user. Please refresh and try again.");
+                    throw;
                 }
             }
 
@@ -179,7 +228,7 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 }
                 else
                 {
-                    return Conflict("The company was modified by another user. Please refresh and try again.");
+                    throw;
                 }
             }
 

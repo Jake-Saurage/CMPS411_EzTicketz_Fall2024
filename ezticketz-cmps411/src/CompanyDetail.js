@@ -4,9 +4,12 @@ import './App.css';
 import NavBar from './NavBar.js';
 import ConfirmationModal from './ConfirmationModal'; // Import the confirmation modal
 
+
+
 const CompanyDetail = () => {
   const { companyId } = useParams();
   const [company, setCompany] = useState(null);
+  const [tickets, setTickets] = useState([]); // State for company-wide tickets
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false); // Modal visibility state
@@ -29,7 +32,21 @@ const CompanyDetail = () => {
       }
     };
 
+    const fetchTickets = async () => {
+      try {
+        const response = await fetch(`http://localhost:5099/api/tickets/company/${companyId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch tickets');
+        }
+        const data = await response.json();
+        setTickets(data); // Set tickets for the company
+      } catch (error) {
+        console.error('Error fetching tickets:', error);
+      }
+    };
+
     fetchCompany();
+    fetchTickets();
   }, [companyId]);
 
   const handleCreateClient = () => {
@@ -143,9 +160,22 @@ const CompanyDetail = () => {
 
         {/* Company Wide Tickets Box */}
         <div className="company-wide-tickets">
-          <h3>Company Wide Tickets</h3>
-          <p>{company.totalTickets}</p>
-        </div>
+  <h3>Company Wide Tickets</h3>
+  {company.tickets && company.tickets.length > 0 ? (
+    <ul className="tickets-list">
+      {company.tickets.map(ticket => (
+        <li key={ticket.id}>
+          <Link to={`/tickets/${ticket.id}`}>
+            <strong>{ticket.ticketTitle}</strong>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p>No tickets available for this company.</p>
+  )}
+</div>
+
       </div>
 
       {/* Render the Confirmation Modal if showModal is true */}

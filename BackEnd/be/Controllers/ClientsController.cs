@@ -39,28 +39,43 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
         }
 
         // GET: api/clients/{id}
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ClientGetDto>> GetClient(int id)
+[HttpGet("{id}")]
+public async Task<ActionResult<ClientGetDto>> GetClient(int id)
+{
+    var client = await _context.Clients
+        .Include(c => c.Company)
+        .Include(c => c.Tickets) // Include tickets
+        .ThenInclude(t => t.Tech) // Include tech user info
+        .FirstOrDefaultAsync(c => c.Id == id);
+
+    if (client == null)
+    {
+        return NotFound();
+    }
+
+    var clientDTO = new ClientGetDto
+    {
+        Id = client.Id,
+        Name = client.Name,
+        Email = client.Email,
+        Phone = client.Phone,
+        CompanyId = client.CompanyId,
+        CompanyName = client.Company.CompanyName,
+        Tickets = client.Tickets.Select(ticket => new TicketDto
         {
-            var client = await _context.Clients.Include(c => c.Company).FirstOrDefaultAsync(c => c.Id == id);
+            Id = ticket.Id,
+            Title = ticket.TicketTitle,
+            Description = ticket.TicketDescription,
+            TechName = ticket.Tech?.Name,
+            CreationDate = ticket.CreationDate.UtcDateTime // Convert DateTimeOffset to DateTime
+        }).ToList()
+    };
 
-            if (client == null)
-            {
-                return NotFound();
-            }
+    return Ok(clientDTO);
+}
 
-            var clientDTO = new ClientGetDto
-            {
-                Id = client.Id,
-                Name = client.Name,
-                Email = client.Email,
-                Phone = client.Phone,
-                CompanyId = client.CompanyId,
-                CompanyName = client.Company.CompanyName
-            };
 
-            return Ok(clientDTO);
-        }
+
 
         // POST: api/clients
         [HttpPost]
