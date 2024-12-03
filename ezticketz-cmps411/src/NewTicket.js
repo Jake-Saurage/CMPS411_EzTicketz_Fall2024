@@ -47,21 +47,23 @@ const NewTicket = () => {
       setSubIssueTypes([]);
       return;
     }
-
+  
     try {
-      // Find the selected issue type
-      const selectedIssueType = issueTypes.find(issue => issue.id === Number(issueTypeId));
-      if (selectedIssueType && selectedIssueType.subIssueTypeName) {
-        // Use the sub-issue type name directly from the selected issue type
-        setSubIssueTypes([{ id: selectedIssueType.subIssueTypeName, subIssueName: selectedIssueType.subIssueTypeName }]);
-      } else {
-        setSubIssueTypes([]);
+      const response = await fetch(`http://localhost:5099/api/subissuetypes?issueTypeId=${issueTypeId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch sub-issue types');
       }
+      const data = await response.json();
+      setSubIssueTypes(data); // Ensure `data` contains objects with `id` and `subIssueName`
     } catch (error) {
       console.error('Error fetching sub-issue types:', error.message);
       setSubIssueTypes([]);
     }
-  }, [issueTypes]);
+  }, []);
+  
+
+  
+  
 
   const fetchCompanies = async () => {
     try {
@@ -136,7 +138,11 @@ const NewTicket = () => {
       setSubIssueTypes([]);
     }
   }, [issueId, fetchSubIssueTypes]);
-
+  
+  useEffect(() => {
+    console.log("Sub-issue types state updated:", subIssueTypes); // Debugging log
+  }, [subIssueTypes]);
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -231,20 +237,25 @@ const NewTicket = () => {
           </select>
         </div>
 
+        
         <div className="form-group">
-          <label>Sub Issue Type</label>
-          <select
-            value={subIssueId}
-            onChange={(e) => setSubIssueId(e.target.value)}
-          >
-            <option value="">Select a Sub Issue Type</option>
-            {subIssueTypes.map((subIssue, index) => (
-              <option key={index} value={subIssue.subIssueName}>
-                {subIssue.subIssueName}
-              </option>
-            ))}
-          </select>
-        </div>
+  <label>Sub Issue Type</label>
+  <select
+  value={subIssueId}
+  onChange={(e) => setSubIssueId(e.target.value)}
+>
+  <option value="">Select a Sub Issue Type</option>
+  {subIssueTypes.map((subIssue) => (
+    <option key={subIssue.id} value={subIssue.id}>
+      {subIssue.subIssueName}
+    </option>
+  ))}
+</select>
+
+</div>
+
+
+
 
         <div className="form-group">
           <label>Select Company</label>
