@@ -86,6 +86,8 @@ const TicketDetails = () => {
   const handleEditClick = () => {
     setIsEditing(true);
   };
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const isTechUser = storedUser?.userType === "TechUser";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -166,11 +168,11 @@ const TicketDetails = () => {
       <div className="ticket-details-container">
         <div className="ticket-title-container">
           <h1 className="ticket-title">{ticket.ticketTitle}</h1>
-          {!isEditing && (
-            <button onClick={handleEditClick} className="edit-button">
-              Edit Ticket
-            </button>
-          )}
+          {isTechUser && !isEditing && (
+  <button onClick={handleEditClick} className="edit-button">
+    Edit Ticket
+  </button>
+)}
         </div>
         {isEditing ? (
           <form onSubmit={handleSubmit} className="ticket-edit-form">
@@ -240,15 +242,20 @@ const TicketDetails = () => {
     </p>
   </div>
 
-  {/* Tech User Container */}
-  <div className="tech-container">
-    <p>
-      <strong>Tech User: </strong>
+ {/* Tech User Container */}
+<div className="tech-container">
+  <p>
+    <strong>Tech User: </strong>
+    {isTechUser ? (
       <Link to={`/techusers/${ticket.techId}`} className="details-link">
         {ticket.techName}
       </Link>
-    </p>
-  </div>
+    ) : (
+      <span>{ticket.techName}</span>
+    )}
+  </p>
+</div>
+
 
   {/* Issue Information */}
   <div className="issue-info-container">
