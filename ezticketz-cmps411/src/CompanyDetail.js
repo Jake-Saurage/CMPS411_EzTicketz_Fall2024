@@ -13,6 +13,10 @@ const CompanyDetail = () => {
   const [clientToDelete, setClientToDelete] = useState(null); // Client to delete state
   const navigate = useNavigate();
 
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const isTechUser = storedUser?.userType === "TechUser";
+  
+
   useEffect(() => {
     const fetchCompany = async () => {
       try {
@@ -115,20 +119,26 @@ const CompanyDetail = () => {
                     Total Tickets: {client.totalTickets}
                   </span>
                 </div>
-                <button
-                  onClick={() => handleDeleteClient(client)}
-                  style={{
-                    backgroundColor: '#dc3545',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '8px',
-                    cursor: 'pointer',
-                    marginLeft: '10px'
-                  }}
-                >
-                  Delete
-                </button>
+
+              
+                {isTechUser && (
+  <button
+    onClick={() => handleDeleteClient(client)}
+    style={{ 
+      backgroundColor: '#dc3545', 
+      color: 'white', 
+      border: 'none', 
+      borderRadius: '4px', 
+      padding: '8px', 
+      cursor: 'pointer', 
+      marginLeft: '10px' 
+    }}
+  >
+    Delete
+  </button>
+)}
+
+
               </li>
             ))}
           </ul>
@@ -136,10 +146,12 @@ const CompanyDetail = () => {
           <p className="no-clients">No clients assigned to this company.</p>
         )}
 
-        {/* Create Client Button */}
-        <button onClick={handleCreateClient} className="create-client-button">
-          Create Client
-        </button>
+       {/* Create Client Button */}
+{isTechUser && (
+  <button onClick={handleCreateClient} className="create-client-button">
+    Create Client
+  </button>
+)}
 
         {/* Updated Company Wide Tickets Section */}
         <div style={styles.ticketsBox}>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 
-const NewTicketClient = ({ clientId, companyId }) => {
+const NewTicketClient = () => {
   const [ticketTitle, setTicketTitle] = useState('');
   const [ticketDescription, setTicketDescription] = useState('');
   const [issueId, setIssueId] = useState('');
@@ -10,10 +10,14 @@ const NewTicketClient = ({ clientId, companyId }) => {
 
   const [issueTypes, setIssueTypes] = useState([]);
   const [subIssueTypes, setSubIssueTypes] = useState([]);
-
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
+
+  // Get clientId and companyId from localStorage
+  const storedUser = JSON.parse(localStorage.getItem('user'));
+  const clientId = storedUser?.userId;
+  const companyId = storedUser?.companyId;
 
   // Fetch issue types when component mounts
   const fetchIssueTypes = async () => {
@@ -79,6 +83,8 @@ const NewTicketClient = ({ clientId, companyId }) => {
       techId: 5, // Automatically assigned to Tech User with ID 5
     };
 
+    console.log('Payload being sent:', ticketData);
+
     try {
       const response = await fetch('http://localhost:5099/api/tickets', {
         method: 'POST',
@@ -92,97 +98,73 @@ const NewTicketClient = ({ clientId, companyId }) => {
         throw new Error('Failed to create ticket.');
       }
 
-      // Reset fields after successful creation
-      setTicketTitle('');
-      setTicketDescription('');
-      setIssueId('');
-      setSubIssueId('');
-      setError('');
+      const createdTicket = await response.json(); // Assuming the backend returns the created ticket details
+      console.log('Created Ticket:', createdTicket);
 
-      // Redirect to the tickets list page
-      navigate('/tickets-list');
+      // Redirect to the ticket details page
+      navigate(`/tickets/${createdTicket.id}`);
     } catch (error) {
-      console.error('Error creating ticket:', error);
+      console.error('Error creating ticket:', error.message);
       setError('Failed to create ticket. Please try again.');
     }
   };
 
-  return React.createElement(
-    'div',
-    { className: 'new-ticket-container' },
-    React.createElement('h1', null, 'Create New Ticket'),
-    React.createElement(
-      'form',
-      { onSubmit: handleSubmit },
-      React.createElement(
-        'div',
-        { className: 'form-group' },
-        React.createElement('label', null, 'Ticket Title'),
-        React.createElement('input', {
-          type: 'text',
-          value: ticketTitle,
-          onChange: (e) => setTicketTitle(e.target.value),
-          required: true,
-        })
-      ),
-      React.createElement(
-        'div',
-        { className: 'form-group' },
-        React.createElement('label', null, 'Ticket Description'),
-        React.createElement('textarea', {
-          value: ticketDescription,
-          onChange: (e) => setTicketDescription(e.target.value),
-          required: true,
-        })
-      ),
-      React.createElement(
-        'div',
-        { className: 'form-group' },
-        React.createElement('label', null, 'Issue Type'),
-        React.createElement(
-          'select',
-          {
-            value: issueId,
-            onChange: (e) => setIssueId(e.target.value),
-            required: true,
-          },
-          React.createElement('option', { value: '' }, 'Select an Issue Type'),
-          issueTypes.map((issue) =>
-            React.createElement('option', {
-              key: issue.id,
-              value: issue.id,
-              title: issue.issueTypeDescription, // Tooltip description
-            }, issue.issueTypeName)
-          )
-        )
-      ),
-      React.createElement(
-        'div',
-        { className: 'form-group' },
-        React.createElement('label', null, 'Sub Issue Type'),
-        React.createElement(
-          'select',
-          {
-            value: subIssueId,
-            onChange: (e) => setSubIssueId(e.target.value),
-          },
-          React.createElement('option', { value: '' }, 'Select a Sub Issue Type'),
-          subIssueTypes.map((subIssue) =>
-            React.createElement('option', {
-              key: subIssue.id,
-              value: subIssue.id,
-              title: subIssue.subIssueDescription, // Tooltip description
-            }, subIssue.subIssueName)
-          )
-        )
-      ),
-      error && React.createElement('p', { className: 'error-message' }, error),
-      React.createElement(
-        'button',
-        { type: 'submit', className: 'submit-button' },
-        'Create Ticket'
-      )
-    )
+  return (
+    <div className="new-ticket-container">
+      <h1>Create New Ticket</h1>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Ticket Title</label>
+          <input
+            type="text"
+            value={ticketTitle}
+            onChange={(e) => setTicketTitle(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Ticket Description</label>
+          <textarea
+            value={ticketDescription}
+            onChange={(e) => setTicketDescription(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Issue Type</label>
+          <select
+            value={issueId}
+            onChange={(e) => setIssueId(e.target.value)}
+            required
+          >
+            <option value="">Select an Issue Type</option>
+            {issueTypes.map((issue) => (
+              <option key={issue.id} value={issue.id}>
+                {issue.issueTypeName}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-group">
+          <label>Sub Issue Type</label>
+          <select
+            value={subIssueId}
+            onChange={(e) => setSubIssueId(e.target.value)}
+          >
+            <option value="">Select a Sub Issue Type</option>
+            {subIssueTypes.map((subIssue) => (
+              <option key={subIssue.id} value={subIssue.id}>
+                {subIssue.subIssueName}
+              </option>
+            ))}
+          </select>
+        </div>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <button type="submit" className="submit-button">
+          Create Ticket
+        </button>
+      </form>
+    </div>
   );
 };
 
