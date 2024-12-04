@@ -5,7 +5,6 @@ using CMPS411_EzTicketz_Fall2024.Services;
 using CMPS411_EzTicketz_Fall2024.Models;
 using System.Collections.Generic;
 
-
 namespace CMPS411_EzTicketz_Fall2024.Controllers
 {
     [ApiController]
@@ -14,16 +13,14 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
     {
         private readonly AuthService _authService;
 
-
-        // Dictionary to store session information: email -> (userType, name)
-        private static Dictionary<string, (string UserType, string Name)> _sessions = new Dictionary<string, (string, string)>();
-
+        // Dictionary to store session information: email -> (userType, name, companyId)
+        private static Dictionary<string, (string UserType, string Name, int? CompanyId)> _sessions 
+            = new Dictionary<string, (string, string, int?)>();
 
         public AuthenticationController(AuthService authService)
         {
             _authService = authService;
         }
-
 
         // POST: api/authentication/signin
         [HttpPost("signin")]
@@ -34,15 +31,13 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 return BadRequest("Email and password are required.");
             }
 
-
             // Try authenticating as a client
             var client = await _authService.AuthenticateClientAsync(signInDto.Email, signInDto.Password);
             if (client != null)
             {
-                // Generate a simple session token (e.g., user email as token for simplicity)
+                // Generate a session token (e.g., use email as the token for simplicity)
                 var token = client.Email;
-                _sessions[token] = ("Client", client.Name);
-
+                _sessions[token] = ("Client", client.Name, client.CompanyId); // Include companyId
 
                 // Return user information for the authenticated client
                 return Ok(new
@@ -51,19 +46,18 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                     userType = "Client",
                     email = client.Email,
                     name = client.Name,
+                    companyId = client.CompanyId, // Include companyId in the response
                     token = token
                 });
             }
-
 
             // Try authenticating as a tech user
             var techUser = await _authService.AuthenticateTechUserAsync(signInDto.Email, signInDto.Password);
             if (techUser != null)
             {
-                // Generate a simple session token (e.g., user email as token for simplicity)
+                // Generate a session token (e.g., use email as the token for simplicity)
                 var token = techUser.Email;
-                _sessions[token] = ("TechUser", techUser.Name);
-
+                _sessions[token] = ("TechUser", techUser.Name, null); // No companyId for TechUser
 
                 // Return user information for the authenticated tech user
                 return Ok(new
@@ -76,11 +70,9 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 });
             }
 
-
             // If both attempts fail, return Unauthorized
             return Unauthorized("Invalid email or password.");
         }
-
 
         // GET: api/authentication/currentuser
         [HttpGet("currentuser")]
@@ -91,13 +83,13 @@ namespace CMPS411_EzTicketz_Fall2024.Controllers
                 return Unauthorized("No user is currently signed in.");
             }
 
-
-            var (userType, name) = _sessions[token];
+            var (userType, name, companyId) = _sessions[token];
             return Ok(new
             {
                 email = token,
                 userType = userType,
-                name = name
+                name = name,
+                companyId = companyId // Include companyId if available
             });
         }
     }
