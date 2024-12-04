@@ -122,6 +122,7 @@ namespace CMPS411_EzTicketz_Fall2024.Models
     public string CompanyName { get; set; } = string.Empty; // For convenience, add Company name
 
     public List<TicketDto> Tickets { get; set; } = new List<TicketDto>(); // Added tickets property
+    public int TotalTickets { get; set; }
 }
 
 }

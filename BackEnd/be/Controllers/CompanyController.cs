@@ -53,11 +53,9 @@ public async Task<ActionResult<IEnumerable<GetCompanyDTO>>> GetCompanies()
 public async Task<ActionResult<GetCompanyDTO>> GetCompany(int id)
 {
     var company = await _context.Companies
-        .Include(c => c.Clients) // Include Clients
-        .Include(c => c.Tickets) // Include Tickets
-        .ThenInclude(t => t.Client) // Include Client in Tickets
+        .Include(c => c.Clients)
+        .ThenInclude(client => client.Tickets) // Include tickets for each client
         .Include(c => c.Tickets)
-        .ThenInclude(t => t.Tech) // Include TechUser in Tickets
         .FirstOrDefaultAsync(c => c.Id == id);
 
     if (company == null)
@@ -65,7 +63,6 @@ public async Task<ActionResult<GetCompanyDTO>> GetCompany(int id)
         return NotFound();
     }
 
-    // Create the response with company details, clients, and tickets
     var companyDTO = new GetCompanyDTO
     {
         Id = company.Id,
@@ -76,14 +73,14 @@ public async Task<ActionResult<GetCompanyDTO>> GetCompany(int id)
             Name = client.Name,
             Email = client.Email,
             Phone = client.Phone,
-            CompanyName = company.CompanyName
+            CompanyName = company.CompanyName,
+            TotalTickets = client.Tickets.Count // Calculate total tickets for each client
         }).ToList(),
         Tickets = company.Tickets.Select(ticket => new TicketGetDto
         {
             Id = ticket.Id,
             TicketTitle = ticket.TicketTitle,
             TicketDescription = ticket.TicketDescription,
-            CreationDate = ticket.CreationDate,
             ClientName = ticket.Client?.Name,
             TechName = ticket.Tech?.Name
         }).ToList()
@@ -91,6 +88,7 @@ public async Task<ActionResult<GetCompanyDTO>> GetCompany(int id)
 
     return Ok(companyDTO);
 }
+
 
 
         // NEW ENDPOINT: Get Tickets for a Company
