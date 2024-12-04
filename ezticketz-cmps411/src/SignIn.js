@@ -10,7 +10,7 @@ const SignIn = () => {
 
   const handleSignIn = async () => {
     setError(''); // Clear any previous errors
-
+  
     try {
       const response = await fetch('http://localhost:5099/api/authentication/signin', {
         method: 'POST',
@@ -19,12 +19,19 @@ const SignIn = () => {
         },
         body: JSON.stringify({ email: username, password: password }),
       });
-
+  
       console.log("Response Status:", response.status); // Log response status
       if (response.ok) {
         const result = await response.json();
         console.log("Sign-in Successful:", result.message); // Log successful message
-
+  
+        // Store user information in localStorage
+        localStorage.setItem("user", JSON.stringify({
+          name: result.name,
+          userId: result.userId,
+          userType: result.userType
+        }));
+  
         // Check if the user is a client or tech user and navigate accordingly
         if (result.userType === "Client") {
           navigate(`/clients/${result.userId}`);
@@ -41,7 +48,7 @@ const SignIn = () => {
       setError('An error occurred. Please try again.');
     }
   };
-
+  
   return (
     <div className="sign-in-form-container">
       <h2>Sign In</h2>

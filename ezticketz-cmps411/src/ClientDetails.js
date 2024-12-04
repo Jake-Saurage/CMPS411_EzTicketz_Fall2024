@@ -15,23 +15,12 @@ const ClientDetails = () => {
       .then((data) => {
         if (data) {
           setClient(data);
+          setTickets(data.tickets); // Tickets are part of the response
         } else {
           setError('Client not found');
         }
       })
       .catch((error) => setError('Error fetching client data: ' + error));
-  }, [id]);
-
-  useEffect(() => {
-    // Fetch the tickets assigned to the client
-    fetch(`http://localhost:5099/api/clients/${id}/tickets`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data) {
-          setTickets(data); // Set the tickets data
-        }
-      })
-      .catch((error) => console.error('Error fetching tickets:', error));
   }, [id]);
 
   if (error) {
@@ -69,10 +58,10 @@ const ClientDetails = () => {
                   <p>
                     <strong>Ticket Title: </strong>
                     <Link to={`/tickets/${ticket.id}`} style={styles.ticketLink}>
-                      {ticket.ticketTitle}
+                      {ticket.title}
                     </Link>
                   </p>
-                  <p><strong>Description:</strong> {ticket.ticketDescription}</p>
+                  <p><strong>Description:</strong> {ticket.description}</p>
                   {ticket.techName && <p><strong>Assigned Tech:</strong> {ticket.techName}</p>}
                 </li>
               ))}

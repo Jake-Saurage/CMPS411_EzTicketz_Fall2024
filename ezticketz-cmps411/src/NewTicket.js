@@ -156,12 +156,21 @@ const NewTicket = () => {
       ticketDescription,
       resolution: resolution || '',
       issueId: Number(issueId),
-      subIssueId: subIssueId ? subIssueId : null,
+      subIssueId: subIssueId ? Number(subIssueId) : null,
+      clientId: Number(selectedClientId),
+      companyId: Number(selectedCompanyId),
+      techId: Number(selectedTechId),
+      ticketNotes: ticketNotes || '',
+    };
+
+    console.log('Ticket Data:', ticketData); // Debugging line to check the ticket data
+    console.log('Selected IDs:', {
       clientId: selectedClientId,
       companyId: selectedCompanyId,
       techId: selectedTechId,
-      ticketNotes: ticketNotes || '',
-    };
+      issueId,
+      subIssueId
+    }); // Debugging line to check selected IDs
 
     try {
       const response = await fetch('http://localhost:5099/api/tickets', {
