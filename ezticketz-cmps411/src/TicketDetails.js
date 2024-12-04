@@ -1,322 +1,370 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import "./App.css";
-import NavBar from "./NavBar";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './App.css';
 
-const TicketDetails = () => {
-  const { ticketId } = useParams();
+const NewTicket = () => {
+  const [ticketTitle, setTicketTitle] = useState('');
+  const [ticketDescription, setTicketDescription] = useState('');
+  const [resolution, setResolution] = useState('');
+  const [issueId, setIssueId] = useState('');
+  const [subIssueId, setSubIssueId] = useState('');
+  const [ticketNotes, setTicketNotes] = useState('');
+
+  const [issueTypes, setIssueTypes] = useState([]);
+  const [subIssueTypes, setSubIssueTypes] = useState([]);
+  const [companies, setCompanies] = useState([]);
+
+  const [techSearch, setTechSearch] = useState('');
+  const [clientSearch, setClientSearch] = useState('');
+  const [techSuggestions, setTechSuggestions] = useState([]);
+  const [clientSuggestions, setClientSuggestions] = useState([]);
+
+  const [selectedTechId, setSelectedTechId] = useState(null);
+  const [selectedCompanyId, setSelectedCompanyId] = useState(null);
+  const [selectedClientId, setSelectedClientId] = useState(null);
+
+  const [error, setError] = useState('');
+
   const navigate = useNavigate();
 
-  // States
-  const [ticket, setTicket] = useState(null); // Ticket data
-  const [notes, setNotes] = useState([]); // Notes associated with the ticket
-  const [newNote, setNewNote] = useState(""); // For adding a new note
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Fetch issue types when component mounts
+  const fetchIssueTypes = async () => {
+    try {
+      const response = await fetch('http://localhost:5099/api/issuetypes');
+      if (!response.ok) {
+        throw new Error('Failed to fetch issue types');
+      }
+      const data = await response.json();
+      setIssueTypes(data);
+    } catch (error) {
+      console.error('Error fetching issue types:', error.message);
+    }
+  };
 
-  // Metadata
-  const [issueTypeName, setIssueTypeName] = useState("");
-  const [subIssueTypeName, setSubIssueTypeName] = useState("");
+  // Fetch sub-issue types based on selected issue type
+  const fetchSubIssueTypes = useCallback(async (issueTypeId) => {
+    if (!issueTypeId) {
+      setSubIssueTypes([]);
+      return;
+    }
+  
+    try {
+      const response = await fetch(`http://localhost:5099/api/subissuetypes?issueTypeId=${issueTypeId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch sub-issue types');
+      }
+      const data = await response.json();
+      setSubIssueTypes(data); // Ensure `data` contains objects with `id` and `subIssueName`
+    } catch (error) {
+      console.error('Error fetching sub-issue types:', error.message);
+      setSubIssueTypes([]);
+    }
+  }, []);
+  
 
-  // Edit mode state
-  const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState({
-    ticketTitle: "",
-    ticketDescription: "",
-    issueId: "",
-    subIssueId: "",
-    clientId: "",
-    companyId: "",
-    techId: "",
-  });
+  
+  
+
+  const fetchCompanies = async () => {
+    try {
+      const response = await fetch('http://localhost:5099/api/company');
+      if (!response.ok) {
+        throw new Error('Failed to fetch companies');
+      }
+      const data = await response.json();
+      setCompanies(data);
+    } catch (error) {
+      console.error('Error fetching companies:', error.message);
+    }
+  };
+
+  const fetchTechSuggestions = async (searchTerm) => {
+    try {
+      const response = await fetch(`http://localhost:5099/api/techusers`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch tech users');
+      }
+      const data = await response.json();
+      setTechSuggestions(
+        data.filter((tech) => tech.name.toLowerCase().startsWith(searchTerm.toLowerCase()))
+      );
+    } catch (error) {
+      console.error('Error fetching tech users:', error.message);
+    }
+  };
+
+  const fetchClientSuggestions = async (searchTerm, companyId) => {
+    if (!companyId) {
+      setClientSuggestions([]);
+      return;
+    }
+  
+    try {
+      const response = await fetch(`http://localhost:5099/api/clients`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch clients');
+      }
+      const data = await response.json();
+  
+      // Filter clients based on both companyId and searchTerm
+      setClientSuggestions(
+        data.filter((client) => 
+          client.companyId === Number(companyId) &&
+          client.name.toLowerCase().startsWith(searchTerm.toLowerCase())
+        )
+      );
+    } catch (error) {
+      console.error('Error fetching clients:', error.message);
+    }
+  };
+  
 
   useEffect(() => {
-    const fetchTicketData = async () => {
-      try {
-        // Fetch ticket details
-        const ticketResponse = await fetch(`http://localhost:5099/api/tickets/${ticketId}`);
-        if (!ticketResponse.ok) throw new Error("Failed to fetch ticket");
-        const ticketData = await ticketResponse.json();
+    fetchCompanies();
+    fetchIssueTypes();
+  }, []);
+ 
+  useEffect(() => {
+    if (selectedCompanyId) {
+      fetchClientSuggestions(clientSearch, selectedCompanyId);
+    }
+  }, [selectedCompanyId, clientSearch]);
+  
+  // Fetch sub-issues when issueId changes
+  useEffect(() => {
+    if (issueId) {
+      fetchSubIssueTypes(issueId);
+    } else {
+      setSubIssueTypes([]);
+    }
+  }, [issueId, fetchSubIssueTypes]);
+  
+  useEffect(() => {
+    console.log("Sub-issue types state updated:", subIssueTypes); // Debugging log
+  }, [subIssueTypes]);
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        setTicket(ticketData);
-        setEditData({
-          ticketTitle: ticketData.ticketTitle,
-          ticketDescription: ticketData.ticketDescription,
-          issueId: ticketData.issueId,
-          subIssueId: ticketData.subIssueId,
-          clientId: ticketData.clientId,
-          companyId: ticketData.companyId,
-          techId: ticketData.techId,
-        });
+    if (!ticketTitle || !ticketDescription || !issueId || !selectedClientId || !selectedCompanyId || !selectedTechId) {
+      setError('Please fill out all required fields.');
+      return;
+    }
 
-        // Fetch issue type and sub-issue type
-        if (ticketData.issueId) {
-          const issueResponse = await fetch(`http://localhost:5099/api/issuetypes/${ticketData.issueId}`);
-          if (issueResponse.ok) {
-            const issueData = await issueResponse.json();
-            setIssueTypeName(issueData.issueTypeName);
-          }
-        }
-
-        if (ticketData.subIssueId) {
-          const subIssueResponse = await fetch(`http://localhost:5099/api/subissuetypes/${ticketData.subIssueId}`);
-          if (subIssueResponse.ok) {
-            const subIssueData = await subIssueResponse.json();
-            setSubIssueTypeName(subIssueData.subIssueName);
-          }
-        }
-
-        // Fetch notes for the ticket
-        const notesResponse = await fetch(`http://localhost:5099/api/notes/ticket/${ticketId}`);
-        if (!notesResponse.ok) throw new Error("Failed to fetch notes");
-        const notesData = await notesResponse.json();
-
-        setNotes(notesData);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching ticket data:", err);
-        setError(err.message);
-        setLoading(false);
-      }
+    const ticketData = {
+      ticketTitle,
+      ticketDescription,
+      resolution: resolution || '',
+      issueId: Number(issueId),
+      subIssueId: subIssueId ? Number(subIssueId) : null,
+      clientId: Number(selectedClientId),
+      companyId: Number(selectedCompanyId),
+      techId: Number(selectedTechId),
+      ticketNotes: ticketNotes || '',
     };
 
-    fetchTicketData();
-  }, [ticketId]);
-
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleAddNote = async () => {
-    if (!newNote.trim()) {
-      alert("Please write a note before submitting.");
-      return;
-    }
-
-    // Parse the user object from localStorage
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    if (!user || !user.userId || !user.userType || (user.userType !== "TechUser" && user.userType !== "Client")) {
-      alert("User information is missing or invalid. Please log in again.");
-      return;
-    }
+    console.log('Ticket Data:', ticketData); // Debugging line to check the ticket data
+    console.log('Selected IDs:', {
+      clientId: selectedClientId,
+      companyId: selectedCompanyId,
+      techId: selectedTechId,
+      issueId,
+      subIssueId
+    }); // Debugging line to check selected IDs
 
     try {
-      // Prepare the payload for the backend
-      const payload = {
-        noteDescription: newNote.trim(),
-        techId: user.userType === "TechUser" ? user.userId : null,
-        clientId: user.userType === "Client" ? user.userId : null,
-      };
-
-      const response = await fetch(`http://localhost:5099/api/notes/ticket/${ticketId}`, {
-        method: "POST",
+      const response = await fetch('http://localhost:5099/api/tickets', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(ticketData),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to add note");
+        throw new Error('Failed to create ticket.');
       }
 
-      const createdNote = await response.json();
+      // Reset fields after successful creation
+      setTicketTitle('');
+      setTicketDescription('');
+      setResolution('');
+      setIssueId('');
+      setSubIssueId('');
+      setTechSearch('');
+      setClientSearch('');
+      setSelectedTechId(null);
+      setSelectedCompanyId(null);
+      setSelectedClientId(null);
+      setTicketNotes('');
+      setError('');
 
-      // Add the new note to the existing notes list
-      setNotes((prevNotes) => [...prevNotes, createdNote]);
-      setNewNote(""); // Clear the input field
+      // Redirect to the tickets list page
+      navigate('/tickets-list');
     } catch (error) {
-      console.error("Error adding note:", error);
-      alert("Failed to add note. Please try again.");
+      console.error('Error creating ticket:', error);
+      setError('Failed to create ticket. Please try again.');
     }
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`http://localhost:5099/api/tickets/${ticketId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: ticketId, ...editData }),
-      });
-      if (!response.ok) throw new Error("Failed to update ticket");
-      setIsEditing(false);
-      navigate(0); // Refresh the page
-    } catch (err) {
-      console.error("Error updating ticket:", err);
-      setError("Failed to update ticket");
-    }
-  };
-
-  if (loading) return <div className="loading">Loading...</div>;
-  if (error) return <div className="error">Error: {error}</div>;
-  if (!ticket) return <div className="no-ticket">No ticket found.</div>;
 
   return (
-    <div>
-      <NavBar />
-      <div className="ticket-details-container">
-        <div className="ticket-title-container">
-          <h1 className="ticket-title">{ticket.ticketTitle}</h1>
-          {!isEditing && (
-            <button onClick={handleEditClick} className="edit-button">
-              Edit Ticket
-            </button>
-          )}
+    <div className="new-ticket-container">
+      <h1>Create New Ticket</h1>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Ticket Title</label>
+          <input
+            type="text"
+            value={ticketTitle}
+            onChange={(e) => setTicketTitle(e.target.value)}
+            required
+          />
         </div>
-        {isEditing ? (
-          <form onSubmit={handleSubmit} className="ticket-edit-form">
-            <label>
-              Ticket Title
-              <input
-                type="text"
-                name="ticketTitle"
-                value={editData.ticketTitle}
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              Ticket Description
-              <textarea
-                name="ticketDescription"
-                value={editData.ticketDescription}
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              Issue Type
-              <input
-                type="text"
-                name="issueId"
-                value={issueTypeName}
-                disabled
-              />
-            </label>
-            <label>
-              Sub-Issue Type
-              <input
-                type="text"
-                name="subIssueId"
-                value={subIssueTypeName}
-                disabled
-              />
-            </label>
-            <button type="submit" className="save-button">
-              Save Changes
-            </button>
-          </form>
-        ) : (
-          <div className="ticket-main-content">
-            <div className="ticket-description-container">
-              <p>{ticket.ticketDescription}</p>
-            </div>
 
-            <div className="ticket-side-container">
-  {/* Company Container */}
-  <div className="client-container">
-    <p>
-      <strong>Company: </strong>
-      <Link to={`/companies/${ticket.companyId}`} className="details-link">
-        {ticket.companyName}
-      </Link>
-    </p>
-  </div>
+        <div className="form-group">
+          <label>Ticket Description</label>
+          <textarea
+            value={ticketDescription}
+            onChange={(e) => setTicketDescription(e.target.value)}
+            required
+          />
+        </div>
 
-  {/* Client Container */}
-  <div className="client-container">
-    <p>
-      <strong>Client: </strong>
-      <Link to={`/clients/${ticket.clientId}`} className="details-link">
-        {ticket.clientName}
-      </Link>
-    </p>
-  </div>
+        <div className="form-group">
+          <label>Issue Type</label>
+          <select
+            value={issueId}
+            onChange={(e) => setIssueId(e.target.value)}
+            required
+          >
+            <option value="">Select an Issue Type</option>
+            {issueTypes.map((issue) => (
+              <option key={issue.id} value={issue.id}>
+                {issue.issueTypeName}
+              </option>
+            ))}
+          </select>
+        </div>
 
-  {/* Tech User Container */}
-  <div className="tech-container">
-    <p>
-      <strong>Tech User: </strong>
-      <Link to={`/techusers/${ticket.techId}`} className="details-link">
-        {ticket.techName}
-      </Link>
-    </p>
-  </div>
+        
+        <div className="form-group">
+  <label>Sub Issue Type</label>
+  <select
+  value={subIssueId}
+  onChange={(e) => setSubIssueId(e.target.value)}
+>
+  <option value="">Select a Sub Issue Type</option>
+  {subIssueTypes.map((subIssue) => (
+    <option key={subIssue.id} value={subIssue.id}>
+      {subIssue.subIssueName}
+    </option>
+  ))}
+</select>
 
-  {/* Issue Information */}
-  <div className="issue-info-container">
-    <div className="issue-type">
-      <p>
-        <strong>Issue Type: </strong>
-        {issueTypeName || "No issue type available"}
-      </p>
-    </div>
-
-    <div className="sub-issue-type">
-      <p>
-        <strong>Sub-Issue Type: </strong>
-        {subIssueTypeName || "No sub-issue type available"}
-      </p>
-    </div>
-  </div>
 </div>
 
-          </div>
-        )}
 
-        {/* Notes Section */}
-        <div className="ticket-notes-container">
-          <h2>Notes</h2>
-          {notes.length > 0 ? (
-            <ul className="notes-list">
-              {notes.map((note) => (
-                <li key={note.id} className="note-item">
-                  <p>{note.noteDescription}</p>
-                  <small>
-                    Posted by:{" "}
-                    {note.techName ? (
-                      <Link to={`/techusers/${note.techId}`} className="details-link">
-                        {note.techName}
-                      </Link>
-                    ) : note.clientName ? (
-                      <Link to={`/clients/${note.clientId}`} className="details-link">
-                        {note.clientName}
-                      </Link>
-                    ) : (
-                      "Unknown"
-                    )}{" "}
-                    at {new Date(note.noteTimePosted).toLocaleString()}
-                  </small>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No notes available</p>
-          )}
 
-          {/* Add New Note */}
-          <div className="add-note-container">
-            <textarea
-              placeholder="Leave a note..."
-              value={newNote}
-              onChange={(e) => setNewNote(e.target.value)}
-              className="note-input"
-            />
-            <button onClick={handleAddNote} className="add-note-button">
-              Add Note
-            </button>
-          </div>
+
+        <div className="form-group">
+          <label>Select Company</label>
+          <select
+            value={selectedCompanyId || ''}
+            onChange={(e) => setSelectedCompanyId(e.target.value)}
+            required
+          >
+            <option value="">Select a Company</option>
+            {companies.map((company) => (
+              <option key={company.id} value={company.id}>
+                {company.companyName}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
+
+        <div className="form-group">
+          <label>Tech User</label>
+          <input
+            type="text"
+            value={techSearch}
+            onChange={(e) => {
+              setTechSearch(e.target.value);
+              fetchTechSuggestions(e.target.value);
+            }}
+            placeholder="Search for Tech User"
+          />
+          {techSearch && techSuggestions.length > 0 && (
+            <div className="dropdown polished-dropdown">
+              {techSuggestions.map((tech) => (
+                <div
+                  key={tech.id}
+                  className="dropdown-item polished-dropdown-item"
+                  onClick={() => {
+                    setSelectedTechId(tech.id);
+                    setTechSearch(tech.name); // Set the selected tech user name in the input
+                    setTechSuggestions([]); // Clear the suggestions
+                  }}
+                >
+                  {tech.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="form-group">
+          <label>Client</label>
+          <input
+            type="text"
+            value={clientSearch}
+            onChange={(e) => {
+              setClientSearch(e.target.value);
+              fetchClientSuggestions(e.target.value);
+            }}
+            placeholder="Search for Client"
+          />
+          {clientSearch && clientSuggestions.length > 0 && (
+            <div className="dropdown polished-dropdown">
+              {clientSuggestions.map((client) => (
+                <div
+                  key={client.id}
+                  className="dropdown-item polished-dropdown-item"
+                  onClick={() => {
+                    setSelectedClientId(client.id);
+                    setClientSearch(client.name); // Set the selected client name in the input
+                    setClientSuggestions([]); // Clear the suggestions
+                  }}
+                >
+                  {client.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="form-group">
+          <label>Resolution</label>
+          <input
+            type="text"
+            value={resolution}
+            onChange={(e) => setResolution(e.target.value)}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Ticket Notes</label>
+          <textarea
+            value={ticketNotes}
+            onChange={(e) => setTicketNotes(e.target.value)}
+          />
+        </div>
+
+        {error && <p className="error-message">{error}</p>}
+
+        <button type="submit" className="submit-button">Create Ticket</button>
+      </form>
     </div>
   );
 };
 
-export default TicketDetails;
+export default NewTicket;
