@@ -16,6 +16,7 @@ import Technicians from './Technicians';
 import TicketDetails from './TicketDetails';
 import TicketsList from './TicketList';
 import NewTicket from './NewTicket';
+import NewTicketClient from './NewTicketClient'; // Import the new client ticket page
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from './Layout';
 
@@ -119,6 +120,14 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <NewTicket />
+      </Layout>
+    ),
+  },
+  {
+    path: "new-ticket-client", // New route for client ticket creation
+    element: (
+      <Layout>
+        <NewTicketClient clientId={123} companyId={456} /> {/* Pass dummy IDs or replace with dynamic values */}
       </Layout>
     ),
   },
