@@ -56,13 +56,14 @@ const ClientDetails = () => {
               {tickets.map((ticket) => (
                 <li key={ticket.id} style={styles.ticketItem}>
                   <p>
-                    <strong>Ticket Title: </strong>
-                    <Link to={`/tickets/${ticket.id}`} style={styles.ticketLink}>
-                      {ticket.title}
-                    </Link>
+                    <strong>Title:</strong> {ticket.title}
                   </p>
-                  <p><strong>Description:</strong> {ticket.description}</p>
-                  {ticket.techName && <p><strong>Assigned Tech:</strong> {ticket.techName}</p>}
+                  <p>
+                    <strong>Description:</strong> {ticket.description}
+                  </p>
+                  <Link to={`/tickets/${ticket.id}`}>
+                    <strong>View Ticket</strong>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -139,11 +140,6 @@ const styles = {
     borderRadius: '8px',
     border: '1px solid #ddd',
     marginBottom: '10px',
-  },
-  ticketLink: {
-    textDecoration: 'none',
-    color: '#007bff',
-    transition: 'color 0.3s ease',
   },
 };
 
