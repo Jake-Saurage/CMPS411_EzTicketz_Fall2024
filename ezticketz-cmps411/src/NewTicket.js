@@ -5,7 +5,7 @@ import './App.css';
 const NewTicket = () => {
   const [ticketTitle, setTicketTitle] = useState('');
   const [ticketDescription, setTicketDescription] = useState('');
-  const [resolution, setResolution] = useState('');
+  const [resolution, setResolution] = useState("Work Performed:");
   const [issueId, setIssueId] = useState('');
   const [subIssueId, setSubIssueId] = useState('');
   const [ticketNotes, setTicketNotes] = useState('');
@@ -210,7 +210,14 @@ const NewTicket = () => {
   return (
     <div className="new-ticket-container">
       <h1>Create New Ticket</h1>
-      <form onSubmit={handleSubmit}>
+      <form
+  onSubmit={handleSubmit}
+  onKeyDown={(e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent the default form submission
+    }
+  }}
+>
         <div className="form-group">
           <label>Ticket Title</label>
           <input
@@ -343,13 +350,20 @@ const NewTicket = () => {
         </div>
 
         <div className="form-group">
-          <label>Resolution</label>
-          <input
-            type="text"
-            value={resolution}
-            onChange={(e) => setResolution(e.target.value)}
-          />
-        </div>
+  <label>Resolution</label>
+  <textarea
+    value={resolution}
+    onChange={(e) => setResolution(e.target.value)} // Handles updates
+    rows="5" // Set an appropriate number of visible rows
+    style={{
+      width: "100%", // Make it visually appealing
+      whiteSpace: "pre-wrap", // Ensure spaces and newlines are displayed
+    }}
+    placeholder="Enter resolution details here..."
+  />
+</div>
+
+
 
         <div className="form-group">
           <label>Ticket Notes</label>

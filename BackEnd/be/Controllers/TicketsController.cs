@@ -156,14 +156,23 @@ public async Task<IActionResult> PutTicket(int id, TicketUpdateDto ticketDto)
         return BadRequest();
     }
 
-    var ticket = await _context.Tickets.FindAsync(id);
+    var ticket = await _context.Tickets
+        .Include(t => t.Client)
+        .Include(t => t.Company)
+        .Include(t => t.Tech)
+        .Include(t => t.IssueType)
+        .Include(t => t.SubIssueType)
+        .FirstOrDefaultAsync(t => t.Id == id);
+
     if (ticket == null)
     {
         return NotFound();
     }
 
+    // Update fields
     ticket.TicketTitle = ticketDto.TicketTitle;
     ticket.TicketDescription = ticketDto.TicketDescription;
+    ticket.Resolution = ticketDto.Resolution;
     ticket.IssueId = ticketDto.IssueId;
     ticket.SubIssueId = ticketDto.SubIssueId;
     ticket.ClientId = ticketDto.ClientId;
@@ -188,8 +197,19 @@ public async Task<IActionResult> PutTicket(int id, TicketUpdateDto ticketDto)
         }
     }
 
-    return NoContent();
+    // Fetch the updated ticket with all relational data
+    var updatedTicket = await _context.Tickets
+        .Include(t => t.Client)
+        .Include(t => t.Company)
+        .Include(t => t.Tech)
+        .Include(t => t.IssueType)
+        .Include(t => t.SubIssueType)
+        .FirstOrDefaultAsync(t => t.Id == id);
+
+    return Ok(updatedTicket);
 }
+
+
 
 
     // DELETE: api/tickets/{id}
