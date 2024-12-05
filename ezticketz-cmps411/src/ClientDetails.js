@@ -44,6 +44,7 @@ const ClientDetails = () => {
             <strong>Company: </strong>
             <Link to={`/companies/${client.companyId}`} style={styles.companyLink}>
               {client.companyName}
+              <i className="bx bx-link-external"></i>
             </Link>
           </p>
         </div>
@@ -61,9 +62,11 @@ const ClientDetails = () => {
                   <p>
                     <strong>Description:</strong> {ticket.description}
                   </p>
-                  <Link to={`/tickets/${ticket.id}`}>
-                    <strong>View Ticket</strong>
-                  </Link>
+                  <Link to={`/tickets/${ticket.id}`} style={styles.viewTicketLink}>
+  <strong>View Ticket</strong>
+  <i className="bx bx-link-external" title='Open Ticket Details' style={styles.icon}></i>
+  </Link>
+
                 </li>
               ))}
             </ul>
@@ -100,6 +103,15 @@ const styles = {
     boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
     border: '1px solid #ccc',
   },
+  viewTicketLink: {
+    color: '#007bff', // Default color (blue)
+    fontWeight: 'bold',
+    textDecoration: 'none',
+    transition: 'color 0.3s ease',
+  },
+  viewTicketLinkActive: {
+    color: '#0056b3', // Darker blue on click
+  },
   clientName: {
     fontSize: '1.75rem',
     fontWeight: 'bold',
@@ -116,6 +128,12 @@ const styles = {
     color: '#007bff',
     fontWeight: 'bold',
     transition: 'color 0.3s ease',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  externalLinkIcon: {
+    marginLeft: '5px',
+    fontSize: '1.2rem',
   },
   ticketsBox: {
     marginTop: '30px',
@@ -140,6 +158,10 @@ const styles = {
     borderRadius: '8px',
     border: '1px solid #ddd',
     marginBottom: '10px',
+  },
+  ticketIcon: {
+    marginLeft: '5px',
+    fontSize: '1.2rem',
   },
 };
 

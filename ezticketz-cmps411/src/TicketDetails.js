@@ -222,33 +222,37 @@ const TicketDetails = () => {
             </div>
 
             <div className="ticket-side-container">
-  {/* Company Container */}
-  <div className="client-container">
-    <p>
-      <strong>Company: </strong>
-      <Link to={`/companies/${ticket.companyId}`} className="details-link">
-        {ticket.companyName}
-      </Link>
-    </p>
-  </div>
 
-  {/* Client Container */}
-  <div className="client-container">
-    <p>
-      <strong>Client: </strong>
-      <Link to={`/clients/${ticket.clientId}`} className="details-link">
-        {ticket.clientName}
-      </Link>
-    </p>
-  </div>
+{/* Company Container */}
+<div className="client-container">
+  <p>
+    <strong>Company: </strong>
+    <Link to={`/companies/${ticket.companyId}`} className="details-link">
+      {ticket.companyName}{" "}
+      <i className="bx bx-link-external" title="Open Company Details"></i>
+    </Link>
+  </p>
+</div>
 
- {/* Tech User Container */}
+{/* Client Container */}
+<div className="client-container">
+  <p>
+    <strong>Client: </strong>
+    <Link to={`/clients/${ticket.clientId}`} className="details-link">
+      {ticket.clientName}{" "}
+      <i className="bx bx-link-external" title="Open Client Details"></i>
+    </Link>
+  </p>
+</div>
+
+{/* Tech User Container */}
 <div className="tech-container">
   <p>
     <strong>Tech User: </strong>
     {isTechUser ? (
       <Link to={`/techusers/${ticket.techId}`} className="details-link">
-        {ticket.techName}
+        {ticket.techName}{" "}
+        <i className="bx bx-link-external" title="Open Tech User Details"></i>
       </Link>
     ) : (
       <span>{ticket.techName}</span>

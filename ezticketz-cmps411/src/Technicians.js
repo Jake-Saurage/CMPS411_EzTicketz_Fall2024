@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import './App.css'; // Import the stylesheet
+import 'boxicons/css/boxicons.min.css'; // Import Boxicons if using npm
 
 const Technicians = () => {
   const [techUsers, setTechUsers] = useState([]);
@@ -60,6 +61,7 @@ const Technicians = () => {
                   onClick={() => handleTechUserClick(techUser.id)}
                 >
                   {techUser.name}
+                  <i className="bx bx-link-external" title="Open Technician Details"></i>
                 </span>
                 <span className="tech-user-email">{techUser.email}</span>
                 <span className="tech-user-level">Level: {techUser.techLevel}</span>

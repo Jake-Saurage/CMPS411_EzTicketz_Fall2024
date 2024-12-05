@@ -147,8 +147,12 @@ const CompanyManager = () => {
           return (
             <div key={company.id.toString()} style={styles.companyCard}>
               <Link to={`/companies/${company.id}`} className="company-link">
-                <h3 style={styles.companyName}>{company.companyName || 'No Name'}</h3>
+                <h3 style={styles.companyName}>
+                {company.companyName || 'No Name'}  
+                <i className="bx bx-link-external"></i> {/* Boxicon for external link */}              
+                </h3>
               </Link>
+
               <p style={styles.companyInfo}>Assigned Tickets: {company.assignedTickets || 0}</p>
               <div style={styles.buttonGroup}>
                 <button onClick={() => handleEdit(company)} style={styles.editButton}>Edit</button>
@@ -171,13 +175,14 @@ const CompanyManager = () => {
   );
 };
 
-// Styles (same as before)
+// Styles (same as before, but add styles for the icon)
 const styles = {
   container: {
     padding: '20px',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff',
     borderRadius: '8px',
     boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+    marginTop: '5%',
   },
   header: {
     textAlign: 'center',
@@ -231,28 +236,34 @@ const styles = {
   },
   companyName: {
     color: '#007BFF',
+    display: 'flex',
+    alignItems: 'center', // Align text and icon
+  },
+  icon: {
+    marginRight: '10px', // Add space between icon and text
   },
   companyInfo: {
     color: '#666',
   },
   buttonGroup: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start', // Align buttons to the left
+    gap: '10px',
   },
   editButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: '#ffc107',
     color: 'white',
     border: 'none',
+    padding: '5px 10px',
     borderRadius: '4px',
-    padding: '8px',
     cursor: 'pointer',
   },
   deleteButton: {
     backgroundColor: '#dc3545',
     color: 'white',
     border: 'none',
+    padding: '5px 10px',
     borderRadius: '4px',
-    padding: '8px',
     cursor: 'pointer',
   },
 };

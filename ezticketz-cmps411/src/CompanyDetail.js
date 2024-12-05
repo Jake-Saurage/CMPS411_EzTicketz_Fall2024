@@ -112,6 +112,7 @@ const CompanyDetail = () => {
                 <div style={{ display: 'flex', flexGrow: 1 }}>
                   <Link to={`/clients/${client.id}`} className="client-info-link" style={{ flex: 1 }}>
                     <span className="client-info">{client.name}</span>
+                    <i className="bx bx-link-external" title="Open Client Details"></i>
                   </Link>
                 </div>
                 <div style={{ marginRight: '115px', marginLeft: 'auto' }}>
@@ -168,6 +169,8 @@ const CompanyDetail = () => {
                   </p>
                   <Link to={`/tickets/${ticket.id}`}>
                     <strong>View Ticket</strong>
+                    <i className="bx bx-link-external" title="Open Ticket Details"></i>
+
                   </Link>
                 </li>
               ))}
