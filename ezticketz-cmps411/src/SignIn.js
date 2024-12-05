@@ -56,6 +56,13 @@ const SignIn = () => {
     }
   };
 
+  // Handle Enter key press for both input fields
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSignIn(); // Call handleSignIn on Enter press
+    }
+  };
+
   return (
     <div className="sign-in-form-container">
       <h2>Sign In</h2>
@@ -67,6 +74,7 @@ const SignIn = () => {
             className="input-field"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            onKeyPress={handleKeyPress} // Add onKeyPress event for the Enter key
           />
         </label>
       </div>
@@ -78,6 +86,7 @@ const SignIn = () => {
             className="input-field"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyPress={handleKeyPress} // Add onKeyPress event for the Enter key
           />
         </label>
       </div>

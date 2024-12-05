@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom'; // Add Link here
 import NavBar from './NavBar'; // Import the NavBar component
+import 'boxicons/css/boxicons.min.css'; // Import Boxicons CSS
 
 const TechUserDetails = () => {
   const { id } = useParams(); // Extract the tech user ID from the URL
@@ -56,7 +57,9 @@ const TechUserDetails = () => {
       <div style={styles.container}>
         <h1 style={styles.header}>Tech User Details</h1>
         <div style={styles.techUserCard}>
-          <h2 style={styles.techEmail}>{techUser.name}</h2>
+          <h2 style={styles.techEmail}>
+            <i className="bx bx-user" style={styles.icon}></i> {techUser.name}
+          </h2>
           <p style={styles.techUserInfo}>
             <strong>Email:</strong> {techUser.email}
           </p>
@@ -68,7 +71,7 @@ const TechUserDetails = () => {
         {/* Tickets Section */}
         <div style={styles.ticketsBox}>
           <h2 style={styles.ticketsHeader}>
-            Tickets Assigned to {techUser.name}
+           Tickets Assigned to {techUser.name}
           </h2>
           {tickets.length > 0 ? (
             <ul style={styles.ticketsList}>
@@ -82,7 +85,7 @@ const TechUserDetails = () => {
                   </p>
                   {/* Add a Link to the ticket details page */}
                   <Link to={`/tickets/${ticket.id}`}>
-                    <strong>View Ticket</strong>
+                    <strong>View Ticket</strong> <i className="bx bx-link-external" title='Open Ticket Details' style={styles.icon}></i>
                   </Link>
                 </li>
               ))}
@@ -106,6 +109,7 @@ const styles = {
     backgroundColor: '#f5f5f5',
     borderRadius: '10px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    marginTop: '5%',
   },
   header: {
     fontSize: '2rem',
@@ -166,6 +170,10 @@ const styles = {
     border: '1px solid #ddd',
     marginBottom: '10px',
   },
+  icon: {
+    fontSize: '1.2rem',
+    color: '#0056b3',
+  }
 };
 
 export default TechUserDetails;

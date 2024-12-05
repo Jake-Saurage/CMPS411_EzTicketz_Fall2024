@@ -28,6 +28,7 @@ const TicketDetails = () => {
     clientId: "",
     companyId: "",
     techId: "",
+    resolution: "",
   });
 
   useEffect(() => {
@@ -47,6 +48,7 @@ const TicketDetails = () => {
           clientId: ticketData.clientId,
           companyId: ticketData.companyId,
           techId: ticketData.techId,
+          resolution: ticketData.resolution || "",
         });
 
         // Fetch issue type and sub-issue type
@@ -86,8 +88,6 @@ const TicketDetails = () => {
   const handleEditClick = () => {
     setIsEditing(true);
   };
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  const isTechUser = storedUser?.userType === "TechUser";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -141,6 +141,7 @@ const TicketDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
       const response = await fetch(`http://localhost:5099/api/tickets/${ticketId}`, {
         method: "PUT",
@@ -149,14 +150,23 @@ const TicketDetails = () => {
         },
         body: JSON.stringify({ id: ticketId, ...editData }),
       });
-      if (!response.ok) throw new Error("Failed to update ticket");
+  
+      if (!response.ok) {
+        throw new Error("Failed to update ticket");
+      }
+  
+      const updatedTicket = await response.json(); // Fetch updated ticket data
+      console.log("Updated ticket:", updatedTicket); // Debugging
+      setTicket(updatedTicket); // Update ticket state with full data
       setIsEditing(false);
-      navigate(0); // Refresh the page
     } catch (err) {
       console.error("Error updating ticket:", err);
       setError("Failed to update ticket");
     }
   };
+  
+  
+  
 
   if (loading) return <div className="loading">Loading...</div>;
   if (error) return <div className="error">Error: {error}</div>;
@@ -168,11 +178,11 @@ const TicketDetails = () => {
       <div className="ticket-details-container">
         <div className="ticket-title-container">
           <h1 className="ticket-title">{ticket.ticketTitle}</h1>
-          {isTechUser && !isEditing && (
-  <button onClick={handleEditClick} className="edit-button">
-    Edit Ticket
-  </button>
-)}
+          {!isEditing && (
+            <button onClick={handleEditClick} className="edit-button">
+              Edit Ticket
+            </button>
+          )}
         </div>
         {isEditing ? (
           <form onSubmit={handleSubmit} className="ticket-edit-form">
@@ -193,6 +203,17 @@ const TicketDetails = () => {
                 onChange={handleChange}
               />
             </label>
+            <label>
+  Resolution
+  <textarea
+    name="resolution"
+    value={editData.resolution || "Work Performed:"} // Default to "Work Performed:" if resolution is empty
+    onChange={handleChange}
+    placeholder="Enter resolution here..."
+  />
+</label>
+
+
             <label>
               Issue Type
               <input
@@ -242,20 +263,15 @@ const TicketDetails = () => {
     </p>
   </div>
 
- {/* Tech User Container */}
-<div className="tech-container">
-  <p>
-    <strong>Tech User: </strong>
-    {isTechUser ? (
+  {/* Tech User Container */}
+  <div className="tech-container">
+    <p>
+      <strong>technician: </strong>
       <Link to={`/techusers/${ticket.techId}`} className="details-link">
         {ticket.techName}
       </Link>
-    ) : (
-      <span>{ticket.techName}</span>
-    )}
-  </p>
-</div>
-
+    </p>
+  </div>
 
   {/* Issue Information */}
   <div className="issue-info-container">
@@ -321,6 +337,12 @@ const TicketDetails = () => {
             </button>
           </div>
         </div>
+        <div className="ticket-resolution">
+  <h3>Resolution</h3>
+  <p>{ticket.resolution || "No resolution provided yet."}</p>
+</div>
+
+
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 /* Ensure the navbar spans full width and stays fixed */
 .navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* Center all children */
+  align-items: center; /* Vertically center the navbar content */
   background: #4066FA;
   padding: 10px 16px;
   position: fixed;
@@ -11,71 +12,132 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-
-/* Adjust the navbar-user section for proper alignment */
-.navbar-user {
-  margin-left: auto;
-  padding-right: 16px;
-  white-space: nowrap;
-}
-
-
-/* Style the user's name as a link */
-.navbar-user-link {
-  color: white;
-  font-size: 18px;
-  text-decoration: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-
-.navbar-user-link:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-
-/* Navbar logo styles */
-.navbar-logo {
-  color: white;
-  font-size: 24px;
-}
-
-
-.logo-link {
-  color: white;
-  text-decoration: none;
-  cursor: pointer;
-}
-.logo-link:hover {
-  opacity: 0.8;
-}
-
-
-/* Navbar menu styles */
+/* Center the navbar-menu */
 .navbar-menu {
   display: flex;
   list-style-type: none;
   gap: 30px;
   margin: 0;
   align-items: center;
-  margin-right: 30px;
+  font-size: 1.3rem;
+}
+
+/* Center logo and user link */
+.navbar-logo {
+  color: white;
+  font-size: 24px;
+  margin-right: auto; /* Push the logo to the left */
+}
+
+.navbar-user {
+  margin-left: auto; /* Align user link to the right */
+  padding-right: 16px;
+  white-space: nowrap;
+}
+
+.navbar-user-link {
+  color: white;
+  font-size: 18px;
+  text-decoration: none;
+  font-size: 1.3rem;
+  padding: 8px 12px;
+  border-radius: 4px;
+  position: relative; /* For positioning the underline */
+  transition: background-color 0.3s;
+}
+
+.navbar-user-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease;
 }
 
 
+
+.navbar-user-link:hover::after {
+  width: 100%;
+}
+
+/* Style for navbar menu items */
 .navbar-menu li a {
   text-decoration: none;
   color: white;
   padding: 8px 12px;
   border-radius: 4px;
+  position: relative;
   transition: background-color 0.3s;
 }
 
-
-.navbar-menu li a:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+/* Underline animation on hover for navbar menu */
+.navbar-menu li a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease;
 }
+
+/* On hover, expand the underline */
+.navbar-menu li a:hover::after {
+  width: 100%;
+}
+
+.logo-link {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.logo-link:hover {
+  opacity: 0.8;
+}
+
+
+/* Style for navbar menu items */
+.navbar-menu li a {
+  text-decoration: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  position: relative;
+  transition: background-color 0.3s;
+}
+
+/* Underline animation on hover */
+.navbar-menu li a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease;
+}
+
+/* On hover, expand the underline */
+.navbar-menu li a:hover::after {
+  width: 100%;
+}
+
+.logo-link {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.logo-link:hover {
+  opacity: 0.8;
+}
+
 
 /* Ticket Page Styling Stuff */
 .ticket-form-container {
@@ -86,6 +148,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   animation: slideUp 0.8s ease;
+  margin-top: 5%;
 }
 
 .ticket-input-container, .ticket-textarea-container {
@@ -125,28 +188,11 @@
 }
 
 
-/* Toast Message Styles */
-.toast {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #007bff;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 4px;
-  opacity: 0;
-  transform: translateX(100%);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-
-.toast.show {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-
 /* Ticket List Styles */
+.ticket-list-container{
+  margin-top: 5%;
+}
+
 /* Align the Ticket Heading */
 .ticket-list h2 {
   text-align: center; /* Center the heading */
@@ -187,56 +233,44 @@
   transform: translateY(-10px);
 }
 
-
-
-.bubble {
-  display: inline-block;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 30px;
-  color: #fff;
-  font-size: 0.8em;
-  margin-right: 5px;
-  margin-bottom: 15px;
-  animation: fadeIn 0.5s ease;
+.search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: flex-start;
+  margin: 20px 0;
 }
 
-
-.bubble.open {
-  background-color: #28a745;
-}
-
-
-.bubble.in-progress {
-  background-color: #ffc107;
-}
-
-
-.bubble.completed {
-  background-color: #17a2b8;
-}
-
-
-.bubble.closed {
-  background-color: #dc3545;
-}
-/* Search Bar Styling */
-.search-input {
-  width: 35%; 
+.search-filters input {
   padding: 10px;
-  margin-bottom: 20px;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: border-color 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add some shadow for a stylish effect */
+  border-radius: 5px;
+  font-size: 16px;
+  width: 220px;
+  transition: border 0.3s, box-shadow 0.3s;
 }
 
-.search-input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 10px rgba(0, 123, 255, 0.2); /* Same focus style as other inputs */
+.search-filters input::placeholder {
+  color: #888;
+  font-style: italic;
 }
+
+.search-filters input:focus {
+  border-color: #007BFF;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.search-filters input:hover {
+  border-color: #007BFF;
+}
+
+@media (max-width: 600px) {
+  .search-filters input {
+    width: 100%;
+  }
+}
+
 
 
 /* Button Animations */
@@ -262,6 +296,7 @@
   color: white;
   transform: scale(1.05);
 }
+
 /* Animations */
 @keyframes fadeIn {
   0% {
@@ -292,69 +327,6 @@
 }
 
 
-.progress-bar {
-  height: 100%;
-  background-color: #4caf50; /* Green */
-  text-align: center;
-  color: white;
-  line-height: 20px; /* Center the text vertically */
-}
-
-
-.status-bubbles {
-  display: flex;
-  gap: 5px;
-}
-
-
-.bubble {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-
-.open {
-  background-color: #007bff; /* Blue */
-}
-
-
-.in-progress {
-  background-color: #ffc107; /* Yellow */
-}
-
-
-.completed {
-  background-color: #28a745; /* Green */
-}
-
-
-.closed {
-  background-color: #dc3545; /* Red */
-}
-
-
-.ticket-item {
-  transition: background-color 0.5s ease, transform 0.5s ease;
-}
-
-
-.ticket-item.completed {
-  background-color: #d4edda; /* Light green background for completed tickets */
-  transform: scale(1.05); /* Slightly enlarge the item */
-}
-
-
-/* Optionally, you could add a fade-out effect */
-.ticket-item.completed {
-  animation: fadeOut 0.5s forwards;
-}
-
-
 @keyframes fadeOut {
   from {
     opacity: 1;
@@ -365,12 +337,10 @@
 }
 
 
-
-
-
 .App {
   text-align: center;
 }
+
 .description-container {
   background-color: #f9f9f9;
   padding: 20px;
@@ -502,6 +472,7 @@
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 5%;
 }
 
 .company-name {
@@ -583,6 +554,7 @@
   background-color: #f0f0f0; /* Light grey background for form */
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 5%;
 }
 
 /* Heading styles */
@@ -747,6 +719,7 @@
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 5%;
 }
 
 .form-group {
@@ -826,15 +799,15 @@
 }
 
 
-
 /* Technicians page styling */
 .technicians-container {
   max-width: 800px;
   margin: 20px auto;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 5%; /* Add the margin-top here */
 }
 
 h1 {
@@ -886,30 +859,6 @@ h1 {
   background-color: #0056b3;
 }
 
-
-.technicians-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.tech-users-list {
-  list-style: none;
-  padding: 0;
-}
-
-.tech-user-item {
-  display: flex;
-  background-color: #fff;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
 .tech-user-row {
   display: flex;
   justify-content: space-between;
@@ -934,24 +883,6 @@ h1 {
   text-align: right; /* Align tech level to the right */
 }
 
-.create-tech-user-button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff; /* Change to the blue color */
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.create-tech-user-button:hover {
-  background-color: #0056b3; /* Darker blue for hover effect */
-};
-
 /* Ticket Detail Page */
 .ticket-details-container {
   max-width: 800px;
@@ -967,7 +898,7 @@ h1 {
   margin: 10px 0;
   border: 1px solid #ddd;
   border-radius: 5px;
-  background-color: #f9f9f9;
+  background-color: #fff;
 }
 
 .ticket-details-title {
@@ -1204,11 +1135,13 @@ h1 {
   width: 200px; /* Adjust width */
   padding: 5px;
   margin-right: 10px;
+  margin-left: 20px;
 }
 .techSearch {
   width: 200px; /* Adjust width */
   padding: 5px;
   margin-right: 10px;
+  margin-left: 10000px;
 }
 .clientSearch {
   width: 200px; /* Adjust width */
@@ -1223,6 +1156,7 @@ h1 {
 .items-per-page {
   margin-top: 20px;
 }
+
 /* Pagination controls */
 .pagination-controls {
   display: flex;
@@ -1257,15 +1191,14 @@ h1 {
 
 
 /* NewTicket Page */
-/* App.css */
-
 .new-ticket-container {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+  margin-top: 5%;
 }
 
 .form-group {
@@ -1359,7 +1292,7 @@ h1 {
 }
 
 
-/* App.css */
+
 
 /* Container for the tickets list */
 /* General container style */
@@ -1433,103 +1366,103 @@ h1 {
   color: #555;
   margin-top: 20px;
 }
+
 /*Home Page Revamp Vlad*/
 
-/* General Container Styling */
+/* App Container */
+
+
 .app-container {
-  padding: 20px;
-  text-align: center;
-  font-family: 'Arial', sans-serif;
-  transform: translateY(50px); /* Start from below */
-  animation: slideUp 1s ease-out forwards; /* Apply the animation */
+  min-height: 100vh;
 }
 
-/* Header Section */
-.app-header {
-  background-color: #4A90E2;
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(to right, #007bff, #0056b3);
   color: white;
-  padding: 40px 20px;
+  padding: 100px 20px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 1s ease;
+}
+
+.hero-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: bold;
   margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 1s ease;
 }
 
-.app-header h1 {
-  margin: 0;
-  font-size: 36px;
+.hero-title.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.app-header p {
-  font-size: 18px;
-  margin-top: 10px;
+.hero-description {
+  font-size: 1.25rem;
+  margin-bottom: 30px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 1s ease;
+}
+
+.hero-description.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Features Section */
 .features-section {
-  display: flex;
-  justify-content: center;
+  background-color: #fff;
+  padding: 60px 20px;
+}
+
+.features-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
   margin-bottom: 40px;
 }
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  width: 80%;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Ensures cards scale and fit */
+  gap: 20px; /* Space between the cards */
+  width: 100%; /* Ensure the grid fits within the container */
+  overflow: hidden; /* Prevent overflow */
+  margin-right: 0; /* Ensure no extra margin on the right */
 }
 
-.feature-item {
-  background-color: #f5f5f5;
-  border-radius: 10px;
+.feature-card {
+  background: white;
   padding: 20px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px); /* Start with a slight offset */
 }
 
-.feature-item i {
-  font-size: 50px;
-  color: #4A90E2;
+.feature-card.visible {
+  opacity: 1;
+  transform: translateY(0); /* Reset position */
 }
 
-.feature-item h3 {
-  margin-top: 10px;
-  font-size: 24px;
+/* Hover effect for feature cards */
+.feature-card:hover {
+  transform: translateY(-5px); /* Lift the card on hover */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Add a subtle shadow on hover */
 }
 
-.feature-item p {
-  font-size: 16px;
-  color: #333;
-}
 
-/* Call to Action Section */
-.cta-section {
-  background-color: #f0f0f0;
-  padding: 30px 20px;
-  margin-top: 20px;
-}
-
-.cta-section h2 {
-  font-size: 28px;
-  margin-bottom: 10px;
-}
-
-.cta-section p {
-  font-size: 18px;
-  margin-bottom: 20px;
-}
-
-.cta-button {
-  background-color: #4A90E2;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  font-size: 16px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.cta-button:hover {
-  background-color: #357ABD; /* Change button color on hover */
-
-}
 /* Ticket edit page*/
 /* Edit Form Styling */
 .ticket-edit-form {
@@ -1607,68 +1540,62 @@ h1 {
   background-color: #f1f1f1;
 }
 
-.edit-button {
-  background-color: #4066FA; /* Blue color matching the theme */
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.edit-button:hover {
-  background-color: #3053c3; /* Slightly darker blue for hover */
-}
-
-.edit-button:focus {
-  outline: none;
-  box-shadow: 0 0 5px rgba(64, 102, 250, 0.6);
-}
-
-/* Notes styaliing */
-.ticket-notes-container {
-  margin-top: 20px;
-  padding: 15px;
-  border-top: 1px solid #ccc;
-}
-
-.notes-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.note-item {
-  margin-bottom: 15px;
-  padding: 10px;
-  background: #f9f9f9;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-}
-
 .add-note-container {
   margin-top: 20px;
 }
 
 .note-input {
   width: 100%;
-  height: 80px;
+  height: 200px; /* Increased height for larger box */
   padding: 10px;
-  border: 1px solid #ddd;
+  font-size: 16px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  margin-bottom: 10px;
+  resize: none; /* Optional: prevents resizing of the textarea */
+  transition: all 0.3s ease; /* Smooth transition for all properties */
+}
+
+.note-input:focus {
+  border-color: #4CAF50; /* Change border color on focus */
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.7); /* Add a glow effect on focus */
 }
 
 .add-note-button {
-  background-color: #007bff;
-  color: white;
+  margin-top: 10px;
   padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition on hover */
 }
 
 .add-note-button:hover {
-  background-color: #0056b3;
+  background-color: #45a049;
+  transform: scale(1.05); /* Slightly scale the button on hover */
 }
+
+.add-note-button:active {
+  transform: scale(1); /* Reset scale when button is clicked */
+}
+.ticket-resolution {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  white-space: pre-wrap;
+}
+
+.ticket-resolution h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.ticket-resolution p {
+  margin: 0;
+  line-height: 1.5;
+}
+
