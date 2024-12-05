@@ -99,7 +99,7 @@ const CompanyManager = () => {
         setShowModal(false); // Close the modal after deletion
         setCompanyToDelete(null); // Reset the state after deletion
       } catch (error) {
-        setError(error.message);
+        setShowModal(false); // Close the confirmation modal automatically
       }
     }
   };
@@ -156,7 +156,9 @@ const CompanyManager = () => {
               <p style={styles.companyInfo}>Assigned Tickets: {company.assignedTickets || 0}</p>
               <div style={styles.buttonGroup}>
                 <button onClick={() => handleEdit(company)} style={styles.editButton}>Edit</button>
-                <button onClick={() => handleDelete(company)} style={styles.deleteButton}>Delete</button>
+                {company.assignedTickets === 0 && (
+                  <button onClick={() => handleDelete(company)} style={styles.deleteButton}>Delete</button>
+                )}
               </div>
             </div>
           );
@@ -175,7 +177,7 @@ const CompanyManager = () => {
   );
 };
 
-// Styles (same as before, but add styles for the icon)
+// Styles (same as before, but add styles for the icon and modal)
 const styles = {
   container: {
     padding: '20px',
