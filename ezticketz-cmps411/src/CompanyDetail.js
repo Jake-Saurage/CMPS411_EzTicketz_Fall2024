@@ -94,6 +94,7 @@ const CompanyDetail = () => {
     <div>
       <NavBar />
       <div className="company-detail-container">
+        <h1 className="company-details">Company Details</h1>
         <h1 className="company-name">Company Name: {company.companyName || "Unnamed Company"}</h1>
 
         <h2>Clients Assigned:</h2>
@@ -110,7 +111,15 @@ const CompanyDetail = () => {
                 marginBottom: '10px'
               }}>
                 <div style={{ display: 'flex', flexGrow: 1 }}>
-                  <Link to={`/clients/${client.id}`} className="client-info-link" style={{ flex: 1 }}>
+                  <Link 
+                    to={`/clients/${client.id}`} 
+                    className="client-info-link" 
+                    style={{
+                      color: '#007bff',
+                      textDecoration: 'none',
+                      fontWeight: 'bold'
+                    }}
+                  >
                     <span className="client-info">{client.name}</span>
                     <i className="bx bx-link-external" title="Open Client Details"></i>
                   </Link>
@@ -121,25 +130,22 @@ const CompanyDetail = () => {
                   </span>
                 </div>
 
-              
                 {isTechUser && (
-  <button
-    onClick={() => handleDeleteClient(client)}
-    style={{ 
-      backgroundColor: '#dc3545', 
-      color: 'white', 
-      border: 'none', 
-      borderRadius: '4px', 
-      padding: '8px', 
-      cursor: 'pointer', 
-      marginLeft: '10px' 
-    }}
-  >
-    Delete
-  </button>
-)}
-
-
+                  <button
+                    onClick={() => handleDeleteClient(client)}
+                    style={{ 
+                      backgroundColor: '#dc3545', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px', 
+                      padding: '8px', 
+                      cursor: 'pointer', 
+                      marginLeft: '10px' 
+                    }}
+                  >
+                    Delete
+                  </button>
+                )}
               </li>
             ))}
           </ul>
@@ -147,12 +153,12 @@ const CompanyDetail = () => {
           <p className="no-clients">No clients assigned to this company.</p>
         )}
 
-       {/* Create Client Button */}
-{isTechUser && (
-  <button onClick={handleCreateClient} className="create-client-button">
-    Create Client
-  </button>
-)}
+        {/* Create Client Button */}
+        {isTechUser && (
+          <button onClick={handleCreateClient} className="create-client-button">
+            Create Client
+          </button>
+        )}
 
         {/* Updated Company Wide Tickets Section */}
         <div style={styles.ticketsBox}>
@@ -167,10 +173,16 @@ const CompanyDetail = () => {
                   <p>
                     <strong>Description:</strong> {ticket.ticketDescription}
                   </p>
-                  <Link to={`/tickets/${ticket.id}`}>
+                  <Link 
+                    to={`/tickets/${ticket.id}`} 
+                    style={{
+                      color: '#007bff',
+                      textDecoration: 'none',
+                      fontWeight: 'bold'
+                    }}
+                  >
                     <strong>View Ticket</strong>
                     <i className="bx bx-link-external" title="Open Ticket Details"></i>
-
                   </Link>
                 </li>
               ))}

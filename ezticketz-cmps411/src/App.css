@@ -318,13 +318,6 @@
     opacity: 1;
   }
 }
-.ticket-progress {
-  background-color: #f0f0f0;
-  border-radius: 5px;
-  overflow: hidden;
-  height: 20px;
-  margin: 10px 0;
-}
 
 
 @keyframes fadeOut {
@@ -869,7 +862,7 @@ h1 {
   flex: 1;
   cursor: pointer;
   color: #007bff;
-  text-decoration: underline;
+  text-decoration: none;
   text-align: left; /* Align name to the left */
 }
 
