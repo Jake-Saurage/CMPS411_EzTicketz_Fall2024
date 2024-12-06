@@ -70,7 +70,8 @@ const TicketsList = () => {
   const indexOfLastTicket = currentPage * itemsPerPage;
   const indexOfFirstTicket = indexOfLastTicket - itemsPerPage;
   const currentTickets = sortedTickets.slice(indexOfFirstTicket, indexOfLastTicket);
-  const totalPages = Math.ceil(sortedTickets.length / itemsPerPage);
+  
+  const totalPages = Math.ceil(sortedTickets.length / itemsPerPage); // Ensure this is only declared once
 
   const handleNextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
   const handlePrevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
@@ -152,12 +153,20 @@ const TicketsList = () => {
           )}
         </tbody>
       </table>
-
-      <div className="pagination-controls">
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
-        <span>Page {currentPage} of {totalPages}</span>
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</button>
-      </div>
+      
+      {tickets.length > 0 ? (
+        <div className="pagination-controls">
+          <button onClick={handlePrevPage} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+            Next
+          </button>
+        </div>
+      ) : (
+        <p>No tickets assigned to this tech user.</p>
+      )}
 
       <div className="items-per-page">
         <label>Tickets per page:</label>
@@ -176,29 +185,24 @@ const TicketsList = () => {
 
       <style>
         {`
-
-  .tickets-list-container {
-      margin: 40px auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      margin-top: 5%;
-    }
-
+          .tickets-list-container {
+              margin: 40px auto;
+              padding: 20px;
+              background-color: #fff;
+              border-radius: 8px;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+              margin-top: 5%;
+          }
           th {
             cursor: pointer;
             user-select: none;
           }
-
           th:hover {
             text-decoration: underline;
           }
-
           .items-per-page {
             margin-top: 20px;
           }
-
           .items-per-page-select {
             padding: 8px;
             margin-left: 5px;
@@ -207,12 +211,9 @@ const TicketsList = () => {
             border: 1px solid #ccc;
             transition: background-color 0.3s, border-color 0.3s;
           }
-
           .items-per-page-select:hover {
               border-color: #007BFF;
-
           }
-
           .items-per-page-select:focus {
             outline: none;
             border-color: #007BFF;

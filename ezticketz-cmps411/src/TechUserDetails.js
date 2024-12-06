@@ -84,7 +84,7 @@ const TechUserDetails = () => {
                     <strong>Description:</strong> {ticket.description}
                   </p>
                   {/* Add a Link to the ticket details page */}
-                  <Link to={`/tickets/${ticket.id}`}>
+                  <Link to={`/tickets/${ticket.id}`} style={styles.link}>
                     <strong>View Ticket</strong> <i className="bx bx-link-external" title='Open Ticket Details' style={styles.icon}></i>
                   </Link>
                 </li>
@@ -169,6 +169,11 @@ const styles = {
     borderRadius: '8px',
     border: '1px solid #ddd',
     marginBottom: '10px',
+  },
+  link: {
+    color: '#007bff', // Blue color for links
+    textDecoration: 'none',
+    fontWeight: 'bold',
   },
   icon: {
     fontSize: '1.2rem',
