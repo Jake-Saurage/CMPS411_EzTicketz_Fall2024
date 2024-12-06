@@ -1572,3 +1572,23 @@ h1 {
 .add-note-button:active {
   transform: scale(1); /* Reset scale when button is clicked */
 }
+.ticket-resolution {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  white-space: pre-wrap;
+}
+
+.ticket-resolution h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.ticket-resolution p {
+  margin: 0;
+  line-height: 1.5;
+}
+
